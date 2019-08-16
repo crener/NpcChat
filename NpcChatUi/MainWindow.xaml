@@ -7,6 +7,7 @@
         xmlns:local="clr-namespace:NpcChat"
         xmlns:nodes="clr-namespace:NpcChat.Views.Nodes"
         xmlns:script="clr-namespace:NpcChat.Views.Editors.Script"
+        xmlns:data="clr-namespace:NpcChatSystem.Data;assembly=NpcChatSystem"
         mc:Ignorable="d"
         Title="MainWindow" 
         Height="350" Width="525"
@@ -16,6 +17,28 @@
         >
     <Grid>
         <nodes:BaseNode/>
-        <script:ScriptEditor DialogTreeId="{Binding TreeId}" />
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Height="100" VerticalAlignment="Top" Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition MaxHeight="20" Height="20"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Label Content="Story Elements" Grid.RowSpan="2"/>
+            </Grid>
+
+            <ListView ItemsSource="{Binding Speech}" Grid.Row="1" Margin="10,5,10,10">
+                <ListView.Resources>
+                    <DataTemplate DataType="{x:Type data:DialogSegment}" >
+                        <script:CharacterDialog DialogId="{Binding DialogId}"/>
+                    </DataTemplate>
+                </ListView.Resources>
+            </ListView>
+        </Grid>
     </Grid>
 </Controls:MetroWindow>

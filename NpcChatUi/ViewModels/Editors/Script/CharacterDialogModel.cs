@@ -25,7 +25,7 @@ namespace NpcChat.ViewModels.Editors.Script
 
         public int DialogId
         {
-            get => dialogSegment.DialogId;
+            get => dialogSegment?.DialogId ?? -1;
             set => RetrieveDialog(value);
         }
 

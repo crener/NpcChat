@@ -17,12 +17,12 @@ namespace NpcChatTest.Managers
             NpcChatProject project = new NpcChatProject();
 
             Character character = new Character("Daisy");
-            Assert.AreEqual(0, character.Id);
+            Assert.AreEqual(Character.PreRegisteredId, character.Id);
 
             int id;
             bool success = NpcChatProject.Characters.RegisterNewCharacter(out id, character);
             Assert.IsTrue(success);
-            Assert.AreNotEqual(0, id);
+            Assert.AreNotEqual(Character.PreRegisteredId, id);
         }
 
         [Test]
@@ -31,12 +31,12 @@ namespace NpcChatTest.Managers
             NpcChatProject project = new NpcChatProject();
 
             Character character = new Character("Daisy");
-            Assert.AreEqual(0, character.Id);
+            Assert.AreEqual(Character.PreRegisteredId, character.Id);
 
             int id;
             bool success = NpcChatProject.Characters.RegisterNewCharacter(out id, character);
             Assert.IsTrue(success);
-            Assert.AreNotEqual(0, id);
+            Assert.AreNotEqual(Character.PreRegisteredId, id);
 
             success = NpcChatProject.Characters.RegisterNewCharacter(out id, character);
             Assert.IsFalse(success);
@@ -48,12 +48,12 @@ namespace NpcChatTest.Managers
             NpcChatProject project = new NpcChatProject();
 
             Character character = new Character("Daisy");
-            Assert.AreEqual(0, character.Id);
+            Assert.AreEqual(Character.PreRegisteredId, character.Id);
 
             int id;
             bool success = NpcChatProject.Characters.RegisterNewCharacter(out id, character);
             Assert.IsTrue(success);
-            Assert.AreNotEqual(0, id);
+            Assert.AreNotEqual(Character.PreRegisteredId, id);
 
             character = NpcChatProject.Characters.GetCharacter(id);
             success = NpcChatProject.Characters.RegisterNewCharacter(out id, character);

@@ -103,15 +103,11 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Util\NotificationObject.cs" />
     <Compile Include="ViewModels\Editors\Script\CharacterDialogModel.cs" />
-    <Compile Include="ViewModels\Editors\Script\ScriptEditorModel.cs" />
     <Compile Include="ViewModels\Editors\Script\Util\DialogWrapper.cs" />
     <Compile Include="ViewModels\Editors\Tree\Nodes\BaseNodeModel.cs" />
     <Compile Include="ViewModels\WindowViewModel.cs" />
     <Compile Include="Views\Editors\Script\CharacterDialog.xaml.cs">
       <DependentUpon>CharacterDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Editors\Script\ScriptEditor.xaml.cs">
-      <DependentUpon>ScriptEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Editors\Tree\Nodes\BaseNode.xaml.cs">
       <DependentUpon>BaseNode.xaml</DependentUpon>
@@ -129,10 +125,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\Editors\Script\CharacterDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Editors\Script\ScriptEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -6,18 +6,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NpcChat.Views.Editors.Script"
              xmlns:script="clr-namespace:NpcChat.ViewModels.Editors.Script"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="90">
-    <UserControl.Resources>
-        <script:CharacterDialogModel x:Key="ViewModel"/>
-    </UserControl.Resources>
-    <Grid d:DataContext="{Binding Source={StaticResource ViewModel}}">
+             mc:Ignorable="d" d:DesignWidth="800" Height="30">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
 <!--View mode components-->
-        <Label Content="{Binding DialogSegment.CharacterId, Mode=OneWay}" Grid.Column="0" />
+        <Label Content="{Binding DialogSegment.CharacterId, Mode=OneWay}" VerticalAlignment="Center" Grid.Column="0" />
         <TextBlock Text="{Binding DialogSegment.Text}" VerticalAlignment="Center" Grid.Column="1" />
     </Grid>
 </UserControl>

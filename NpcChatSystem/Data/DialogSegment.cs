@@ -15,7 +15,7 @@ namespace NpcChatSystem.Data
     [DebuggerDisplay("{CharacterId}: {Text}")]
     public class DialogSegment
     {
-        public int DialogId { get; private set; }
+        public int DialogId { get; }
         public int CharacterId { get; private set; }
 
         public string Text

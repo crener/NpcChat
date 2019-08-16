@@ -12,6 +12,8 @@ namespace NpcChatSystem.Data
     [DebuggerDisplay("{Name}")]
     public struct Character
     {
+        public const int PreRegisteredId = 0;
+
         public int Id { get; internal set; }
         public string Name { get; set; }
 
@@ -19,7 +21,7 @@ namespace NpcChatSystem.Data
 
         public Character(string name) : this()
         {
-            Id = 0;
+            Id = PreRegisteredId;
             Name = name;
             traits = new List<CharacterTrait>();
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,40 @@ namespace NpcChat.ViewModels
 {
     class WindowViewModel : NotificationObject
     {
-        public int TreeId { get; set; }
+        public int TreeId
+        {
+            get => treeId;
+            set
+            {
+                SetDialogTree(value);
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<DialogSegment> Speech
+        {
+            get => m_speech;
+            /*set
+            {
+                m_speech = value;
+                RaisePropertyChanged();
+            }*/
+        }
+
+        private ObservableCollection<DialogSegment> m_speech = new ObservableCollection<DialogSegment>();
+        private DialogTree m_tree;
+
+        public void SetDialogTree(int dialogTreeId)
+        {
+            m_tree = NpcChatProject.Dialogs.GetDialog(dialogTreeId);
+            TreePart part = m_tree.GetStart();
+
+            Speech.Clear();
+            Speech.AddRange(part.Dialog);
+        }
+
+
+        private int treeId;
 
         public WindowViewModel()
         {
@@ -28,5 +62,6 @@ namespace NpcChat.ViewModels
                 TreeId = branch.DialogTreeId;
             }
         }
+
     }
 }
