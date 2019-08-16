@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpcChatUi", "NpcChatUi\NpcChatUi.csproj", "{50F83CA0-8BE9-4064-B2DA-C2B952F1DD9D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpcChatSystem", "NpcChatSystem\NpcChatSystem.csproj", "{42513F8F-9551-443A-9A37-3420109B95B8}"
@@ -8,21 +11,27 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpcChatTest", "NpcChatTest\
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{50F83CA0-8BE9-4064-B2DA-C2B952F1DD9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50F83CA0-8BE9-4064-B2DA-C2B952F1DD9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50F83CA0-8BE9-4064-B2DA-C2B952F1DD9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50F83CA0-8BE9-4064-B2DA-C2B952F1DD9D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{42513F8F-9551-443A-9A37-3420109B95B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42513F8F-9551-443A-9A37-3420109B95B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42513F8F-9551-443A-9A37-3420109B95B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42513F8F-9551-443A-9A37-3420109B95B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A8F16C93-2841-4F6A-AE2C-EE23C36A204B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A8F16C93-2841-4F6A-AE2C-EE23C36A204B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A8F16C93-2841-4F6A-AE2C-EE23C36A204B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A8F16C93-2841-4F6A-AE2C-EE23C36A204B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50F83CA0-8BE9-4064-B2DA-C2B952F1DD9D}.Debug|x64.ActiveCfg = Debug|x64
+		{50F83CA0-8BE9-4064-B2DA-C2B952F1DD9D}.Debug|x64.Build.0 = Debug|x64
+		{50F83CA0-8BE9-4064-B2DA-C2B952F1DD9D}.Release|x64.ActiveCfg = Release|x64
+		{50F83CA0-8BE9-4064-B2DA-C2B952F1DD9D}.Release|x64.Build.0 = Release|x64
+		{42513F8F-9551-443A-9A37-3420109B95B8}.Debug|x64.ActiveCfg = Debug|x64
+		{42513F8F-9551-443A-9A37-3420109B95B8}.Debug|x64.Build.0 = Debug|x64
+		{42513F8F-9551-443A-9A37-3420109B95B8}.Release|x64.ActiveCfg = Release|x64
+		{42513F8F-9551-443A-9A37-3420109B95B8}.Release|x64.Build.0 = Release|x64
+		{A8F16C93-2841-4F6A-AE2C-EE23C36A204B}.Debug|x64.ActiveCfg = Debug|x64
+		{A8F16C93-2841-4F6A-AE2C-EE23C36A204B}.Debug|x64.Build.0 = Debug|x64
+		{A8F16C93-2841-4F6A-AE2C-EE23C36A204B}.Release|x64.ActiveCfg = Release|x64
+		{A8F16C93-2841-4F6A-AE2C-EE23C36A204B}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D75EC4FA-B6A7-4476-A0FD-CDC503780AD8}
 	EndGlobalSection
 EndGlobal

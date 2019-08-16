@@ -5,10 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:NpcChat"
+        xmlns:nodes="clr-namespace:NpcChat.Views.Nodes"
+        xmlns:script="clr-namespace:NpcChat.Views.Editors.Script"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525"
+        Title="MainWindow" 
+        Height="350" Width="525"
+        MinHeight="120" MinWidth="200"
         
-        GlowBrush="{DynamicResource AccentColorBrush}" >
+        GlowBrush="{DynamicResource AccentColorBrush}" 
+        >
     <Grid>
+        <nodes:BaseNode/>
+        <script:ScriptEditor DialogTreeId="{Binding TreeId}" />
     </Grid>
 </Controls:MetroWindow>

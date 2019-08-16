@@ -1,4 +1,9 @@
-﻿using MahApps.Metro.Controls;
+﻿using System.Windows.Media;
+using MahApps.Metro.Controls;
+using NpcChat.ViewModels;
+using NpcChatSystem;
+using NpcChatSystem.Data;
+using NpcChatSystem.Data.DialogTreeItems;
 
 namespace NpcChat
 {
@@ -9,6 +14,7 @@ namespace NpcChat
     {
         public MainWindow()
         {
+            DataContext = new WindowViewModel();
             InitializeComponent();
         }
     }
