@@ -10,12 +10,13 @@ using NpcChat.Util;
 using NpcChatSystem;
 using NpcChatSystem.Data;
 using NpcChatSystem.Data.Dialog;
+using NpcChatSystem.Data.Dialog.DialogTreeItems;
 
 namespace NpcChat.ViewModels.Editors.Script
 {
     public class CharacterDialogModel : NotificationObject
     {
-        public NpcChatProject Project { get; set; }
+        public NpcChatProject Project { get; }
         public DialogSegment DialogSegment
         {
             get => m_dialogSegment;
@@ -23,27 +24,17 @@ namespace NpcChat.ViewModels.Editors.Script
             {
                 m_dialogSegment = value;
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(DialogSegmentId));
             }
         }
 
-        public int DialogSegmentId
+        public DialogSegmentIdentifier DialogSegmentId
         {
-            get => m_dialogSegment?.Id.DialogSegmentId ?? -1;
+            get => m_dialogSegment?.Id ?? null;
             set => RetrieveDialog(value);
         }
 
-        public int TreeId
-        {
-            get => m_dialogSegment?.Id.DialogTreeId ?? -1;
-            set
-            {
-                RetrieveDialog(value);
-            }
-        }
-
-
         private DialogSegment m_dialogSegment = null;
-
 
         public CharacterDialogModel(NpcChatProject project, DialogSegment dialog)
         {
@@ -51,11 +42,12 @@ namespace NpcChat.ViewModels.Editors.Script
             m_dialogSegment = dialog;
         }
 
-        private void RetrieveDialog(int dialogId)
+        private void RetrieveDialog(DialogSegmentIdentifier dialogId)
         {
-            if (Project == null) return;
+            DialogSegment tree = Project?.ProjectDialogs[dialogId];
+            if(tree == null) return;
 
-            DialogTree tree = Project.ProjectDialogs.GetDialog(dialogId);
+            m_dialogSegment = tree;
         }
     }
 }
