@@ -9,13 +9,36 @@ namespace NpcChatSystem
 {
     public class NpcChatProject
     {
+        /// <summary>
+        /// Character store for the last loaded project, null if no project has been loaded
+        /// </summary>
         public static CharacterStore Characters { get; private set; }
+        /// <summary>
+        /// Dialog Manager for the last loaded project, null if no project has been loaded
+        /// </summary>
         public static DialogManager Dialogs { get; private set; }
+        /// <summary>
+        /// Story Element Manager for the last loaded project, null if no project has been loaded
+        /// </summary>
         public static StoryElementManager StoryElements { get; private set; }
+        /// <summary>
+        /// Last project loaded, if another project is loaded this is replaced
+        /// </summary>
+        public static NpcChatProject LastProject { get; private set; }
 
-        public CharacterStore ProjectCharacters { get; private set; }
-        public DialogManager ProjectDialogs { get; private set; }
-        public StoryElementManager ProjectStoryElements { get; private set; }
+
+        /// <summary>
+        /// Character store for the project
+        /// </summary>
+        public CharacterStore ProjectCharacters { get; }
+        /// <summary>
+        /// Dialog Manager store for the project
+        /// </summary>
+        public DialogManager ProjectDialogs { get; }
+        /// <summary>
+        /// Story Element Manager store for the project
+        /// </summary>
+        public StoryElementManager ProjectStoryElements { get; }
 
         /// <summary>
         /// Create a new Project
@@ -25,6 +48,7 @@ namespace NpcChatSystem
             Characters = ProjectCharacters = new CharacterStore();
             Dialogs = ProjectDialogs = new DialogManager();
             StoryElements = ProjectStoryElements = new StoryElementManager();
+            LastProject = this;
         }
 
         /// <summary>

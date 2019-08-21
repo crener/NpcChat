@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using NpcChatSystem.Data.DialogParts;
-using NpcChatSystem.Data.Util;
+using NpcChatSystem.Data.Dialog.DialogParts;
+using NpcChatSystem.Data.Dialog.DialogTreeItems;
 
-namespace NpcChatSystem.Data
+namespace NpcChatSystem.Data.Dialog
 {
     /// <summary>
     /// Piece of dialog from within a larger conversation
@@ -15,7 +12,15 @@ namespace NpcChatSystem.Data
     [DebuggerDisplay("{CharacterId}: {Text}")]
     public class DialogSegment
     {
-        public int DialogId { get; }
+        /// <summary>
+        /// Id of the dialog
+        /// </summary>
+        public DialogSegmentIdentifier Id { get; }
+
+        /// <summary>
+        /// Who is expressing this dialog?
+        /// Id of the character
+        /// </summary>
         public int CharacterId { get; private set; }
 
         public string Text
@@ -35,10 +40,9 @@ namespace NpcChatSystem.Data
 
         private List<IDialogElement> dialogParts = new List<IDialogElement>();
 
-        internal DialogSegment(int dialogId, int charId)
+        internal DialogSegment(DialogTreePartIdentifier treeId, int dialogId, int charId)
         {
-            CharacterId = charId;
-            DialogId = dialogId;
+            Id = new DialogSegmentIdentifier(treeId, dialogId);
 
             dialogParts.Add(new DialogText{Text = "Before "});
             dialogParts.Add(new DialogCharacterTrait(charId));

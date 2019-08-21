@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NpcChatSystem.Data;
+using NpcChatSystem.Data.Dialog;
 
 namespace NpcChat.ViewModels.Editors.Script.Util
 {

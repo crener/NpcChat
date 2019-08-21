@@ -11,11 +11,17 @@ namespace NpcChatTest.Managers
 {
     public class CharacterManagerTests
     {
+        private NpcChatProject project;
+
+        [SetUp]
+        public void Setup()
+        {
+            project = new NpcChatProject();
+        }
+
         [Test]
         public void AddCharacter()
         {
-            NpcChatProject project = new NpcChatProject();
-
             Character character = new Character("Daisy");
             Assert.AreEqual(Character.PreRegisteredId, character.Id);
 
@@ -28,8 +34,6 @@ namespace NpcChatTest.Managers
         [Test]
         public void AddDuplicateCharacter()
         {
-            NpcChatProject project = new NpcChatProject();
-
             Character character = new Character("Daisy");
             Assert.AreEqual(Character.PreRegisteredId, character.Id);
 
@@ -45,8 +49,6 @@ namespace NpcChatTest.Managers
         [Test]
         public void AddDuplicateCharacter2()
         {
-            NpcChatProject project = new NpcChatProject();
-
             Character character = new Character("Daisy");
             Assert.AreEqual(Character.PreRegisteredId, character.Id);
 
@@ -55,7 +57,10 @@ namespace NpcChatTest.Managers
             Assert.IsTrue(success);
             Assert.AreNotEqual(Character.PreRegisteredId, id);
 
-            character = NpcChatProject.Characters.GetCharacter(id);
+            Character? newCharacter = NpcChatProject.Characters.GetCharacter(id);
+            Assert.IsTrue(newCharacter.HasValue);
+            character = newCharacter.Value;
+
             success = NpcChatProject.Characters.RegisterNewCharacter(out id, character);
             Assert.IsFalse(success);
         }
@@ -65,14 +70,12 @@ namespace NpcChatTest.Managers
         [TestCase(-1)]
         public void HasCharacterFalse(int id)
         {
-            NpcChatProject project = new NpcChatProject();
             Assert.IsFalse(NpcChatProject.Characters.HasCharacter(id));
         }
 
         [Test]
         public void HasCharacterTrue2()
         {
-            NpcChatProject project = new NpcChatProject();
             Character character = new Character("Daisy");
 
             int id;

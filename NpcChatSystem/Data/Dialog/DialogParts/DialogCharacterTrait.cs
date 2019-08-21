@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
-using NpcChatSystem.Data.Util;
 
-namespace NpcChatSystem.Data.DialogParts
+namespace NpcChatSystem.Data.Dialog.DialogParts
 {
     /// <summary>
     /// Information about a particular character
@@ -17,9 +16,11 @@ namespace NpcChatSystem.Data.DialogParts
         {
             get
             {
-                Character character = NpcChatProject.Characters.GetCharacter(CharacterId);
-                if(CharacterTrait == "Name") return character.Name;
-                return character.GetTrait(CharacterTrait, null);
+                Character? character = NpcChatProject.Characters.GetCharacter(CharacterId);
+                if(!character.HasValue) return "<???>";
+
+                if(CharacterTrait == "Name") return character.Value.Name;
+                return character.Value.GetTrait(CharacterTrait, null);
             }
         }
 

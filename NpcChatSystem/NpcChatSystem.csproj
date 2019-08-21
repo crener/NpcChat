@@ -57,12 +57,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Character.cs" />
-    <Compile Include="Data\DialogSegment.cs" />
-    <Compile Include="Data\DialogParts\DialogCharacterTrait.cs" />
-    <Compile Include="Data\DialogParts\DialogText.cs" />
-    <Compile Include="Data\DialogTree.cs" />
-    <Compile Include="Data\DialogParts\IDialogElement.cs" />
-    <Compile Include="Data\DialogTreeItems\TreePart.cs" />
+    <Compile Include="Data\Dialog\DialogSegment.cs" />
+    <Compile Include="Data\Dialog\DialogParts\DialogCharacterTrait.cs" />
+    <Compile Include="Data\Dialog\DialogParts\DialogText.cs" />
+    <Compile Include="Data\Dialog\DialogTree.cs" />
+    <Compile Include="Data\Dialog\DialogParts\IDialogElement.cs" />
+    <Compile Include="Data\Dialog\DialogTreeItems\DialogTreeIdentifiers.cs" />
+    <Compile Include="Data\Dialog\DialogTreeItems\TreePart.cs" />
     <Compile Include="Data\StoryElement.cs" />
     <Compile Include="Data\Util\ChatObject.cs" />
     <Compile Include="Data\Util\ValueType.cs" />
