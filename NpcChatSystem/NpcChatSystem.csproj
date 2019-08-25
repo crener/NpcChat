@@ -65,7 +65,6 @@
     <Compile Include="Data\Dialog\DialogTreeItems\DialogTreeIdentifiers.cs" />
     <Compile Include="Data\Dialog\DialogTreeItems\TreePart.cs" />
     <Compile Include="Data\StoryElement.cs" />
-    <Compile Include="Data\Util\ChatObject.cs" />
     <Compile Include="Data\Util\ValueType.cs" />
     <Compile Include="NpcChatProject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
