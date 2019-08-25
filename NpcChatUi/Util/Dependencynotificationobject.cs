@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using NpcChat.Properties;
+using System.Windows;
+using NpcChat.Annotations;
 
 namespace NpcChat.Util
 {
-    public class NotificationObject : INotifyPropertyChanged
+    public class DependencyNotificationObject : DependencyObject, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

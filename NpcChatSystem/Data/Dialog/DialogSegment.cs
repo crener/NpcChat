@@ -43,6 +43,7 @@ namespace NpcChatSystem.Data.Dialog
         internal DialogSegment(DialogTreePartIdentifier treeId, int dialogId, int charId)
         {
             Id = new DialogSegmentIdentifier(treeId, dialogId);
+            CharacterId = charId;
 
             dialogParts.Add(new DialogText{Text = "Before "});
             dialogParts.Add(new DialogCharacterTrait(charId));

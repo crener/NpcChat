@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NpcChat.Util;
 using NpcChat.ViewModels.Editors.Script;
 using NpcChatSystem;
@@ -15,10 +11,7 @@ namespace NpcChat.ViewModels
 {
     class WindowViewModel : NotificationObject
     {
-        public ObservableCollection<CharacterDialogModel> Speech
-        {
-            get => m_speech;
-        }
+        public ObservableCollection<CharacterDialogModel> Speech => m_speech;
 
         private NpcChatProject m_project;
         private ObservableCollection<CharacterDialogModel> m_speech = new ObservableCollection<CharacterDialogModel>();
@@ -33,9 +26,9 @@ namespace NpcChat.ViewModels
                 DialogTree dialog = m_project.ProjectDialogs.CreateNewDialogTree();
                 TreePart branch = dialog.CreateNewBranch();
                 DialogSegment segment = branch.CreateNewDialog(diane);
-                m_speech.Add(new CharacterDialogModel(m_project, segment));
+                Speech.Add(new CharacterDialogModel(m_project, segment));
                 DialogSegment segment2 = branch.CreateNewDialog(jerry);
-                m_speech.Add(new CharacterDialogModel(m_project, segment2));
+                Speech.Add(new CharacterDialogModel(m_project, segment2));
             }
         }
 

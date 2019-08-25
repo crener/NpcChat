@@ -1,10 +1,7 @@
-﻿using System.Windows.Media;
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro.Controls;
 using NpcChat.ViewModels;
-using NpcChatSystem;
-using NpcChatSystem.Data;
 
-namespace NpcChat
+namespace NpcChat.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

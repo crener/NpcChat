@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using NpcChat.Util;
+﻿using NpcChat.Util;
 using NpcChatSystem;
-using NpcChatSystem.Data;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
 
@@ -25,6 +16,7 @@ namespace NpcChat.ViewModels.Editors.Script
                 m_dialogSegment = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(DialogSegmentId));
+                RaisePropertyChanged(nameof(CharacterName));
             }
         }
 
@@ -32,6 +24,15 @@ namespace NpcChat.ViewModels.Editors.Script
         {
             get => m_dialogSegment?.Id ?? null;
             set => RetrieveDialog(value);
+        }
+
+        public string CharacterName
+        {
+            get
+            {
+                if (Project?.ProjectCharacters == null) return "No Project";
+                return Project.ProjectCharacters.GetCharacter(DialogSegment?.CharacterId ?? -1)?.Name ?? "Unknown";
+            }
         }
 
         private DialogSegment m_dialogSegment = null;

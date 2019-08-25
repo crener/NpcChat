@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataTypes\CharacterTests.cs" />
+    <Compile Include="DataTypes\DialogSegmentTests.cs" />
     <Compile Include="DataTypes\DialogTreePartTests.cs" />
     <Compile Include="Managers\CharacterManagerTests.cs" />
     <Compile Include="Managers\DialogTreeManagerTests.cs" />

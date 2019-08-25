@@ -1,10 +1,7 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Media;
-using NpcChat.Annotations;
 using NpcChat.Util;
 
-namespace NpcChat.ViewModels.Nodes
+namespace NpcChat.ViewModels.Editors.Tree.Nodes
 {
     public class BaseNodeModel : NotificationObject
     {
