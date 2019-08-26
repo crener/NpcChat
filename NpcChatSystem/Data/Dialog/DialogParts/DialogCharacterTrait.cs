@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using NpcChatSystem.Data.CharacterData;
 
 namespace NpcChatSystem.Data.Dialog.DialogParts
 {
@@ -27,12 +28,12 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
         /// <summary>
         /// Id of the character
         /// </summary>
-        public int CharacterId { get; }
+        public int CharacterId { get; set; }
 
         /// <summary>
         /// Character trait to get information about
         /// </summary>
-        public string CharacterTrait { get; } = "Name";
+        public string CharacterTrait { get; set; } = "Name";
 
 
         public DialogCharacterTrait(int characterId)

@@ -14,9 +14,26 @@
         
         GlowBrush="{DynamicResource AccentColorBrush}">
     <Grid>
-        <nodes:BaseNode/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-        <Grid>
+        <ToolBarTray Margin="0,0,0,0" AllowDrop="False" IsLocked="True">
+            <ToolBar Margin="5,0,0,0" >
+                <Menu>
+                    <MenuItem Header="File">
+                        <Menu>Save</Menu>
+                        <Menu>Save As..</Menu>
+                        <Separator/>
+                    </MenuItem>
+                    <Button>About</Button>
+                </Menu>
+            </ToolBar>
+        </ToolBarTray>
+        <!--<nodes:BaseNode/>-->
+
+        <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="42"/>
                 <RowDefinition/>

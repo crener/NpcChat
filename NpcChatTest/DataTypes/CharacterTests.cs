@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NpcChatSystem;
 using NpcChatSystem.Data;
+using NpcChatSystem.Data.CharacterData;
 using NUnit.Framework;
 
 namespace NpcChatTest.DataTypes

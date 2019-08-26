@@ -6,7 +6,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
     /// Piece of text
     /// </summary>
     [DebuggerDisplay("{Text}")]
-    class DialogText : IDialogElement
+    public class DialogText : IDialogElement
     {
         public string Text { get; set; } = "";
     }

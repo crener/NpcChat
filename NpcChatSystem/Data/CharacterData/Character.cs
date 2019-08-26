@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NpcChatSystem.Data.Util;
-using ValueType = NpcChatSystem.Data.Util.ValueType;
 
-namespace NpcChatSystem.Data
+namespace NpcChatSystem.Data.CharacterData
 {
     [DebuggerDisplay("{Name}")]
     public struct Character
@@ -34,12 +28,5 @@ namespace NpcChatSystem.Data
             }
             return defaultValue;
         }
-    }
-
-    public struct CharacterTrait
-    {
-        public string Name { get; set; }
-        public string Value { get; set; }
-        public ValueType Type { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using NpcChat.Util;
+﻿using Microsoft.Xaml.Behaviors.Core;
+using NpcChat.Util;
+using NpcChat.ViewModels.Reusable;
 using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
@@ -35,12 +37,15 @@ namespace NpcChat.ViewModels.Editors.Script
             }
         }
 
+        public CharacterSelectorModel SelectorModel { get; }
+
         private DialogSegment m_dialogSegment = null;
 
         public CharacterDialogModel(NpcChatProject project, DialogSegment dialog)
         {
             Project = project;
             m_dialogSegment = dialog;
+            SelectorModel = new CharacterSelectorModel(project);
         }
 
         private void RetrieveDialog(DialogSegmentIdentifier dialogId)

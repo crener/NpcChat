@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using NpcChatSystem.Data;
+using NpcChatSystem.Data.CharacterData;
 
 namespace NpcChatSystem.System
 {
@@ -12,14 +14,9 @@ namespace NpcChatSystem.System
     {
         private static readonly Random s_random = new Random();
 
-        Dictionary<int, Character> m_characters = new Dictionary<int, Character>();
-
-        /// <summary>
-        /// Event used to notify of a change in a characters information
-        /// </summary>
-        /// <param name="charId">Id of the character</param>
-        /// <param name="changed">Data that was changed</param>
-        public delegate void CharacterChangeEvent(int charId, UpdatedField changed);
+        public event CharacterChangeEvent CharacterChanged;
+        public event CharacterEvent CharacterAdded;
+        public event CharacterEvent CharacterRemoved;
 
         /// <summary>
         /// Find a character by id
@@ -28,7 +25,7 @@ namespace NpcChatSystem.System
         /// <returns>character if found, null if not found</returns>
         public Character? GetCharacter(int id)
         {
-            if(HasCharacter(id))
+            if (HasCharacter(id))
             {
                 return m_characters[id];
             }
@@ -42,12 +39,14 @@ namespace NpcChatSystem.System
             return m_characters.ContainsKey(id);
         }
 
+        private Dictionary<int, Character> m_characters = new Dictionary<int, Character>();
+
         public bool RegisterNewCharacter(out int generatedId, Character character)
         {
             generatedId = -1;
-            if(HasCharacter(character.Id)) return false;
+            if (HasCharacter(character.Id)) return false;
 
-            if(m_characters.Values.Any(c => c.Name == character.Name))
+            if (m_characters.Values.Any(c => c.Name == character.Name))
             {
                 return false;
             }
@@ -55,7 +54,30 @@ namespace NpcChatSystem.System
             generatedId = character.Id = GenerateUniqueId();
             m_characters.Add(generatedId, character);
 
+            CharacterAdded?.Invoke(generatedId);
+
             return true;
+        }
+
+        public bool RemoveCharacter(int characterId)
+        {
+            if (!HasCharacter(characterId)) return false;
+
+            m_characters.Remove(characterId);
+            CharacterRemoved?.Invoke(characterId);
+
+            return true;
+        }
+
+        public IList<CharacterId> AvailableCharacters()
+        {
+            List<CharacterId> characters = new List<CharacterId>(m_characters.Count);
+            foreach (KeyValuePair<int, Character> character in m_characters)
+            {
+                characters.Add(new CharacterId(character.Value.Name, character.Value.Id));
+            }
+
+            return characters;
         }
 
         private int GenerateUniqueId()
@@ -68,12 +90,19 @@ namespace NpcChatSystem.System
             }
         }
 
+        /// <summary>
+        /// Event used to notify of a change in a characters information
+        /// </summary>
+        /// <param name="charId">Id of the character</param>
+        /// <param name="changed">Data that was changed</param>
+        public delegate void CharacterChangeEvent(int charId, UpdatedField changed);
+        public delegate void CharacterEvent(int charId);
+
         public enum UpdatedField
         {
             Unspecified = 0,
             Name = 100,
             Trait = 200,
         }
-
     }
 }

@@ -38,6 +38,8 @@ namespace NpcChatSystem.Data.Dialog
             }
         }
 
+        public IReadOnlyList<IDialogElement> SegmentParts => dialogParts;
+
         private List<IDialogElement> dialogParts = new List<IDialogElement>();
 
         internal DialogSegment(DialogTreePartIdentifier treeId, int dialogId, int charId)

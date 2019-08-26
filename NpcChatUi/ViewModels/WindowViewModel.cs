@@ -4,6 +4,7 @@ using NpcChat.Util;
 using NpcChat.ViewModels.Editors.Script;
 using NpcChatSystem;
 using NpcChatSystem.Data;
+using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
 
