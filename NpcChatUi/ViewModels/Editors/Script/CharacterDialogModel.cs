@@ -1,5 +1,4 @@
-﻿using Microsoft.Xaml.Behaviors.Core;
-using NpcChat.Util;
+﻿using NpcChat.Util;
 using NpcChat.ViewModels.Reusable;
 using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
