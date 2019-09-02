@@ -37,8 +37,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <reusable:CharacterSelector SelectedCharacter="{Binding DialogSegment.CharacterId, RelativeSource={RelativeSource AncestorType=script:CharacterDialog}}" 
-                                        DataContext="{Binding SelectorModel}" />
+            <reusable:CharacterSelector DataContext="{Binding SelectorModel}" />
             <ListView ItemsSource="{Binding DialogSegment.SegmentParts}" Grid.Column="2" Grid.Row="0" ItemContainerStyle="{DynamicResource DialogItemBoxStyle}">
                 <ListView.Resources>
                     <DataTemplate DataType="{x:Type data:DialogText}" >

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using NpcChatSystem.Data.CharacterData;
+using NpcChatSystem.Data.Util;
 
 namespace NpcChatSystem.Data.Dialog.DialogParts
 {
@@ -8,7 +9,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
     /// For example the name or a trait value
     /// </summary>
     [DebuggerDisplay("{Text}")]
-    public class DialogCharacterTrait : IDialogElement
+    public class DialogCharacterTrait : ProjectObject, IDialogElement
     {
         /// <summary>
         /// Text representation of the dialog element
@@ -17,7 +18,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
         {
             get
             {
-                Character? character = NpcChatProject.Characters.GetCharacter(CharacterId);
+                Character? character = Project.ProjectCharacters.GetCharacter(CharacterId);
                 if(!character.HasValue) return "<???>";
 
                 if(CharacterTrait == "Name") return character.Value.Name;
@@ -36,7 +37,8 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
         public string CharacterTrait { get; set; } = "Name";
 
 
-        public DialogCharacterTrait(int characterId)
+        public DialogCharacterTrait(NpcChatProject project, int characterId) 
+            : base(project)
         {
             CharacterId = characterId;
         }

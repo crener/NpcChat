@@ -6,14 +6,20 @@ using System.Threading.Tasks;
 using NpcChatSystem.Data;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
+using NpcChatSystem.Data.Util;
 
 namespace NpcChatSystem.System
 {
-    public class DialogManager
+    public class DialogManager : ProjectObject
     {
         public IReadOnlyCollection<int> DialogTreeIds => m_dialogs.Select(d => d.Id.DialogTreeId).ToArray();
         List<DialogTree> m_dialogs = new List<DialogTree>();
-        
+
+        internal DialogManager(NpcChatProject project)
+            : base(project)
+        {
+        }
+
         /// <summary>
         /// Find specific dialog by id
         /// </summary>
@@ -37,16 +43,16 @@ namespace NpcChatSystem.System
         {
             int id = GenerateUniqueId();
 
-            DialogTree tree = new DialogTree(id);
+            DialogTree tree = new DialogTree(Project, id);
             m_dialogs.Add(tree);
             return tree;
         }
 
         public bool RemoveDialog(DialogTree dialog)
         {
-            if(dialog.Id.DialogTreeId == 0) return false;
+            if (dialog.Id.DialogTreeId == 0) return false;
 
-            if(m_dialogs.Contains(dialog))
+            if (m_dialogs.Contains(dialog))
             {
                 m_dialogs.Remove(dialog);
             }
@@ -56,7 +62,7 @@ namespace NpcChatSystem.System
 
         public bool RemoveDialog(int id)
         {
-            if(id == 0) return false;
+            if (id == 0) return false;
 
             DialogTree dialog = GetDialog(id);
             return RemoveDialog(dialog);

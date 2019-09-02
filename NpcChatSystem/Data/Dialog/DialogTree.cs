@@ -2,20 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
+using NpcChatSystem.Data.Util;
 
 namespace NpcChatSystem.Data.Dialog
 {
     /// <summary>
     /// A branching tree following all options within a conversation
     /// </summary>
-    public class DialogTree
+    public class DialogTree : ProjectObject
     {
         private static Random s_random = new Random();
 
         public DialogTreeIdentifier Id { get; }
         private List<TreePart> m_dialog = new List<TreePart>();
 
-        internal DialogTree(int id)
+        internal DialogTree(NpcChatProject project, int id)
+            : base(project)
         {
             Id = new DialogTreeIdentifier(id);
         }
@@ -26,9 +28,9 @@ namespace NpcChatSystem.Data.Dialog
             do
             {
                 id = s_random.Next(1, int.MaxValue);
-            } while(m_dialog.Any(d => d.Id.DialogTreeId == id));
+            } while (m_dialog.Any(d => d.Id.DialogTreeId == id));
 
-            TreePart part = new TreePart(Id, id);
+            TreePart part = new TreePart(Project, Id, id);
             m_dialog.Add(part);
             return part;
         }
@@ -40,7 +42,7 @@ namespace NpcChatSystem.Data.Dialog
 
         public TreePart GetTree(DialogTreePartIdentifier id)
         {
-            if(!Id.Compatible(id)) return null;
+            if (!Id.Compatible(id)) return null;
 
             return m_dialog.FirstOrDefault(d => d.Id == id);
         }

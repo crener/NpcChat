@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using NpcChat.Backend;
 using NpcChat.Util;
 using NpcChat.ViewModels.Editors.Script;
 using NpcChatSystem;
-using NpcChatSystem.Data;
 using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
@@ -20,7 +20,7 @@ namespace NpcChat.ViewModels
 
         public WindowViewModel()
         {
-            m_project = new NpcChatProject();
+            CurrentProject.Project = m_project = new NpcChatProject();
             if (m_project.ProjectCharacters.RegisterNewCharacter(out int diane, new Character("diane")) &&
                 m_project.ProjectCharacters.RegisterNewCharacter(out int jerry, new Character("jerry")))
             {
@@ -35,7 +35,7 @@ namespace NpcChat.ViewModels
 
         public void SetDialogTree(int dialogTreeId)
         {
-            m_tree = NpcChatProject.Dialogs.GetDialog(dialogTreeId);
+            m_tree = m_project.ProjectDialogs.GetDialog(dialogTreeId);
             TreePart part = m_tree.GetStart();
 
             List<CharacterDialogModel> tempList = new List<CharacterDialogModel>();

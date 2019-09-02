@@ -6,7 +6,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/ModernUI.xaml" />
+                <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/ModernUI.xaml"/>
                 <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/modernui.dark.xaml"/>
 
                 <ResourceDictionary Source="/Style/WindowStyle.xaml"/>

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text;
 using NpcChatSystem.Data.Dialog.DialogParts;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
+using NpcChatSystem.Data.Util;
 
 namespace NpcChatSystem.Data.Dialog
 {
@@ -10,7 +11,7 @@ namespace NpcChatSystem.Data.Dialog
     /// Piece of dialog from within a larger conversation
     /// </summary>
     [DebuggerDisplay("{CharacterId}: {Text}")]
-    public class DialogSegment
+    public class DialogSegment : ProjectObject
     {
         /// <summary>
         /// Id of the dialog
@@ -29,7 +30,7 @@ namespace NpcChatSystem.Data.Dialog
             {
                 StringBuilder text = new StringBuilder();
 
-                foreach(IDialogElement element in dialogParts)
+                foreach(IDialogElement element in m_dialogParts)
                 {
                     text.Append(element.Text);
                 }
@@ -38,25 +39,26 @@ namespace NpcChatSystem.Data.Dialog
             }
         }
 
-        public IReadOnlyList<IDialogElement> SegmentParts => dialogParts;
+        public IReadOnlyList<IDialogElement> SegmentParts => m_dialogParts;
 
-        private List<IDialogElement> dialogParts = new List<IDialogElement>();
+        private List<IDialogElement> m_dialogParts = new List<IDialogElement>();
 
-        internal DialogSegment(DialogTreePartIdentifier treeId, int dialogId, int charId)
+        internal DialogSegment(NpcChatProject project, DialogTreePartIdentifier treeId, int dialogId, int charId)
+            : base(project)
         {
             Id = new DialogSegmentIdentifier(treeId, dialogId);
             CharacterId = charId;
 
-            dialogParts.Add(new DialogText{Text = "Before "});
-            dialogParts.Add(new DialogCharacterTrait(charId));
-            dialogParts.Add(new DialogText{Text = " after"});
+            m_dialogParts.Add(new DialogText{Text = "Before "});
+            m_dialogParts.Add(new DialogCharacterTrait(Project, charId));
+            m_dialogParts.Add(new DialogText{Text = " after"});
         }
 
         public void ChangeCharacter(int newChar)
         {
             if(CharacterId == newChar) return;
 
-            if(NpcChatProject.Characters.HasCharacter(newChar))
+            if(Project.ProjectCharacters.HasCharacter(newChar))
             {
                 CharacterId = newChar;
             }
