@@ -30,7 +30,7 @@ namespace NpcChatSystem.Data.Dialog
                 id = s_random.Next(1, int.MaxValue);
             } while (m_dialog.Any(d => d.Id.DialogTreeId == id));
 
-            TreePart part = new TreePart(Project, Id, id);
+            TreePart part = new TreePart(m_project, Id, id);
             m_dialog.Add(part);
             return part;
         }

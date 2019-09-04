@@ -8,11 +8,11 @@ namespace NpcChatSystem.Data.Util
 {
     public class ProjectObject
     {
-        protected NpcChatProject Project { get; private set; }
+        protected NpcChatProject m_project { get; private set; }
 
         public ProjectObject(NpcChatProject project)
         {
-            Project = project;
+            m_project = project;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="NpcChat.Views.Reusable.CharacterSelector"
+﻿<UserControl x:Class="NpcChat.Views.Reusable.CharacterLabel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,9 +6,5 @@
              xmlns:local="clr-namespace:NpcChat.Views.Reusable"
              mc:Ignorable="d" 
              Height="23" d:DesignWidth="130">
-    <Grid Name="SelectorGrid">
-        <ComboBox IsEditable="False" IsReadOnly="True" ItemsSource="{Binding Names, Mode=OneWay}" 
-                  SelectedValuePath="Id" DisplayMemberPath="Name" SelectedValue="{Binding SelectedCharacter}">
-        </ComboBox>
-    </Grid>
+    <Label Content="{Binding Text}" Name="Label"/>
 </UserControl>

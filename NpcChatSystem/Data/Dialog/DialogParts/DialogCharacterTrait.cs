@@ -9,7 +9,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
     /// For example the name or a trait value
     /// </summary>
     [DebuggerDisplay("{Text}")]
-    public class DialogCharacterTrait : ProjectObject, IDialogElement
+    public class DialogCharacterTrait : ProjectNotificationObject, IDialogElement
     {
         /// <summary>
         /// Text representation of the dialog element
@@ -18,7 +18,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
         {
             get
             {
-                Character? character = Project.ProjectCharacters.GetCharacter(CharacterId);
+                Character? character = m_project.ProjectCharacters.GetCharacter(CharacterId);
                 if(!character.HasValue) return "<???>";
 
                 if(CharacterTrait == "Name") return character.Value.Name;
@@ -29,13 +29,31 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
         /// <summary>
         /// Id of the character
         /// </summary>
-        public int CharacterId { get; set; }
+        public int CharacterId
+        {
+            get => m_characterId;
+            set
+            {
+                m_characterId = value;
+                RaiseChanged();
+            }
+        }
 
         /// <summary>
         /// Character trait to get information about
         /// </summary>
-        public string CharacterTrait { get; set; } = "Name";
+        public string CharacterTrait
+        {
+            get => m_characterTrait;
+            set
+            {
+                m_characterTrait = value;
+                RaiseChanged();
+            }
+        }
 
+        private int m_characterId;
+        private string m_characterTrait = "Name";
 
         public DialogCharacterTrait(NpcChatProject project, int characterId) 
             : base(project)

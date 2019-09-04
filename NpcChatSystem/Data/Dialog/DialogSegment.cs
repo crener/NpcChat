@@ -11,7 +11,7 @@ namespace NpcChatSystem.Data.Dialog
     /// Piece of dialog from within a larger conversation
     /// </summary>
     [DebuggerDisplay("{CharacterId}: {Text}")]
-    public class DialogSegment : ProjectObject
+    public class DialogSegment : ProjectNotificationObject
     {
         /// <summary>
         /// Id of the dialog
@@ -22,7 +22,15 @@ namespace NpcChatSystem.Data.Dialog
         /// Who is expressing this dialog?
         /// Id of the character
         /// </summary>
-        public int CharacterId { get; private set; }
+        public int CharacterId
+        {
+            get => m_characterId;
+            private set
+            {
+                m_characterId = value;
+                RaiseChanged();
+            }
+        }
 
         public string Text
         {
@@ -42,6 +50,7 @@ namespace NpcChatSystem.Data.Dialog
         public IReadOnlyList<IDialogElement> SegmentParts => m_dialogParts;
 
         private List<IDialogElement> m_dialogParts = new List<IDialogElement>();
+        private int m_characterId;
 
         internal DialogSegment(NpcChatProject project, DialogTreePartIdentifier treeId, int dialogId, int charId)
             : base(project)
@@ -50,7 +59,7 @@ namespace NpcChatSystem.Data.Dialog
             CharacterId = charId;
 
             m_dialogParts.Add(new DialogText{Text = "Before "});
-            m_dialogParts.Add(new DialogCharacterTrait(Project, charId));
+            m_dialogParts.Add(new DialogCharacterTrait(m_project, charId));
             m_dialogParts.Add(new DialogText{Text = " after"});
         }
 
@@ -58,7 +67,7 @@ namespace NpcChatSystem.Data.Dialog
         {
             if(CharacterId == newChar) return;
 
-            if(Project.ProjectCharacters.HasCharacter(newChar))
+            if(m_project.ProjectCharacters.HasCharacter(newChar))
             {
                 CharacterId = newChar;
             }
