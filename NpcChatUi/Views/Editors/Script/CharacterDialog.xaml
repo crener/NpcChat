@@ -52,7 +52,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Label Content="Text" Grid.Column="0"/>
-                            <TextBox Text="{Binding Text}" TextWrapping="Wrap" Grid.Column="1" Margin="5,0,0,0" />
+                            <TextBox Text="{Binding Text}" MinWidth="60" TextWrapping="Wrap" Grid.Column="1" Margin="5,0,0,0" />
                         </Grid>
                     </DataTemplate>
 

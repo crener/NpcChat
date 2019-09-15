@@ -64,9 +64,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataTypes\CharacterTests.cs" />
-    <Compile Include="DataTypes\DialogSegmentTests.cs" />
-    <Compile Include="DataTypes\DialogTreePartTests.cs" />
+    <Compile Include="Data\Character\CharacterTests.cs" />
+    <Compile Include="Data\Dialog\DialogSegmentTests.cs" />
+    <Compile Include="Data\Dialog\DialogTreeItems\DialogTreePartTests.cs" />
+    <Compile Include="Data\Dialog\DialogParts\DialogCharacterTraitTests.cs" />
+    <Compile Include="Data\Dialog\DialogParts\DialogTextTests.cs" />
     <Compile Include="Managers\CharacterManagerTests.cs" />
     <Compile Include="Managers\DialogTreeManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -80,6 +82,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

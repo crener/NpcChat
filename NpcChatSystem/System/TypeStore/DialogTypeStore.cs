@@ -161,6 +161,31 @@ namespace NpcChatSystem.System.TypeStore
             return null;
         }
 
+        public static IDialogElement CreateDialogElement(Type dialogType, NpcChatProject project = null)
+        {
+            if (!m_elementLookup.ContainsValue(dialogType))
+            {
+                //todo log error
+                return null;
+            }
+
+            KeyValuePair<string, Type> key = m_elementLookup.First(k => k.Value == dialogType);
+            return CreateDialogElement(key.Key, project);
+        }
+
+        public static T CreateDialogElement<T>(NpcChatProject project = null) where T : class, IDialogElement
+        {
+            Type desiredType = typeof(T);
+            if(!m_elementLookup.ContainsValue(desiredType))
+            {
+                //todo log error
+                return null;
+            }
+
+            KeyValuePair<string, Type> key = m_elementLookup.First(k => k.Value == desiredType);
+            return CreateDialogElement(key.Key, project) as T;
+        }
+
         public static T CreateDialogElement<T>(string dialogName, NpcChatProject project = null) where T : class, IDialogElement
         {
             return CreateDialogElement(dialogName, project) as T;

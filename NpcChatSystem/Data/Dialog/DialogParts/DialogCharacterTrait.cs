@@ -14,6 +14,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
     public class DialogCharacterTrait : ProjectNotificationObject, IDialogElement
     {
         private const string c_elementName = "Character Trait";
+        private const string c_traitFallback = "<???>";
         public string ElementName => c_elementName;
 
         /// <summary>
@@ -24,10 +25,10 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
             get
             {
                 Character? character = m_project?.ProjectCharacters.GetCharacter(CharacterId);
-                if (!character.HasValue) return "<???>";
+                if (!character.HasValue) return c_traitFallback;
 
                 if (CharacterTrait == "Name") return character.Value.Name;
-                return character.Value.GetTrait(CharacterTrait, null);
+                return character.Value.GetTrait(CharacterTrait, c_traitFallback);
             }
         }
 

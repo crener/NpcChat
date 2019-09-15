@@ -20,6 +20,6 @@ namespace NpcChatSystem.Data.CharacterData
     {
         public string Name { get; set; }
         public string Value { get; set; }
-        public ValueType Type { get; set; }
+        public Util.ValueType Type { get; set; }
     }
 }

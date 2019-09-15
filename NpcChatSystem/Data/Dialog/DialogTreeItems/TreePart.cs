@@ -5,7 +5,7 @@ using NpcChatSystem.Data.Util;
 namespace NpcChatSystem.Data.Dialog.DialogTreeItems
 {
     /// <summary>
-    /// A section of dialog between two branches
+    /// A section of dialog between two <see cref="DialogTree"/> branches
     /// </summary>
     public class TreePart : ProjectObject
     {

@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using NpcChatSystem.Annotations;
 using NpcChatSystem.System.TypeStore;
-using NotImplementedException = System.NotImplementedException;
 
 namespace NpcChatSystem.Data.Dialog.DialogParts
 {

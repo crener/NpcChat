@@ -1,30 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NpcChatSystem;
-using NpcChatSystem.Data;
+﻿using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NUnit.Framework;
 
-namespace NpcChatTest.DataTypes
+namespace NpcChatTest.Data.Dialog.DialogTreeItems
 {
     class DialogTreePartTests
     {
-        private NpcChatProject project;
+        private NpcChatProject m_project;
 
         [SetUp]
         public void Setup()
         {
-            project = new NpcChatProject();
+            m_project = new NpcChatProject();
         }
 
         [Test]
         public void DuplicateIdTest()
         {
-            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
             TreePart part = tree.CreateNewBranch();
             DialogSegment one = part.CreateNewDialog(12);
             DialogSegment two = part.CreateNewDialog(13);
@@ -35,7 +29,7 @@ namespace NpcChatTest.DataTypes
         [Test]
         public void Contains()
         {
-            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
             TreePart part = tree.CreateNewBranch();
             DialogSegment one = part.CreateNewDialog(12);
             DialogSegment two = part.CreateNewDialog(13);
@@ -50,7 +44,7 @@ namespace NpcChatTest.DataTypes
         [Test]
         public void Contains2()
         {
-            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
             TreePart part = tree.CreateNewBranch();
             DialogSegment one = part.CreateNewDialog(12);
             
@@ -66,7 +60,7 @@ namespace NpcChatTest.DataTypes
         [Test]
         public void Contains3()
         {
-            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
             TreePart part = tree.CreateNewBranch();
             DialogSegment one = part.CreateNewDialog(12);
             
@@ -74,7 +68,7 @@ namespace NpcChatTest.DataTypes
             Assert.IsTrue(part.ContainsDialogSegment(one.Id));
 
             //make an id that has a different initial identifier but an id of an existing segment
-            DialogTree tree2 = project.ProjectDialogs.CreateNewDialogTree();
+            DialogTree tree2 = m_project.ProjectDialogs.CreateNewDialogTree();
             TreePart branch2 = tree2.CreateNewBranch();
             DialogSegmentIdentifier fakeId = new DialogSegmentIdentifier(branch2.Id, one.Id.DialogSegmentId);
 
