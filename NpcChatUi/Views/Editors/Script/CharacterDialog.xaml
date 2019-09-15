@@ -38,7 +38,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId}" Grid.Column="0" Grid.Row="1"/>
+            <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId, Mode=TwoWay}" Grid.Column="0" Grid.Row="1"/>
             <TextBlock Text="{Binding DialogSegment.Text}" TextWrapping="Wrap" Margin="0,4,0,3" 
                        VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3"/>
             <ListView ItemsSource="{Binding DialogSegment.SegmentParts}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -66,7 +66,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Label Content="Character Target: " Grid.Column="0"/>
-                            <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId}"  Margin="5,0,5,0" Grid.Column="1"/>
+                            <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId, Mode=TwoWay}"  Margin="5,0,5,0" Grid.Column="1"/>
                             <Label Content="Trait:" Grid.Column="2"/>
                             <TextBox Text="{Binding CharacterTrait}" Margin="5,0,0,0" Grid.Column="3"/>
                         </Grid>

@@ -45,8 +45,9 @@ namespace NpcChat.Views.Reusable
             Names.AddRange(nameIds);
         }
 
-        public static readonly DependencyProperty SelectedCharacterProperty =
-            DependencyProperty.Register("SelectedCharacter", typeof(int), typeof(CharacterSelector), new PropertyMetadata(0, CharacterChanged));
+        public static readonly DependencyProperty SelectedCharacterProperty = DependencyProperty.Register("SelectedCharacter", typeof(int), typeof(CharacterSelector), 
+            new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, CharacterChanged));
+            //new PropertyMetadata(0, CharacterChanged));
         public static readonly DependencyProperty ProjectProperty =
             DependencyProperty.Register("Project", typeof(NpcChatProject), typeof(CharacterSelector), new PropertyMetadata(CurrentProject.Project, ProjectChanged));
 
