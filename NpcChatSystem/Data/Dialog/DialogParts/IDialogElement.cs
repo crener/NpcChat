@@ -8,5 +8,6 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
     public interface IDialogElement : INotifyPropertyChanged
     {
         string Text { get; }
+        string ElementName { get; }
     }
 }

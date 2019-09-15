@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using NpcChatSystem.Annotations;
+using NpcChatSystem.System.TypeStore;
 using NotImplementedException = System.NotImplementedException;
 
 namespace NpcChatSystem.Data.Dialog.DialogParts
@@ -9,10 +10,11 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
     /// <summary>
     /// Piece of text
     /// </summary>
-    [DebuggerDisplay("{Text}")]
+    [DebuggerDisplay("{Text}"), DialogElementName(c_elementName)]
     public class DialogText : IDialogElement, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        private const string c_elementName = "Plain Text";
+        public string ElementName => c_elementName;
 
         public string Text
         {
@@ -24,9 +26,10 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
             }
         }
 
-
         private string m_text = "";
 
+
+        public event PropertyChangedEventHandler PropertyChanged;
         [NotifyPropertyChangedInvocator]
         protected virtual void RaiseChanged([CallerMemberName] string propertyName = null)
         {
