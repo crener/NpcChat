@@ -23,7 +23,7 @@ namespace NpcChatTest.Managers
 
         public void DuplicateIdTest()
         {
-            DialogTree tree = NpcChatProject.Dialogs.CreateNewDialogTree();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
             TreePart part = tree.CreateNewBranch();
             TreePart part2 = tree.CreateNewBranch();
             

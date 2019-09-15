@@ -24,7 +24,7 @@ namespace NpcChatTest.DataTypes
         [Test]
         public void DuplicateIdTest()
         {
-            DialogTree tree = NpcChatProject.Dialogs.CreateNewDialogTree();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
             TreePart part = tree.CreateNewBranch();
             DialogSegment one = part.CreateNewDialog(12);
             DialogSegment two = part.CreateNewDialog(13);
@@ -35,7 +35,7 @@ namespace NpcChatTest.DataTypes
         [Test]
         public void Contains()
         {
-            DialogTree tree = NpcChatProject.Dialogs.CreateNewDialogTree();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
             TreePart part = tree.CreateNewBranch();
             DialogSegment one = part.CreateNewDialog(12);
             DialogSegment two = part.CreateNewDialog(13);
@@ -50,7 +50,7 @@ namespace NpcChatTest.DataTypes
         [Test]
         public void Contains2()
         {
-            DialogTree tree = NpcChatProject.Dialogs.CreateNewDialogTree();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
             TreePart part = tree.CreateNewBranch();
             DialogSegment one = part.CreateNewDialog(12);
             
@@ -66,7 +66,7 @@ namespace NpcChatTest.DataTypes
         [Test]
         public void Contains3()
         {
-            DialogTree tree = NpcChatProject.Dialogs.CreateNewDialogTree();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
             TreePart part = tree.CreateNewBranch();
             DialogSegment one = part.CreateNewDialog(12);
             
@@ -74,7 +74,7 @@ namespace NpcChatTest.DataTypes
             Assert.IsTrue(part.ContainsDialogSegment(one.Id));
 
             //make an id that has a different initial identifier but an id of an existing segment
-            DialogTree tree2 = NpcChatProject.Dialogs.CreateNewDialogTree();
+            DialogTree tree2 = project.ProjectDialogs.CreateNewDialogTree();
             TreePart branch2 = tree2.CreateNewBranch();
             DialogSegmentIdentifier fakeId = new DialogSegmentIdentifier(branch2.Id, one.Id.DialogSegmentId);
 
