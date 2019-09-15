@@ -105,13 +105,15 @@
     <Compile Include="Util\NotificationObject.cs" />
     <Compile Include="ViewModels\Editors\Script\CharacterDialogModel.cs" />
     <Compile Include="ViewModels\Editors\Tree\Nodes\BaseNodeModel.cs" />
-    <Compile Include="ViewModels\Reusable\CharacterSelectorModel.cs" />
     <Compile Include="ViewModels\WindowViewModel.cs" />
     <Compile Include="Views\Editors\Script\CharacterDialog.xaml.cs">
       <DependentUpon>CharacterDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Editors\Tree\Nodes\BaseNode.xaml.cs">
       <DependentUpon>BaseNode.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reusable\CharacterLabel.xaml.cs">
+      <DependentUpon>CharacterLabel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Reusable\CharacterSelector.xaml.cs">
       <DependentUpon>CharacterSelector.xaml</DependentUpon>
@@ -137,6 +139,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Editors\Tree\Nodes\BaseNode.xaml" />
+    <Page Include="Views\Reusable\CharacterLabel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Reusable\CharacterSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -170,7 +176,9 @@
       <Name>NpcChatSystem</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ViewModels\Reusable\" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\add.png" />
     <Resource Include="Resources\remove.png" />

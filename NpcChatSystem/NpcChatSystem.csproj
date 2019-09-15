@@ -51,6 +51,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -66,12 +67,16 @@
     <Compile Include="Data\Dialog\DialogTreeItems\DialogTreeIdentifiers.cs" />
     <Compile Include="Data\Dialog\DialogTreeItems\TreePart.cs" />
     <Compile Include="Data\StoryElement.cs" />
+    <Compile Include="Data\Util\ProjectNotificationObject.cs" />
     <Compile Include="Data\Util\ProjectObject.cs" />
     <Compile Include="Data\Util\ValueTypeEnum.cs" />
     <Compile Include="NpcChatProject.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System\CharacterStore.cs" />
     <Compile Include="System\DialogManager.cs" />
+    <Compile Include="System\TypeStore\DialogElementNameAttribute.cs" />
+    <Compile Include="System\TypeStore\DialogTypeStore.cs" />
     <Compile Include="System\StoryElementManager.cs" />
   </ItemGroup>
   <ItemGroup />

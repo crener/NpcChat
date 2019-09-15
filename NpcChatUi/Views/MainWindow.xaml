@@ -32,7 +32,7 @@
         <Grid Grid.Row="1" Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="23"/>
-                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid VerticalAlignment="Top" Grid.Row="0" Grid.RowSpan="2" Height="26">
@@ -43,7 +43,8 @@
                 <Label Content="Story Elements" Grid.RowSpan="2" Margin="0"/>
             </Grid>
 
-            <ListView ItemsSource="{Binding Speech}" Grid.Row="1" Margin="5" SelectionMode="Single" ItemContainerStyle="{StaticResource DialogItemBoxStyle}">
+            <ListView ItemsSource="{Binding Speech}" Grid.Row="1" Margin="5" SelectionMode="Single" 
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemContainerStyle="{StaticResource DialogItemBoxStyle}">
                 <ListView.Resources>
                     <DataTemplate DataType="{x:Type data:CharacterDialogModel}">
                         <script:CharacterDialog/>

@@ -5,9 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:converters="clr-namespace:NpcChat.Converters"
              xmlns:reusable="clr-namespace:NpcChat.Views.Reusable"
-             xmlns:script="clr-namespace:NpcChat.Views.Editors.Script"
              xmlns:data="clr-namespace:NpcChatSystem.Data.Dialog.DialogParts;assembly=NpcChatSystem"
-             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="30">
+             mc:Ignorable="d" d:DesignWidth="200" >
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="EditModeBoolVis" TrueVisibility="Visible" FalseVisibility="Collapsed" />
         <converters:BoolToVisibilityConverter x:Key="ViewModeBoolVis" TrueVisibility="Collapsed" FalseVisibility="Visible" />
@@ -18,27 +17,32 @@
         <Grid Visibility="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource ViewModeBoolVis}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="3"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Label Content="{Binding CharacterName, Mode=OneWay}" VerticalAlignment="Center" Grid.Column="0" />
-            <TextBlock Text="{Binding DialogSegment.Text}" VerticalAlignment="Center" Grid.Column="1" />
+            <reusable:CharacterLabel SelectedCharacter="{Binding CharacterId}" Grid.Column="0" />
+            <TextBlock Text="{Binding DialogSegment.Text}" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" />
         </Grid>
 
         <!--View mode components-->
         <Grid Visibility="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource EditModeBoolVis}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="3"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="3" MaxWidth="3"/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <reusable:CharacterSelector DataContext="{Binding SelectorModel}" />
-            <ListView ItemsSource="{Binding DialogSegment.SegmentParts}" Grid.Column="2" Grid.Row="0" ItemContainerStyle="{DynamicResource DialogItemBoxStyle}">
+            <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId}" Grid.Column="0" Grid.Row="1"/>
+            <TextBlock Text="{Binding DialogSegment.Text}" TextWrapping="Wrap" Margin="0,4,0,3" 
+                       VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3"/>
+            <ListView ItemsSource="{Binding DialogSegment.SegmentParts}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      Grid.Column="2" Grid.Row="1" ItemContainerStyle="{DynamicResource DialogItemBoxStyle}">
                 <ListView.Resources>
                     <DataTemplate DataType="{x:Type data:DialogText}" >
                         <Grid>
@@ -48,7 +52,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Label Content="Text" Grid.Column="0"/>
-                            <TextBox Text="{Binding Text}" Grid.Column="1"/>
+                            <TextBox Text="{Binding Text}" TextWrapping="Wrap" Grid.Column="1" Margin="5,0,0,0" />
                         </Grid>
                     </DataTemplate>
 
@@ -61,26 +65,25 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <Label Content="Character Target Character: " Grid.Column="0"/>
-                            <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId}" Grid.Column="1"/>
-                            <Label Content=" Trait: " Grid.Column="2"/>
-                            <TextBox Text="{Binding CharacterTrait}" Grid.Column="3"/>
+                            <Label Content="Character Target: " Grid.Column="0"/>
+                            <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId}"  Margin="5,0,5,0" Grid.Column="1"/>
+                            <Label Content="Trait:" Grid.Column="2"/>
+                            <TextBox Text="{Binding CharacterTrait}" Margin="5,0,0,0" Grid.Column="3"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.Resources>
             </ListView>
-            <Grid Grid.Row="1" Grid.ColumnSpan="10">
+
+            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="10,0,0,0" >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="5"/>
                     <ColumnDefinition Width="30"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="30"/>
-                    <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
 
-                <ComboBox Grid.Column="1"></ComboBox>
-                
-                <Button Grid.Column="3" ToolTip="Add new dialog part">
+                <ComboBox Name="DialogElementTypeSelector" ItemsSource="{Binding DialogElementTypes}" IsSynchronizedWithCurrentItem="True" Grid.Column="0"></ComboBox>
+
+                <Button Grid.Column="2" ToolTip="Add new dialog part" Command="{Binding AddDialogElementCommand}" CommandParameter="{Binding ElementName=DialogElementTypeSelector, Path=SelectedValue}">
                     <Image Source="../../../Resources/add.png"/>
                     <!--<Label Content="Add"/>-->
                 </Button>

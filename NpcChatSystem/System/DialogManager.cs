@@ -43,7 +43,7 @@ namespace NpcChatSystem.System
         {
             int id = GenerateUniqueId();
 
-            DialogTree tree = new DialogTree(Project, id);
+            DialogTree tree = new DialogTree(m_project, id);
             m_dialogs.Add(tree);
             return tree;
         }

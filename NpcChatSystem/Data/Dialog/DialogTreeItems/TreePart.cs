@@ -24,7 +24,7 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
 
         public DialogSegment CreateNewDialog(int characterId = -1)
         {
-            DialogSegment dialog = new DialogSegment(Project, Id, m_dialog.Count + 1, characterId);
+            DialogSegment dialog = new DialogSegment(m_project, Id, m_dialog.Count + 1, characterId);
             m_dialog.Add(dialog);
             return dialog;
         }
