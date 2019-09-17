@@ -118,6 +118,14 @@
     <Compile Include="Views\Reusable\CharacterSelector.xaml.cs">
       <DependentUpon>CharacterSelector.xaml</DependentUpon>
     </Compile>
+    <Page Include="Style\SvgIcons\add.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Style\SvgIcons\remove.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Style\WindowStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -177,11 +185,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Resources\" />
     <Folder Include="ViewModels\Reusable\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\add.png" />
-    <Resource Include="Resources\remove.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
