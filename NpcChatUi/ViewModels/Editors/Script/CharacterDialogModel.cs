@@ -32,7 +32,11 @@ namespace NpcChat.ViewModels.Editors.Script
         public int CharacterId
         {
             get => m_dialogSegment?.CharacterId ?? 0;
-            set => m_dialogSegment.CharacterId = value;
+            set
+            {
+                m_dialogSegment.CharacterId = value;
+                RaisePropertyChanged();
+            }
         }
 
         public DialogSegmentIdentifier DialogSegmentId
@@ -74,7 +78,7 @@ namespace NpcChat.ViewModels.Editors.Script
         private void DialogChanged(object s, PropertyChangedEventArgs a)
         {
             RaisePropertyChanged(nameof(DialogSegment));
-            //RaisePropertyChanged(nameof(DialogSegmentId));
+            RaisePropertyChanged(nameof(DialogSegmentId));
         }
     }
 }
