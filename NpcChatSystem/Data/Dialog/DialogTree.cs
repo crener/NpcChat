@@ -18,6 +18,7 @@ namespace NpcChatSystem.Data.Dialog
         private List<DialogTreeBranch> m_dialog = new List<DialogTreeBranch>();
 
         public event Action<DialogTreeBranch> BranchCreated;
+        public event Action<DialogTreeBranchIdentifier> BranchRemoved;
 
         internal DialogTree(NpcChatProject project, int id)
             : base(project)
@@ -43,19 +44,36 @@ namespace NpcChatSystem.Data.Dialog
             return branch;
         }
 
+        public bool RemoveBranch(DialogTreeBranchIdentifier id)
+        {
+            if(!HasTree(id)) return false;
+
+            m_dialog.Remove(GetTree(id));
+            BranchRemoved?.Invoke(id);
+
+            return true;
+        }
+
         public DialogTreeBranch GetStart()
         {
             return m_dialog.First();
         }
 
-        public DialogTreeBranch GetTree(DialogTreePartIdentifier id)
+        public DialogTreeBranch GetTree(DialogTreeBranchIdentifier id)
         {
             if (!Id.Compatible(id)) return null;
 
             return m_dialog.FirstOrDefault(d => d.Id == id);
         }
 
-        public DialogTreeBranch this[DialogTreePartIdentifier id] => GetTree(id);
+        public bool HasTree(DialogTreeBranchIdentifier id)
+        {
+            if (!Id.Compatible(id)) return false;
+
+            return m_dialog.Any(d => d.Id == id);
+        }
+
+        public DialogTreeBranch this[DialogTreeBranchIdentifier id] => GetTree(id);
         public DialogSegment this[DialogSegmentIdentifier id] => GetTree(id)?[id];
 
         public static implicit operator DialogTreeIdentifier(DialogTree d) => d.Id;

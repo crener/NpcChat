@@ -25,10 +25,11 @@ namespace NpcChatTest.Managers
         public void DuplicateIdTest()
         {
             DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
-            DialogTreeBranch branch = tree.CreateNewBranch();
-            DialogTreeBranch part2 = tree.CreateNewBranch();
-            
-            Assert.AreNotEqual(branch.Id.DialogTreeId, part2.Id.DialogTreeId);
+            DialogTreeBranch branch1 = tree.CreateNewBranch();
+            DialogTreeBranch branch2 = tree.CreateNewBranch();
+
+            Assert.AreEqual(branch1.Id.DialogTreeId, branch2.Id.DialogTreeId);
+            Assert.AreNotEqual(branch1.Id.DialogTreeBranchId, branch2.Id.DialogTreeBranchId);
         }
 
         [Test]
@@ -37,6 +38,25 @@ namespace NpcChatTest.Managers
             DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
             Assert.IsNotNull(tree.GetStart());
             Assert.IsTrue(tree.GetStart().isTreeRoot);
+        }
+
+        [Test]
+        public void DialogModificationCallbackTests()
+        {
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
+
+            bool created = false, destroyed = false;
+
+            tree.BranchCreated += newBranch => created = true;
+            tree.BranchRemoved += newBranch => destroyed = true;
+
+            DialogTreeBranch branch = tree.CreateNewBranch();
+            Assert.NotNull(branch);
+            Assert.IsTrue(created, $"Failed to call '{nameof(tree.BranchCreated)}' callback");
+
+            bool removeReported = tree.RemoveBranch(branch);
+            Assert.IsTrue(removeReported);
+            Assert.IsTrue(destroyed,$"Failed to call '{nameof(tree.BranchRemoved)}' callback");
         }
     }
 }

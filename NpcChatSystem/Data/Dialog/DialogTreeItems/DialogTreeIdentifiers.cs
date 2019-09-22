@@ -25,26 +25,26 @@
     ///
     /// <see cref="DialogTree"/> => <see cref="DialogTreeBranch"/>
     /// </summary>
-    public class DialogTreePartIdentifier : DialogTreeIdentifier
+    public class DialogTreeBranchIdentifier : DialogTreeIdentifier
     {
-        public int DialogTreePartId { get; }
+        public int DialogTreeBranchId { get; }
 
-        public DialogTreePartIdentifier(DialogTreeIdentifier dialogTree, int dialogTreePartId)
+        public DialogTreeBranchIdentifier(DialogTreeIdentifier dialogTree, int dialogTreeBranchId)
             : base(dialogTree.DialogTreeId)
         {
-            DialogTreePartId = dialogTreePartId;
+            DialogTreeBranchId = dialogTreeBranchId;
         }
 
-        public DialogTreePartIdentifier(int dialogTreeId, int dialogTreePartId)
+        public DialogTreeBranchIdentifier(int dialogTreeId, int dialogTreeBranchId)
             : base(dialogTreeId)
         {
-            DialogTreePartId = dialogTreePartId;
+            DialogTreeBranchId = dialogTreeBranchId;
         }
 
-        public bool Compatible(DialogTreePartIdentifier diag)
+        public bool Compatible(DialogTreeBranchIdentifier diag)
         {
             if(!base.Compatible(diag)) return false;
-            if(DialogTreePartId != diag.DialogTreePartId) return false;
+            if(DialogTreeBranchId != diag.DialogTreeBranchId) return false;
 
             return true;
         }
@@ -55,12 +55,12 @@
     ///
     /// <see cref="DialogTree"/> => <see cref="DialogTreeBranch"/> => <see cref="DialogSegment"/>
     /// </summary>
-    public class DialogSegmentIdentifier : DialogTreePartIdentifier
+    public class DialogSegmentIdentifier : DialogTreeBranchIdentifier
     {
         public int DialogSegmentId { get; }
 
-        public DialogSegmentIdentifier(DialogTreePartIdentifier dialogTree, int dialogSegmentId)
-            : base(dialogTree.DialogTreeId, dialogTree.DialogTreePartId)
+        public DialogSegmentIdentifier(DialogTreeBranchIdentifier dialogTree, int dialogSegmentId)
+            : base(dialogTree.DialogTreeId, dialogTree.DialogTreeBranchId)
         {
             DialogSegmentId = dialogSegmentId;
         }

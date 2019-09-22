@@ -11,7 +11,7 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
     /// </summary>
     public class DialogTreeBranch : ProjectNotificationObject
     {
-        public DialogTreePartIdentifier Id { get; }
+        public DialogTreeBranchIdentifier Id { get; }
 
         /// <summary>
         /// Name of Branch, useful mainly for illustrative purposes and debugging
@@ -43,7 +43,7 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
         internal DialogTreeBranch(NpcChatProject project, DialogTreeIdentifier dialogId, int treePartId)
             : base(project)
         {
-            Id = new DialogTreePartIdentifier(dialogId, treePartId);
+            Id = new DialogTreeBranchIdentifier(dialogId, treePartId);
         }
 
         public DialogSegment CreateNewDialog(int characterId = -1)
@@ -102,6 +102,6 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
         public DialogSegment this[DialogSegmentIdentifier id] => GetDialogSegment(id);
 
         public static implicit operator DialogTreeIdentifier(DialogTreeBranch d) => d.Id;
-        public static implicit operator DialogTreePartIdentifier(DialogTreeBranch d) => d.Id;
+        public static implicit operator DialogTreeBranchIdentifier(DialogTreeBranch d) => d.Id;
     }
 }

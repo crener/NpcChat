@@ -56,7 +56,7 @@ namespace NpcChatSystem.Data.Dialog
         private readonly ObservableCollection<IDialogElement> m_dialogParts = new ObservableCollection<IDialogElement>();
         private int m_characterId;
 
-        internal DialogSegment(NpcChatProject project, DialogTreePartIdentifier treeId, int dialogId, int charId)
+        internal DialogSegment(NpcChatProject project, DialogTreeBranchIdentifier treeId, int dialogId, int charId)
             : base(project)
         {
             Id = new DialogSegmentIdentifier(treeId, dialogId);
@@ -113,7 +113,7 @@ namespace NpcChatSystem.Data.Dialog
         }
 
         public static implicit operator DialogTreeIdentifier(DialogSegment d) => d.Id;
-        public static implicit operator DialogTreePartIdentifier(DialogSegment d) => d.Id;
+        public static implicit operator DialogTreeBranchIdentifier(DialogSegment d) => d.Id;
         public static implicit operator DialogSegmentIdentifier(DialogSegment d) => d.Id;
     }
 }

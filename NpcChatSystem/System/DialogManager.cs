@@ -80,7 +80,7 @@ namespace NpcChatSystem.System
         }
 
         public DialogTree this[DialogTreeIdentifier id] => GetDialog(id.DialogTreeId);
-        public DialogTreeBranch this[DialogTreePartIdentifier id] => GetDialog(id.DialogTreeId)?[id];
+        public DialogTreeBranch this[DialogTreeBranchIdentifier id] => GetDialog(id.DialogTreeId)?[id];
         public DialogSegment this[DialogSegmentIdentifier id] => GetDialog(id.DialogTreeId)?[id];
     }
 }
