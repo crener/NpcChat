@@ -1,22 +1,46 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Util;
 
 namespace NpcChatSystem.Data.Dialog.DialogTreeItems
 {
     /// <summary>
-    /// A section of dialog between two <see cref="DialogTree"/> branches
+    /// A section of dialog between between multiple <see cref="Character"/>s within part of the <see cref="DialogTree"/>
     /// </summary>
-    public class TreePart : ProjectObject
+    public class DialogTreeBranch : ProjectNotificationObject
     {
         public DialogTreePartIdentifier Id { get; }
 
-        public object Condition { get; set; }
+        /// <summary>
+        /// Name of Branch, useful mainly for illustrative purposes and debugging
+        /// </summary>
+        public string Name
+        {
+            get => m_name;
+            set
+            {
+                m_name = value;
+                RaiseChanged();
+            }
+        }
+
+        public object Condition { get; set; } = null;
         public IReadOnlyCollection<DialogSegment> Dialog => m_dialog;
 
-        private readonly List<DialogSegment> m_dialog = new List<DialogSegment>();
+        /// <summary>
+        /// Is this the first branch in the <see cref="DialogTree"/>
+        /// </summary>
+        public bool isTreeRoot { get; internal set; } = false;
 
-        internal TreePart(NpcChatProject project, DialogTreeIdentifier dialogId, int treePartId)
+        public event Action<DialogSegmentIdentifier> OnDialogCreated;
+        public event Action<DialogSegmentIdentifier> OnDialogDestroyed;
+
+        private readonly List<DialogSegment> m_dialog = new List<DialogSegment>();
+        private string m_name = "New Tree Branch";
+
+        internal DialogTreeBranch(NpcChatProject project, DialogTreeIdentifier dialogId, int treePartId)
             : base(project)
         {
             Id = new DialogTreePartIdentifier(dialogId, treePartId);
@@ -26,12 +50,14 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
         {
             DialogSegment dialog = new DialogSegment(m_project, Id, m_dialog.Count + 1, characterId);
             m_dialog.Add(dialog);
+
+            RaiseChanged(nameof(Dialog));
+            OnDialogCreated?.Invoke(dialog);
             return dialog;
         }
 
         public bool RemoveDialog(DialogSegment id)
         {
-            //todo add implicit conversion from DialogSegment to DialogSegmentIdentifier
             return RemoveDialog(id.Id);
         }
 
@@ -42,6 +68,7 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
                 if (m_dialog[i].Id == id)
                 {
                     m_dialog.RemoveAt(i);
+                    OnDialogDestroyed?.Invoke(id);
                     return true;
                 }
             }
@@ -73,5 +100,8 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
         }
 
         public DialogSegment this[DialogSegmentIdentifier id] => GetDialogSegment(id);
+
+        public static implicit operator DialogTreeIdentifier(DialogTreeBranch d) => d.Id;
+        public static implicit operator DialogTreePartIdentifier(DialogTreeBranch d) => d.Id;
     }
 }

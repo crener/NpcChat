@@ -13,22 +13,30 @@ namespace NpcChatTest.Managers
 {
     public class DialogTreeManagerTests
     {
-        private NpcChatProject project;
+        private NpcChatProject m_project;
 
         [SetUp]
         public void Setup()
         {
-            project = new NpcChatProject();
+            m_project = new NpcChatProject();
         }
 
+        [Test]
         public void DuplicateIdTest()
         {
-            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
-            TreePart part = tree.CreateNewBranch();
-            TreePart part2 = tree.CreateNewBranch();
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
+            DialogTreeBranch branch = tree.CreateNewBranch();
+            DialogTreeBranch part2 = tree.CreateNewBranch();
             
-            Assert.AreNotEqual(part.Id.DialogTreeId, part2.Id.DialogTreeId);
+            Assert.AreNotEqual(branch.Id.DialogTreeId, part2.Id.DialogTreeId);
         }
 
+        [Test]
+        public void StartPartCreation()
+        {
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
+            Assert.IsNotNull(tree.GetStart());
+            Assert.IsTrue(tree.GetStart().isTreeRoot);
+        }
     }
 }

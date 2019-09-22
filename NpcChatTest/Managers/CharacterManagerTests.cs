@@ -12,12 +12,12 @@ namespace NpcChatTest.Managers
 {
     public class CharacterManagerTests
     {
-        private NpcChatProject project;
+        private NpcChatProject m_project;
 
         [SetUp]
         public void Setup()
         {
-            project = new NpcChatProject();
+            m_project = new NpcChatProject();
         }
 
         [Test]
@@ -27,7 +27,7 @@ namespace NpcChatTest.Managers
             Assert.AreEqual(Character.PreRegisteredId, character.Id);
 
             int id;
-            bool success = project.ProjectCharacters.RegisterNewCharacter(out id, character);
+            bool success = m_project.ProjectCharacters.RegisterNewCharacter(out id, character);
             Assert.IsTrue(success);
             Assert.AreNotEqual(Character.PreRegisteredId, id);
         }
@@ -39,11 +39,11 @@ namespace NpcChatTest.Managers
             Assert.AreEqual(Character.PreRegisteredId, character.Id);
 
             int id;
-            bool success = project.ProjectCharacters.RegisterNewCharacter(out id, character);
+            bool success = m_project.ProjectCharacters.RegisterNewCharacter(out id, character);
             Assert.IsTrue(success);
             Assert.AreNotEqual(Character.PreRegisteredId, id);
 
-            success = project.ProjectCharacters.RegisterNewCharacter(out id, character);
+            success = m_project.ProjectCharacters.RegisterNewCharacter(out id, character);
             Assert.IsFalse(success);
         }
 
@@ -54,15 +54,15 @@ namespace NpcChatTest.Managers
             Assert.AreEqual(Character.PreRegisteredId, character.Id);
 
             int id;
-            bool success = project.ProjectCharacters.RegisterNewCharacter(out id, character);
+            bool success = m_project.ProjectCharacters.RegisterNewCharacter(out id, character);
             Assert.IsTrue(success);
             Assert.AreNotEqual(Character.PreRegisteredId, id);
 
-            Character? newCharacter = project.ProjectCharacters.GetCharacter(id);
+            Character? newCharacter = m_project.ProjectCharacters.GetCharacter(id);
             Assert.IsTrue(newCharacter.HasValue);
             character = newCharacter.Value;
 
-            success = project.ProjectCharacters.RegisterNewCharacter(out id, character);
+            success = m_project.ProjectCharacters.RegisterNewCharacter(out id, character);
             Assert.IsFalse(success);
         }
 
@@ -71,7 +71,7 @@ namespace NpcChatTest.Managers
         [TestCase(-1)]
         public void HasCharacterFalse(int id)
         {
-            Assert.IsFalse(project.ProjectCharacters.HasCharacter(id));
+            Assert.IsFalse(m_project.ProjectCharacters.HasCharacter(id));
         }
 
         [Test]
@@ -80,8 +80,8 @@ namespace NpcChatTest.Managers
             Character character = new Character("Daisy");
 
             int id;
-            Assert.IsTrue(project.ProjectCharacters.RegisterNewCharacter(out id, character));
-            Assert.IsTrue(project.ProjectCharacters.HasCharacter(id));
+            Assert.IsTrue(m_project.ProjectCharacters.RegisterNewCharacter(out id, character));
+            Assert.IsTrue(m_project.ProjectCharacters.HasCharacter(id));
         }
     }
 }

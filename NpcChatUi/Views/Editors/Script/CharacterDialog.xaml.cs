@@ -1,5 +1,7 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using NpcChat.ViewModels.Editors.Script;
+using NpcChatSystem.Data.Dialog.DialogTreeItems;
 
 namespace NpcChat.Views.Editors.Script
 {
@@ -8,7 +10,7 @@ namespace NpcChat.Views.Editors.Script
     /// </summary>
     public partial class CharacterDialog : UserControl
     {
-        public CharacterDialogModel DialogModel => DataContext as CharacterDialogModel;
+        public CharacterDialogVM DialogVm => DataContext as CharacterDialogVM;
 
         public CharacterDialog()
         {

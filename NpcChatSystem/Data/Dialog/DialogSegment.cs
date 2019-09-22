@@ -111,5 +111,9 @@ namespace NpcChatSystem.Data.Dialog
                 CharacterId = newChar;
             }
         }
+
+        public static implicit operator DialogTreeIdentifier(DialogSegment d) => d.Id;
+        public static implicit operator DialogTreePartIdentifier(DialogSegment d) => d.Id;
+        public static implicit operator DialogSegmentIdentifier(DialogSegment d) => d.Id;
     }
 }

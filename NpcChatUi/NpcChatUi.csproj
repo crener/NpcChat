@@ -103,7 +103,8 @@
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Util\DependencyNotificationObject.cs" />
     <Compile Include="Util\NotificationObject.cs" />
-    <Compile Include="ViewModels\Editors\Script\CharacterDialogModel.cs" />
+    <Compile Include="ViewModels\Editors\Script\CharacterDialogVM.cs" />
+    <Compile Include="ViewModels\Editors\Script\TreePartVM.cs" />
     <Compile Include="ViewModels\Editors\Tree\Nodes\BaseNodeModel.cs" />
     <Compile Include="ViewModels\WindowViewModel.cs" />
     <Compile Include="Views\Editors\Script\CharacterDialog.xaml.cs">

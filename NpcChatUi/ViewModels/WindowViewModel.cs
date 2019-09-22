@@ -10,12 +10,12 @@ using NpcChatSystem.Data.Dialog.DialogTreeItems;
 
 namespace NpcChat.ViewModels
 {
-    class WindowViewModel : NotificationObject
+    public class WindowViewModel : NotificationObject
     {
-        public ObservableCollection<CharacterDialogModel> Speech => m_speech;
+        public ObservableCollection<TreePartVM> Branches => m_branches;
 
         private NpcChatProject m_project;
-        private ObservableCollection<CharacterDialogModel> m_speech = new ObservableCollection<CharacterDialogModel>();
+        private ObservableCollection<TreePartVM> m_branches = new ObservableCollection<TreePartVM>();
         private DialogTree m_tree;
 
         public WindowViewModel()
@@ -24,28 +24,37 @@ namespace NpcChat.ViewModels
             if (m_project.ProjectCharacters.RegisterNewCharacter(out int diane, new Character("diane")) &&
                 m_project.ProjectCharacters.RegisterNewCharacter(out int jerry, new Character("jerry")))
             {
-                DialogTree dialog = m_project.ProjectDialogs.CreateNewDialogTree();
-                TreePart branch = dialog.CreateNewBranch();
+                m_tree = m_project.ProjectDialogs.CreateNewDialogTree();
+                SetDialogTree(m_tree.Id);
+                DialogTreeBranch branch = m_tree.GetStart();
+
                 DialogSegment segment = branch.CreateNewDialog(diane);
-                Speech.Add(new CharacterDialogModel(m_project, segment));
+                //Speech.Add(new CharacterDialogVM(m_project, segment));
                 DialogSegment segment2 = branch.CreateNewDialog(jerry);
-                Speech.Add(new CharacterDialogModel(m_project, segment2));
+                //Speech.Add(new CharacterDialogVM(m_project, segment2));
             }
         }
 
-        public void SetDialogTree(int dialogTreeId)
+        public void SetDialogTree(DialogTreeIdentifier dialogTreeId)
         {
             m_tree = m_project.ProjectDialogs.GetDialog(dialogTreeId);
-            TreePart part = m_tree.GetStart();
+            m_tree.BranchCreated += OnBranchCreated;
+            Branches.Clear();
+            Branches.Add(new TreePartVM(m_project, m_tree.GetStart()));
 
-            List<CharacterDialogModel> tempList = new List<CharacterDialogModel>();
+            /*List<CharacterDialogVM> tempList = new List<CharacterDialogVM>();
             foreach (DialogSegment segment in part.Dialog)
             {
-                tempList.Add(new CharacterDialogModel(m_project, segment));
-            }
+                tempList.Add(new CharacterDialogVM(m_project, segment));
+            }*/
 
-            Speech.Clear();
-            Speech.AddRange(tempList);
+            //Speech.Clear();
+            //Speech.AddRange(tempList);
+        }
+
+        private void OnBranchCreated(DialogTreeBranch obj)
+        {
+            
         }
     }
 }

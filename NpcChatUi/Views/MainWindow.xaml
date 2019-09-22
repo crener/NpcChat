@@ -6,6 +6,7 @@
         xmlns:mui="http://firstfloorsoftware.com/ModernUI"
         xmlns:data="clr-namespace:NpcChat.ViewModels.Editors.Script"
         xmlns:script="clr-namespace:NpcChat.Views.Editors.Script"
+        xmlns:dialogTreeItems="clr-namespace:NpcChatSystem.Data.Dialog.DialogTreeItems;assembly=NpcChatSystem"
         mc:Ignorable="d"
         Title="Npc Chat" 
         Height="350" Width="525"
@@ -27,33 +28,42 @@
             </MenuItem>
         </Menu>
 
-        <!--<nodes:BaseNode/>-->
-
-        <Grid Grid.Row="1" Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="23"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <Grid VerticalAlignment="Top" Grid.Row="0" Grid.RowSpan="2" Height="26">
+        <StackPanel Grid.Row="1" Margin="5">
+            <!--<Grid VerticalAlignment="Top" Height="26">
                 <Grid.RowDefinitions>
                     <RowDefinition MaxHeight="20" Height="20"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Label Content="Story Elements" Grid.RowSpan="2" Margin="0"/>
-            </Grid>
+            </Grid>-->
 
-            <ListView ItemsSource="{Binding Speech}" Grid.Row="1" Margin="5" SelectionMode="Single" ItemContainerStyle="{StaticResource DialogItemBoxStyle}"
-                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="false" >
-                <ListView.Resources>
-                    <DataTemplate DataType="{x:Type data:CharacterDialogModel}">
-                        <script:CharacterDialog/>
+            <ListView ItemsSource="{Binding Branches}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="false">
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="data:TreePartVM">
+                        <StackPanel>
+                            <TextBox Text="{Binding DialogTree.Name}"/>
+
+                            <ListView ItemsSource="{Binding Speech}" Margin="5" SelectionMode="Single" ItemContainerStyle="{StaticResource DialogItemBoxStyle}"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="false" >
+                                <ListView.Resources>
+                                    <DataTemplate DataType="{x:Type data:CharacterDialogVM}">
+                                        <script:CharacterDialog/>
+                                    </DataTemplate>
+                                </ListView.Resources>
+                            </ListView>
+                        </StackPanel>
                     </DataTemplate>
-                </ListView.Resources>
+                </ListView.ItemTemplate>
             </ListView>
-        </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!--<Button Grid.Column="0" Margin="5,3">Add Dialog</Button>-->
+                <Button Grid.Column="0" Margin="5,3">Add Branch</Button>
+            </Grid>
+        </StackPanel>
     </Grid>
 </mui:ModernWindow>

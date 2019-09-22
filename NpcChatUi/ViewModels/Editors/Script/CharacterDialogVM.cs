@@ -12,7 +12,7 @@ using Prism.Commands;
 
 namespace NpcChat.ViewModels.Editors.Script
 {
-    public class CharacterDialogModel : NotificationObject
+    public class CharacterDialogVM : NotificationObject
     {
         public NpcChatProject Project { get; }
         public DialogSegment DialogSegment
@@ -52,7 +52,7 @@ namespace NpcChat.ViewModels.Editors.Script
         private DialogSegment m_dialogSegment = null;
         private DelegateCommand<string> m_addDialogElement;
 
-        public CharacterDialogModel(NpcChatProject project, DialogSegment dialog)
+        public CharacterDialogVM(NpcChatProject project, DialogSegment dialog)
         {
             Project = project;
             DialogSegment = dialog;

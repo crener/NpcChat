@@ -19,7 +19,7 @@ namespace NpcChatTest.Data.Dialog
             if(project.ProjectCharacters.RegisterNewCharacter(out id, new NpcChatSystem.Data.CharacterData.Character("bill")))
             {
                 DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
-                TreePart branch = tree.CreateNewBranch();
+                DialogTreeBranch branch = tree.CreateNewBranch();
                 DialogSegment segment = branch.CreateNewDialog(id);
 
                 Assert.NotNull(segment);
@@ -36,7 +36,7 @@ namespace NpcChatTest.Data.Dialog
             if (project.ProjectCharacters.RegisterNewCharacter(out int id, new NpcChatSystem.Data.CharacterData.Character("bill")))
             {
                 DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
-                TreePart branch = tree.CreateNewBranch();
+                DialogTreeBranch branch = tree.CreateNewBranch();
 
                 DialogSegment segment = branch.CreateNewDialog(id);
                 Assert.NotNull(segment);

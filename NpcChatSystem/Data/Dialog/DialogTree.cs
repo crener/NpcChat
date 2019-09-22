@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.Data.Util;
 
@@ -14,15 +15,19 @@ namespace NpcChatSystem.Data.Dialog
         private static Random s_random = new Random();
 
         public DialogTreeIdentifier Id { get; }
-        private List<TreePart> m_dialog = new List<TreePart>();
+        private List<DialogTreeBranch> m_dialog = new List<DialogTreeBranch>();
+
+        public event Action<DialogTreeBranch> BranchCreated;
 
         internal DialogTree(NpcChatProject project, int id)
             : base(project)
         {
             Id = new DialogTreeIdentifier(id);
+            DialogTreeBranch branch = CreateNewBranch();
+            branch.isTreeRoot = true;
         }
 
-        public TreePart CreateNewBranch()
+        public DialogTreeBranch CreateNewBranch()
         {
             int id;
             do
@@ -30,24 +35,30 @@ namespace NpcChatSystem.Data.Dialog
                 id = s_random.Next(1, int.MaxValue);
             } while (m_dialog.Any(d => d.Id.DialogTreeId == id));
 
-            TreePart part = new TreePart(m_project, Id, id);
-            m_dialog.Add(part);
-            return part;
+            DialogTreeBranch branch = new DialogTreeBranch(m_project, Id, id);
+            m_dialog.Add(branch);
+
+            BranchCreated?.Invoke(branch);
+
+            return branch;
         }
 
-        public TreePart GetStart()
+        public DialogTreeBranch GetStart()
         {
-            return m_dialog.FirstOrDefault();
+            return m_dialog.First();
         }
 
-        public TreePart GetTree(DialogTreePartIdentifier id)
+        public DialogTreeBranch GetTree(DialogTreePartIdentifier id)
         {
             if (!Id.Compatible(id)) return null;
 
             return m_dialog.FirstOrDefault(d => d.Id == id);
         }
 
-        public TreePart this[DialogTreePartIdentifier id] => GetTree(id);
+        public DialogTreeBranch this[DialogTreePartIdentifier id] => GetTree(id);
         public DialogSegment this[DialogSegmentIdentifier id] => GetTree(id)?[id];
+
+        public static implicit operator DialogTreeIdentifier(DialogTree d) => d.Id;
+
     }
 }
