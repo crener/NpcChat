@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/modernui.dark.xaml"/>
 
                 <ResourceDictionary Source="/Style/WindowStyle.xaml"/>
+                <ResourceDictionary Source="/Style/DialogEditorElementViewStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

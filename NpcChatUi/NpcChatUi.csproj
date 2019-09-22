@@ -119,6 +119,10 @@
     <Compile Include="Views\Reusable\CharacterSelector.xaml.cs">
       <DependentUpon>CharacterSelector.xaml</DependentUpon>
     </Compile>
+    <Page Include="Style\DialogEditorElementViewStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Style\SvgIcons\add.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -188,6 +192,9 @@
   <ItemGroup>
     <Folder Include="Resources\" />
     <Folder Include="ViewModels\Reusable\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
