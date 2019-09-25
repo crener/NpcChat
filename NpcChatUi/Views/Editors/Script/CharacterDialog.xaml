@@ -6,6 +6,8 @@
              xmlns:converters="clr-namespace:NpcChat.Converters"
              xmlns:reusable="clr-namespace:NpcChat.Views.Reusable"
              xmlns:data="clr-namespace:NpcChatSystem.Data.Dialog.DialogParts;assembly=NpcChatSystem"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:behaviour="clr-namespace:NpcChat.Views.Utility.Behaviour"
              mc:Ignorable="d" d:DesignWidth="200" >
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="EditModeBoolVis" TrueVisibility="Visible" FalseVisibility="Collapsed" />
@@ -46,6 +48,9 @@
 
             <ListView ItemsSource="{Binding DialogSegment.SegmentParts}" Grid.Column="1" Grid.Row="1" ItemContainerStyle="{StaticResource DialogNoHoverListBoxItem}"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                <i:Interaction.Behaviors>
+                    <behaviour:IgnoreMouseWheelBehavior />
+                </i:Interaction.Behaviors>
                 <ListView.Resources>
                     <!--  Dialog Text  -->
                     <DataTemplate DataType="{x:Type data:DialogText}" >
@@ -79,9 +84,9 @@
                 </ListView.Resources>
             </ListView>
 
-            <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5"/>
+            <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
 
-            <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="10,0,0,0" >
+            <Grid Grid.Row="3" Grid.Column="0" Margin="10,0,0,0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>

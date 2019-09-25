@@ -6,6 +6,8 @@
         xmlns:mui="http://firstfloorsoftware.com/ModernUI"
         xmlns:data="clr-namespace:NpcChat.ViewModels.Editors.Script"
         xmlns:script="clr-namespace:NpcChat.Views.Editors.Script"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:behaviour="clr-namespace:NpcChat.Views.Utility.Behaviour"
         mc:Ignorable="d"
         Title="Npc Chat" 
         Height="350" Width="525"
@@ -45,6 +47,10 @@
                                 <TextBox Text="{Binding DialogTree.Name}"/>
                                 <ListView ItemsSource="{Binding Speech}" Margin="5" SelectionMode="Single" ItemContainerStyle="{StaticResource DialogSubtleHighlightListBoxItem}"
                                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="false" >
+                                    <i:Interaction.Behaviors>
+                                        <behaviour:ScrollParentWhenAtMax />
+                                    </i:Interaction.Behaviors>
+
                                     <ListView.Resources>
                                         <DataTemplate DataType="{x:Type data:CharacterDialogVM}">
                                             <script:CharacterDialog/>
@@ -54,6 +60,9 @@
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
+                    <i:Interaction.Behaviors>
+                        <behaviour:ScrollParentWhenAtMax />
+                    </i:Interaction.Behaviors>
                 </ListView>
 
                 <Grid>
