@@ -5,6 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NpcChat.Views.Reusable"
              mc:Ignorable="d" 
-             Height="23" d:DesignWidth="130">
+             d:DesignHeight="23" d:DesignWidth="130">
     <Label Content="{Binding Text}" Name="Label"/>
 </UserControl>

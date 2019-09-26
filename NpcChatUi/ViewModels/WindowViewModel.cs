@@ -22,19 +22,30 @@ namespace NpcChat.ViewModels
         {
             CurrentProject.Project = m_project = new NpcChatProject();
             if (m_project.ProjectCharacters.RegisterNewCharacter(out int diane, new Character("diane")) &&
-                m_project.ProjectCharacters.RegisterNewCharacter(out int jerry, new Character("jerry")))
+                m_project.ProjectCharacters.RegisterNewCharacter(out int jerry, new Character("jerry")) && 
+                m_project.ProjectCharacters.RegisterNewCharacter(out int gran, new Character("Granny")) && 
+                m_project.ProjectCharacters.RegisterNewCharacter(out int banana, new Character("Banana")))
             {
                 m_tree = m_project.ProjectDialogs.CreateNewDialogTree();
                 SetDialogTree(m_tree.Id);
                 DialogTreeBranch branch = m_tree.GetStart();
+                branch.Name = "Start";
 
                 DialogSegment segment = branch.CreateNewDialog(diane);
-                //Speech.Add(new CharacterDialogVM(m_project, segment));
                 DialogSegment segment2 = branch.CreateNewDialog(jerry);
-                //Speech.Add(new CharacterDialogVM(m_project, segment2));
+
+                branch = m_tree.CreateNewBranch();
+                branch.Name = "First Branch";
+                Branches.Add(new TreePartVM(m_project, branch));
+                DialogSegment segment3 = branch.CreateNewDialog(gran);
+                DialogSegment segment4 = branch.CreateNewDialog(banana);
             }
         }
 
+        /// <summary>
+        /// sets the dialog tree to display
+        /// </summary>
+        /// <param name="dialogTreeId">Dialog Tree ID</param>
         public void SetDialogTree(DialogTreeIdentifier dialogTreeId)
         {
             m_tree = m_project.ProjectDialogs.GetDialog(dialogTreeId);

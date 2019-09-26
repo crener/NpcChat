@@ -65,7 +65,7 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{DynamicResource ItemText}" />
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Margin" Value="0"/>
         <Setter Property="Padding" Value="2"/>
@@ -101,5 +101,14 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+    
+    
+    <SolidColorBrush x:Key="BranchBackground" Color="#2A2732"/>
+    <SolidColorBrush x:Key="BranchBoarder" Color="#516DD4"/>
+
+    <Style x:Key="BranchItemStyle" BasedOn="{StaticResource DialogNoHoverListBoxItem}"  TargetType="{x:Type ListViewItem}">
+        <Setter Property="Background" Value="{DynamicResource BranchBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BranchBoarder}"/>
     </Style>
 </ResourceDictionary>
