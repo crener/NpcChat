@@ -95,5 +95,28 @@ namespace NpcChatTest.Managers
             Assert.IsFalse(m_project.ProjectDialogs.HasDialog(new DialogSegmentIdentifier(dialogSegment.Id, dialogSegment.Id.DialogSegmentId + 1)));
             Assert.IsFalse(m_project.ProjectDialogs.HasDialog(new DialogSegmentIdentifier(dialogSegment.Id, dialogSegment.Id.DialogSegmentId + 10)));
         }
+
+        [TestCase(1)]
+        [TestCase(10)]
+        [TestCase(555)]
+        public void DialogGetter(int offset)
+        {
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
+            Assert.IsNotNull(m_project.ProjectDialogs[tree]);
+            DialogTreeIdentifier fakeTreeId = new DialogTreeIdentifier(tree.Id.DialogTreeId + offset);
+            Assert.IsNull(m_project.ProjectDialogs[fakeTreeId]);
+
+            DialogTreeBranch branch = tree.CreateNewBranch();
+            Assert.NotNull(branch);
+            Assert.IsNotNull(m_project.ProjectDialogs[branch]);
+            DialogTreeBranchIdentifier fakeBranchId = new DialogTreeBranchIdentifier(branch.Id, branch.Id.DialogTreeBranchId + offset);
+            Assert.IsNull(m_project.ProjectDialogs[fakeBranchId]);
+
+            DialogSegment dialogSegment = branch.CreateNewDialog(CharacterId.DefaultId);
+            Assert.NotNull(dialogSegment);
+            Assert.IsNotNull(m_project.ProjectDialogs[dialogSegment]);
+            DialogSegmentIdentifier fakeSegmentId = new DialogSegmentIdentifier(dialogSegment.Id, dialogSegment.Id.DialogSegmentId + offset);
+            Assert.IsNull(m_project.ProjectDialogs[fakeSegmentId]);
+        }
     }
 }
