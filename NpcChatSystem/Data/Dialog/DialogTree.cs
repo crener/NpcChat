@@ -15,7 +15,7 @@ namespace NpcChatSystem.Data.Dialog
         private static Random s_random = new Random();
 
         public DialogTreeIdentifier Id { get; }
-        private List<DialogTreeBranch> m_dialog = new List<DialogTreeBranch>();
+        private List<DialogTreeBranch> m_branches = new List<DialogTreeBranch>();
 
         public event Action<DialogTreeBranch> BranchCreated;
         public event Action<DialogTreeBranchIdentifier> BranchRemoved;
@@ -34,10 +34,10 @@ namespace NpcChatSystem.Data.Dialog
             do
             {
                 id = s_random.Next(1, int.MaxValue);
-            } while (m_dialog.Any(d => d.Id.DialogTreeId == id));
+            } while (m_branches.Any(d => d.Id.DialogTreeId == id));
 
             DialogTreeBranch branch = new DialogTreeBranch(m_project, Id, id);
-            m_dialog.Add(branch);
+            m_branches.Add(branch);
 
             BranchCreated?.Invoke(branch);
 
@@ -48,7 +48,7 @@ namespace NpcChatSystem.Data.Dialog
         {
             if(!HasTree(id)) return false;
 
-            m_dialog.Remove(GetTree(id));
+            m_branches.Remove(GetTree(id));
             BranchRemoved?.Invoke(id);
 
             return true;
@@ -56,21 +56,21 @@ namespace NpcChatSystem.Data.Dialog
 
         public DialogTreeBranch GetStart()
         {
-            return m_dialog.First();
+            return m_branches.First();
         }
 
         public DialogTreeBranch GetTree(DialogTreeBranchIdentifier id)
         {
             if (!Id.Compatible(id)) return null;
 
-            return m_dialog.FirstOrDefault(d => d.Id == id);
+            return m_branches.FirstOrDefault(d => d.Id.Compatible(id));
         }
 
         public bool HasTree(DialogTreeBranchIdentifier id)
         {
             if (!Id.Compatible(id)) return false;
 
-            return m_dialog.Any(d => d.Id == id);
+            return m_branches.Any(d => d.Id == id);
         }
 
         public DialogTreeBranch this[DialogTreeBranchIdentifier id] => GetTree(id);

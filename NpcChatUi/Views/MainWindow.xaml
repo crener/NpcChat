@@ -8,6 +8,8 @@
         xmlns:script="clr-namespace:NpcChat.Views.Editors.Script"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:behaviour="clr-namespace:NpcChat.Views.Utility.Behaviour"
+        xmlns:reusable="clr-namespace:NpcChat.Views.Reusable"
+        xmlns:typeStore="clr-namespace:NpcChatSystem.System.TypeStore;assembly=NpcChatSystem"
         mc:Ignorable="d"
         Title="Npc Chat" 
         Height="350" Width="525"
@@ -64,6 +66,12 @@
                                             </DataTemplate>
                                         </ListView.Resources>
                                     </ListView>
+
+                                    <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
+                                        <Label Content="Add New Dialog for " VerticalAlignment="Center"/>
+                                        <reusable:CharacterSelector SelectedCharacter="{Binding NewDialogCharacterId}"/>
+                                        <Button Command="{Binding AddNewDialogCommand}" Content="Add" Margin="3,0,0,0"/>
+                                    </StackPanel>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

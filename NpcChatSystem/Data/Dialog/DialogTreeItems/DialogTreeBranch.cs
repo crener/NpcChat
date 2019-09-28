@@ -11,6 +11,8 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
     /// </summary>
     public class DialogTreeBranch : ProjectNotificationObject
     {
+        public static Random rand = new Random();
+
         public DialogTreeBranchIdentifier Id { get; }
 
         /// <summary>
@@ -48,12 +50,23 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
 
         public DialogSegment CreateNewDialog(int characterId = -1)
         {
-            DialogSegment dialog = new DialogSegment(m_project, Id, m_dialog.Count + 1, characterId);
+            DialogSegment dialog = new DialogSegment(m_project, Id, GenerateId(), characterId);
             m_dialog.Add(dialog);
 
             RaiseChanged(nameof(Dialog));
             OnDialogCreated?.Invoke(dialog);
             return dialog;
+        }
+
+        private int GenerateId()
+        {
+            int id = m_dialog.Count+1;
+            while(m_dialog.Any(d => d.CharacterId == id))
+            {
+                id = rand.Next();
+            }
+
+            return id;
         }
 
         public bool RemoveDialog(DialogSegment id)
@@ -96,7 +109,7 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
         {
             if (!Id.Compatible(id)) return null;
 
-            return m_dialog.FirstOrDefault(d => d.Id == id);
+            return m_dialog.FirstOrDefault(d => d.Id.Compatible(id));
         }
 
         public DialogSegment this[DialogSegmentIdentifier id] => GetDialogSegment(id);

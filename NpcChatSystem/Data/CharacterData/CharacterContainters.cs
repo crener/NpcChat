@@ -6,6 +6,8 @@ namespace NpcChatSystem.Data.CharacterData
     [DebuggerDisplay("{Name}, ID: {Id}")]
     public struct CharacterId
     {
+        public static int DefaultId = 0;
+
         public string Name { get; }
         public int Id { get; }
 

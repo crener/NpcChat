@@ -6,5 +6,5 @@
              xmlns:local="clr-namespace:NpcChat.Views.Reusable"
              mc:Ignorable="d" 
              d:DesignHeight="23" d:DesignWidth="130">
-    <Label Content="{Binding Text}" Name="Label"/>
+    <Label Content="{Binding Text}" Name="Label" FontWeight="Bold"/>
 </UserControl>

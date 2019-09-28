@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Input;
 using NpcChat.Util;
 using NpcChatSystem;
+using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogParts;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
@@ -52,7 +53,7 @@ namespace NpcChat.ViewModels.Editors.Script
         private DialogSegment m_dialogSegment = null;
         private DelegateCommand<string> m_addDialogElement;
 
-        public CharacterDialogVM(NpcChatProject project, DialogSegment dialog)
+        public CharacterDialogVM(NpcChatProject project, [NotNull] DialogSegment dialog)
         {
             Project = project;
             DialogSegment = dialog;

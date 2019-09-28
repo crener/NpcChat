@@ -1,8 +1,12 @@
-﻿namespace NpcChatSystem.Data.Dialog.DialogTreeItems
+﻿using System;
+using System.Diagnostics;
+
+namespace NpcChatSystem.Data.Dialog.DialogTreeItems
 {
     /// <summary>
     /// Identifier for a <see cref="DialogTree"/>
     /// </summary>
+    [DebuggerDisplay("Tree: {DialogTreeId}")]
     public class DialogTreeIdentifier
     {
         public int DialogTreeId { get; }
@@ -12,9 +16,14 @@
             DialogTreeId = dialogTreeId;
         }
 
-        public bool Compatible(DialogTreeIdentifier diag)
+        /// <summary>
+        /// Are both tree identifiers referencing the same <see cref="DialogTree"/>?
+        /// </summary>
+        /// <param name="tree">other <see cref="DialogTreeIdentifier"/> to compare</param>
+        /// <returns>true if identifiers reference the same <see cref="DialogTree"/></returns>
+        public bool Compatible(DialogTreeIdentifier tree)
         {
-            if (DialogTreeId != diag.DialogTreeId) return false;
+            if (DialogTreeId != tree.DialogTreeId) return false;
 
             return true;
         }
@@ -25,6 +34,7 @@
     ///
     /// <see cref="DialogTree"/> => <see cref="DialogTreeBranch"/>
     /// </summary>
+    [DebuggerDisplay("Tree: {DialogTreeId}, Branch: {DialogTreeBranchId}")]
     public class DialogTreeBranchIdentifier : DialogTreeIdentifier
     {
         public int DialogTreeBranchId { get; }
@@ -41,10 +51,15 @@
             DialogTreeBranchId = dialogTreeBranchId;
         }
 
-        public bool Compatible(DialogTreeBranchIdentifier diag)
+        /// <summary>
+        /// Are both branch identifiers referencing the same <see cref="DialogTreeBranch"/>?
+        /// </summary>
+        /// <param name="branch">other <see cref="DialogTreeBranchIdentifier"/> to compare</param>
+        /// <returns>true if identifiers reference the same <see cref="DialogTreeBranch"/></returns>
+        public bool Compatible(DialogTreeBranchIdentifier branch)
         {
-            if(!base.Compatible(diag)) return false;
-            if(DialogTreeBranchId != diag.DialogTreeBranchId) return false;
+            if(!base.Compatible(branch)) return false;
+            if(DialogTreeBranchId != branch.DialogTreeBranchId) return false;
 
             return true;
         }
@@ -55,6 +70,7 @@
     ///
     /// <see cref="DialogTree"/> => <see cref="DialogTreeBranch"/> => <see cref="DialogSegment"/>
     /// </summary>
+    [DebuggerDisplay("Tree: {DialogTreeId}, Branch: {DialogTreeBranchId}, Segment: {DialogSegmentId}")]
     public class DialogSegmentIdentifier : DialogTreeBranchIdentifier
     {
         public int DialogSegmentId { get; }
@@ -65,10 +81,15 @@
             DialogSegmentId = dialogSegmentId;
         }
 
-        public bool Compatible(DialogSegmentIdentifier diag)
+        /// <summary>
+        /// Are both segment identifiers referencing the same <see cref="DialogSegment"/>?
+        /// </summary>
+        /// <param name="segment">other <see cref="DialogSegmentIdentifier"/> to compare</param>
+        /// <returns>true if identifiers reference the same <see cref="DialogSegment"/></returns>
+        public bool Compatible(DialogSegmentIdentifier segment)
         {
-            if (!base.Compatible(diag)) return false;
-            if (DialogSegmentId != diag.DialogSegmentId) return false;
+            if (!base.Compatible(segment)) return false;
+            if (DialogSegmentId != segment.DialogSegmentId) return false;
 
             return true;
         }

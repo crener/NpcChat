@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NpcChatSystem.Data;
+using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.Data.Util;
@@ -13,7 +14,8 @@ namespace NpcChatSystem.System
     public class DialogManager : ProjectObject
     {
         public IReadOnlyCollection<int> DialogTreeIds => m_dialogs.Select(d => d.Id.DialogTreeId).ToArray();
-        List<DialogTree> m_dialogs = new List<DialogTree>();
+
+        private List<DialogTree> m_dialogs = new List<DialogTree>();
 
         internal DialogManager(NpcChatProject project)
             : base(project)
@@ -50,7 +52,7 @@ namespace NpcChatSystem.System
 
         public bool RemoveDialog(DialogTree dialog)
         {
-            if (dialog.Id.DialogTreeId == 0) return false;
+            if (dialog.Id.DialogTreeId == CharacterId.DefaultId) return false;
 
             if (m_dialogs.Contains(dialog))
             {
@@ -79,8 +81,26 @@ namespace NpcChatSystem.System
             } while (true);
         }
 
-        public DialogTree this[DialogTreeIdentifier id] => GetDialog(id.DialogTreeId);
-        public DialogTreeBranch this[DialogTreeBranchIdentifier id] => GetDialog(id.DialogTreeId)?[id];
-        public DialogSegment this[DialogSegmentIdentifier id] => GetDialog(id.DialogTreeId)?[id];
+        public DialogTree this[DialogTreeIdentifier id] => GetDialog(id);
+        public DialogTreeBranch this[DialogTreeBranchIdentifier id] => GetDialog(id)?[id];
+        public DialogSegment this[DialogSegmentIdentifier id] => GetDialog(id)?[id];
+
+        public bool HasDialog(DialogTreeIdentifier id)
+        {
+            DialogTree tree = this[id];
+            return tree != null;
+        }
+
+        public bool HasDialog(DialogTreeBranchIdentifier id)
+        {
+            DialogTreeBranch branch = this[id];
+            return branch != null;
+        }
+
+        public bool HasDialog(DialogSegmentIdentifier id)
+        {
+            DialogSegment dialogSegment = this[id];
+            return dialogSegment != null;
+        }
     }
 }

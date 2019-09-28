@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NpcChatSystem;
 using NpcChatSystem.Data;
+using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NUnit.Framework;
@@ -56,7 +57,43 @@ namespace NpcChatTest.Managers
 
             bool removeReported = tree.RemoveBranch(branch);
             Assert.IsTrue(removeReported);
-            Assert.IsTrue(destroyed,$"Failed to call '{nameof(tree.BranchRemoved)}' callback");
+            Assert.IsTrue(destroyed, $"Failed to call '{nameof(tree.BranchRemoved)}' callback");
+        }
+
+        [Test]
+        public void DialogHasId()
+        {
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
+            Assert.IsTrue(m_project.ProjectDialogs.HasDialog(tree.Id));
+
+            DialogTreeBranch branch = tree.CreateNewBranch();
+            Assert.NotNull(branch);
+            Assert.IsTrue(m_project.ProjectDialogs.HasDialog(branch.Id));
+
+            DialogSegment dialogSegment = branch.CreateNewDialog(CharacterId.DefaultId);
+            Assert.NotNull(dialogSegment);
+            Assert.IsTrue(m_project.ProjectDialogs.HasDialog(dialogSegment.Id));
+        }
+
+        /// <summary>
+        /// Same as <see cref="DialogHasId"/> Except that it tests for negative results instead of positive ones
+        /// </summary>
+        [Test]
+        public void DialogHasIdFalse()
+        {
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
+            Assert.IsFalse(m_project.ProjectDialogs.HasDialog(new DialogTreeIdentifier(tree.Id.DialogTreeId + 1)));
+            Assert.IsFalse(m_project.ProjectDialogs.HasDialog(new DialogTreeIdentifier(tree.Id.DialogTreeId + 10)));
+
+            DialogTreeBranch branch = tree.CreateNewBranch();
+            Assert.NotNull(branch);
+            Assert.IsFalse(m_project.ProjectDialogs.HasDialog(new DialogTreeBranchIdentifier(branch.Id, branch.Id.DialogTreeBranchId + 1)));
+            Assert.IsFalse(m_project.ProjectDialogs.HasDialog(new DialogTreeBranchIdentifier(branch.Id, branch.Id.DialogTreeBranchId + 10)));
+
+            DialogSegment dialogSegment = branch.CreateNewDialog(CharacterId.DefaultId);
+            Assert.NotNull(dialogSegment);
+            Assert.IsFalse(m_project.ProjectDialogs.HasDialog(new DialogSegmentIdentifier(dialogSegment.Id, dialogSegment.Id.DialogSegmentId + 1)));
+            Assert.IsFalse(m_project.ProjectDialogs.HasDialog(new DialogSegmentIdentifier(dialogSegment.Id, dialogSegment.Id.DialogSegmentId + 10)));
         }
     }
 }
