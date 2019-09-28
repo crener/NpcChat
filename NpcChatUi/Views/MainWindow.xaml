@@ -68,9 +68,9 @@
                                     </ListView>
 
                                     <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
-                                        <Label Content="Add New Dialog for " VerticalAlignment="Center"/>
+                                        <Label Content="Add new dialog for " VerticalAlignment="Center"/>
                                         <reusable:CharacterSelector SelectedCharacter="{Binding NewDialogCharacterId}"/>
-                                        <Button Command="{Binding AddNewDialogCommand}" Content="Add" Margin="3,0,0,0"/>
+                                        <Button Command="{Binding AddNewDialogCommand}" Content="Add" Margin="8,0,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>

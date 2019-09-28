@@ -12,7 +12,7 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
     /// </summary>
     public class DialogTreeBranch : ProjectNotificationObject
     {
-        public static Random rand = new Random();
+        public static readonly Random Rand = new Random();
 
         public DialogTreeBranchIdentifier Id { get; }
 
@@ -64,7 +64,7 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
             int id = m_dialog.Count+1;
             while(m_dialog.Any(d => d.CharacterId == id))
             {
-                id = rand.Next();
+                id = Rand.Next();
             }
 
             return id;

@@ -84,7 +84,9 @@
                             <Label Content="Character Target: " Grid.Column="0"/>
                             <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId, Mode=TwoWay}"  Margin="5,0,5,0" Grid.Column="1"/>
                             <Label Content="Trait:" Grid.Column="2"/>
-                            <TextBox Text="{Binding CharacterTrait}" MinWidth="60" Margin="5,0,0,0" Grid.Column="3"/>
+                            <!--<TextBox Text="{Binding CharacterTrait}" MinWidth="60" Margin="5,0,0,0" Grid.Column="3"/>-->
+                            <ComboBox ItemsSource="{Binding CharacterProperties}" SelectedValue="{Binding CharacterTrait}" Margin="5,0,0,0" Grid.Column="3"
+                                      IsReadOnly="True" IsEditable="True"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.Resources>

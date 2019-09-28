@@ -57,8 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\CharacterData\Character.cs" />
-    <Compile Include="Data\CharacterData\CharacterContainters.cs" />
+    <Compile Include="Data\Character\Character.cs" />
+    <Compile Include="Data\Character\CharacterContainters.cs" />
     <Compile Include="Data\Dialog\DialogSegment.cs" />
     <Compile Include="Data\Dialog\DialogParts\DialogCharacterTrait.cs" />
     <Compile Include="Data\Dialog\DialogParts\DialogText.cs" />
@@ -79,7 +79,9 @@
     <Compile Include="System\TypeStore\DialogTypeStore.cs" />
     <Compile Include="System\StoryElementManager.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Conditions\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.

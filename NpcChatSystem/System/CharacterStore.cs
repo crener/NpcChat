@@ -90,6 +90,8 @@ namespace NpcChatSystem.System
             }
         }
 
+        public Character? this[int key] => GetCharacter(key);
+
         /// <summary>
         /// Event used to notify of a change in a characters information
         /// </summary>

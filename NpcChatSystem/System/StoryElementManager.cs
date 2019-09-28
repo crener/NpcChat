@@ -16,7 +16,7 @@ namespace NpcChatSystem.System
         /// </summary>
         /// <param name="name">name of the storyElement</param>
         /// <returns>character if found, null if not found</returns>
-        public StoryElement GetDialog(string name)
+        public StoryElement GetElement(string name)
         {
             return m_elements.FirstOrDefault(c => c.Name == name);
         }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Util;
@@ -41,6 +42,23 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
             set
             {
                 m_characterId = value;
+
+                Character? character = m_project.ProjectCharacters[CharacterId];
+                if(character.HasValue)
+                {
+                    CharacterProperties = character.Value.TraitNames;
+                }
+
+                RaiseChanged();
+            }
+        }
+
+        public IEnumerable<string> CharacterProperties
+        {
+            get => m_characterProperties;
+            set
+            {
+                m_characterProperties = value;
                 RaiseChanged();
             }
         }
@@ -60,6 +78,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
 
         private int m_characterId;
         private string m_characterTrait = "Name";
+        private IEnumerable<string> m_characterProperties;
 
         public DialogCharacterTrait(NpcChatProject project, int characterId = -1)
             : base(project)

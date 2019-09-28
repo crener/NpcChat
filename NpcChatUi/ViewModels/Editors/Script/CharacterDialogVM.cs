@@ -48,7 +48,6 @@ namespace NpcChat.ViewModels.Editors.Script
         }
 
         public IReadOnlyList<string> DialogElementTypes => DialogTypeStore.Dialogs;
-
         public ICommand AddDialogElementCommand => m_addDialogElement;
 
         private DialogSegment m_dialogSegment = null;
