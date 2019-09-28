@@ -8,6 +8,7 @@ using NpcChatSystem.Data;
 using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
+using NpcChatSystem.Identifiers;
 using NUnit.Framework;
 
 namespace NpcChatTest.Managers

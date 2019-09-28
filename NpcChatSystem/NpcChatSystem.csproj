@@ -64,7 +64,7 @@
     <Compile Include="Data\Dialog\DialogParts\DialogText.cs" />
     <Compile Include="Data\Dialog\DialogTree.cs" />
     <Compile Include="Data\Dialog\DialogParts\IDialogElement.cs" />
-    <Compile Include="Data\Dialog\DialogTreeItems\DialogTreeIdentifiers.cs" />
+    <Compile Include="Identifiers\DialogIdentifiers.cs" />
     <Compile Include="Data\Dialog\DialogTreeItems\DialogTreeBranch.cs" />
     <Compile Include="Data\StoryElement.cs" />
     <Compile Include="Data\Util\ProjectNotificationObject.cs" />

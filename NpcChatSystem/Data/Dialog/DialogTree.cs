@@ -4,6 +4,7 @@ using System.Linq;
 using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.Data.Util;
+using NpcChatSystem.Identifiers;
 
 namespace NpcChatSystem.Data.Dialog
 {

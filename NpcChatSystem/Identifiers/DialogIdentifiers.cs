@@ -1,7 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using NpcChatSystem.Data.Dialog;
+using NpcChatSystem.Data.Dialog.DialogTreeItems;
 
-namespace NpcChatSystem.Data.Dialog.DialogTreeItems
+namespace NpcChatSystem.Identifiers
 {
     /// <summary>
     /// Identifier for a <see cref="DialogTree"/>
@@ -77,6 +78,12 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
 
         public DialogSegmentIdentifier(DialogTreeBranchIdentifier dialogTree, int dialogSegmentId)
             : base(dialogTree.DialogTreeId, dialogTree.DialogTreeBranchId)
+        {
+            DialogSegmentId = dialogSegmentId;
+        }
+
+        public DialogSegmentIdentifier(int tree, int branch, int dialogSegmentId)
+            : base(tree, branch)
         {
             DialogSegmentId = dialogSegmentId;
         }

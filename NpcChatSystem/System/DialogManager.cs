@@ -8,6 +8,7 @@ using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.Data.Util;
+using NpcChatSystem.Identifiers;
 
 namespace NpcChatSystem.System
 {

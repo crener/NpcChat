@@ -7,6 +7,7 @@ using NpcChatSystem;
 using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
+using NpcChatSystem.Identifiers;
 
 namespace NpcChat.ViewModels
 {

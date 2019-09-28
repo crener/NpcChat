@@ -8,6 +8,7 @@ using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogParts;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
+using NpcChatSystem.Identifiers;
 using NpcChatSystem.System.TypeStore;
 using Prism.Commands;
 

@@ -7,6 +7,7 @@ using System.Text;
 using NpcChatSystem.Data.Dialog.DialogParts;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.Data.Util;
+using NpcChatSystem.Identifiers;
 using NotImplementedException = System.NotImplementedException;
 
 namespace NpcChatSystem.Data.Dialog
