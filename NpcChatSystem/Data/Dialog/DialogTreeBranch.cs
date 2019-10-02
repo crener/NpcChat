@@ -29,6 +29,16 @@ namespace NpcChatSystem.Data.Dialog.DialogTreeItems
             }
         }
 
+        /// <summary>
+        /// Determines the order that branches are evaluated in
+        /// </summary>
+        public int BranchEvaluationPriority { get; internal set; } = 0;
+
+        /// <summary>
+        /// Determines which which branch is executed when there is no 
+        /// </summary>
+        public int FallbackExecutionOrder { get; internal set; } = 10;
+
         public object Condition { get; set; } = null;
         public IReadOnlyCollection<DialogSegment> Dialog => m_dialog;
 

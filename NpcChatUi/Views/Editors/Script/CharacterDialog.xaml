@@ -51,7 +51,6 @@
             <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId}" Grid.Column="0" Grid.Row="1" Margin="3,0,3,0" />
             <TextBlock Text="{Binding DialogSegment.Text}" TextWrapping="Wrap" Margin="4,3,4,1" FontWeight="Bold"
                        VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"/>
-
             <ListView ItemsSource="{Binding DialogSegment.SegmentParts}" Grid.Column="1" Grid.Row="1" ItemContainerStyle="{StaticResource DialogNoHoverListBoxItem}"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
                 <i:Interaction.Behaviors>

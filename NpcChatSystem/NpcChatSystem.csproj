@@ -57,6 +57,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Branching\Conditions\ICondition.cs" />
+    <Compile Include="Branching\EvaluationContainers\AbstractEvaluationContainer.cs" />
+    <Compile Include="Branching\EvaluationContainers\LeveledEvaluationContainer.cs" />
     <Compile Include="Data\Character\Character.cs" />
     <Compile Include="Data\Character\CharacterContainters.cs" />
     <Compile Include="Data\Dialog\DialogSegment.cs" />
@@ -64,8 +67,10 @@
     <Compile Include="Data\Dialog\DialogParts\DialogText.cs" />
     <Compile Include="Data\Dialog\DialogTree.cs" />
     <Compile Include="Data\Dialog\DialogParts\IDialogElement.cs" />
+    <Compile Include="Branching\EvaluationContainers\IEvaluationContainer.cs" />
+    <Compile Include="Branching\EvaluationContainers\SimpleEvaluationContainer.cs" />
     <Compile Include="Identifiers\DialogIdentifiers.cs" />
-    <Compile Include="Data\Dialog\DialogTreeItems\DialogTreeBranch.cs" />
+    <Compile Include="Data\Dialog\DialogTreeBranch.cs" />
     <Compile Include="Data\StoryElement.cs" />
     <Compile Include="Data\Util\ProjectNotificationObject.cs" />
     <Compile Include="Data\Util\ProjectObject.cs" />
@@ -79,9 +84,7 @@
     <Compile Include="System\TypeStore\DialogTypeStore.cs" />
     <Compile Include="System\StoryElementManager.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Conditions\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
