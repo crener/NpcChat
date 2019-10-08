@@ -6,10 +6,7 @@
         xmlns:mui="http://firstfloorsoftware.com/ModernUI"
         xmlns:data="clr-namespace:NpcChat.ViewModels.Editors.Script"
         xmlns:script="clr-namespace:NpcChat.Views.Editors.Script"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:behaviour="clr-namespace:NpcChat.Views.Utility.Behaviour"
-        xmlns:reusable="clr-namespace:NpcChat.Views.Reusable"
-        xmlns:typeStore="clr-namespace:NpcChatSystem.System.TypeStore;assembly=NpcChatSystem"
+        xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         mc:Ignorable="d"
         Title="Npc Chat" 
         Height="350" Width="525"
@@ -28,72 +25,34 @@
 
         <Menu>
             <MenuItem Header="File">
-                <MenuItem Header="Open"/>
+                <MenuItem Header="Open" Click="LoadLayout"/>
                 <MenuItem Header="Close"/>
-                <MenuItem Header="Save"/>
+                <MenuItem Header="Save" Click="SaveLayout"/>
             </MenuItem>
         </Menu>
 
-        <ScrollViewer Grid.Row="1" Margin="5">
-            <StackPanel >
-                <!--<Grid VerticalAlignment="Top" Height="26">
-                <Grid.RowDefinitions>
-                    <RowDefinition MaxHeight="20" Height="20"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Label Content="Story Elements" Grid.RowSpan="2" Margin="0"/>
-            </Grid>-->
+        <xcad:DockingManager x:Name="DockingManager" DocumentsSource="{Binding Windows}" Grid.Row="1">
+            <xcad:DockingManager.Resources>
 
-                <ListView ItemsSource="{Binding Branches}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="false"
-                          ItemContainerStyle="{DynamicResource BranchItemStyle}">
-                    <i:Interaction.Behaviors>
-                        <behaviour:ScrollParentWhenAtMax />
-                    </i:Interaction.Behaviors>
-                    <ListView.ItemTemplate>
-                        <DataTemplate DataType="data:TreePartVM">
-                            <Border BorderBrush="{DynamicResource BranchBoarder}" BorderThickness="1">
-                                <StackPanel Margin="3">
-                                    <TextBox Text="{Binding DialogTree.Name}"/>
+                <DataTemplate DataType="{x:Type data:ScriptPanelVM}">
+                    <script:ScriptPanel />
+                </DataTemplate>
 
-                                    <Expander IsExpanded="True" Header="Conditions">
-                                        <StackPanel>
-                                            
-                                        </StackPanel>
-                                    </Expander>
+            </xcad:DockingManager.Resources>
 
-                                    <ListView ItemsSource="{Binding Speech}" Margin="5" SelectionMode="Single" ItemContainerStyle="{StaticResource DialogSubtleHighlightListBoxItem}" 
-                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="false" HorizontalContentAlignment="Stretch">
-                                        <i:Interaction.Behaviors>
-                                            <behaviour:ScrollParentWhenAtMax />
-                                        </i:Interaction.Behaviors>
+            <xcad:DockingManager.LayoutItemContainerStyle>
+                <Style TargetType="{x:Type xcad:LayoutItem}" >
+                    <Setter Property="Title" Value="{Binding Model.Title}" />
+                    <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
+                    <Setter Property="CanClose" Value="{Binding Model.CanClose}" />
+                </Style>
 
-                                        <ListView.Resources>
-                                            <DataTemplate DataType="{x:Type data:CharacterDialogVM}">
-                                                <script:CharacterDialog/>
-                                            </DataTemplate>
-                                        </ListView.Resources>
-                                    </ListView>
+                <!--<Style TargetType="{x:Type data:ScriptPanelVM}" BasedOn="{StaticResource BaseStyle}"/>-->
+            </xcad:DockingManager.LayoutItemContainerStyle>
 
-                                    <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
-                                        <Label Content="Add new dialog for " VerticalAlignment="Center"/>
-                                        <reusable:CharacterSelector SelectedCharacter="{Binding NewDialogCharacterId}"/>
-                                        <Button Command="{Binding AddNewDialogCommand}" Content="Add" Margin="8,0,0,0"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+            <xcad:LayoutRoot/>
+        </xcad:DockingManager>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
 
-                    <!--<Button Grid.Column="0" Margin="5,3">Add Dialog</Button>-->
-                    <Button Grid.Column="0" Margin="5,3">Add Branch</Button>
-                </Grid>
-            </StackPanel>
-        </ScrollViewer>
     </Grid>
 </mui:ModernWindow>

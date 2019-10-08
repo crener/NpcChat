@@ -26,7 +26,7 @@ namespace NpcChat.Views.Utility.Behaviour
 
             e.Handled = true;
 
-            var e2 = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+            MouseWheelEventArgs e2 = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
             e2.RoutedEvent = UIElement.MouseWheelEvent;
             AssociatedObject.RaiseEvent(e2);
 

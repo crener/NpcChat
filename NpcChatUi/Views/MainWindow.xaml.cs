@@ -1,5 +1,10 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
+﻿using System;
+using System.IO;
+using System.Windows;
+using FirstFloor.ModernUI.Windows.Controls;
 using NpcChat.ViewModels;
+using Xceed.Wpf.AvalonDock.Controls;
+using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
 namespace NpcChat.Views
 {
@@ -8,10 +13,32 @@ namespace NpcChat.Views
     /// </summary>
     public partial class MainWindow : ModernWindow
     {
+        private WindowViewModel m_viewModel { get; }
+
         public MainWindow()
         {
-            DataContext = new WindowViewModel();
+            DataContext = m_viewModel = new WindowViewModel();
             InitializeComponent();
+        }
+
+        private string WorkspaceLocation => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NpcChat", "workspace.xml");
+
+        private void SaveLayout(object sender, RoutedEventArgs e)
+        {
+            using (StreamWriter writer = new StreamWriter(WorkspaceLocation))
+            {
+                XmlLayoutSerializer layoutSerializer = new XmlLayoutSerializer(DockingManager);
+                layoutSerializer.Serialize(writer);
+            }
+        }
+
+        private void LoadLayout(object sender, RoutedEventArgs e)
+        {
+            using (StreamReader reader = new StreamReader(WorkspaceLocation))
+            {
+                XmlLayoutSerializer layoutSerializer = new XmlLayoutSerializer(DockingManager);
+                layoutSerializer.Deserialize(reader);
+            }
         }
     }
 }

@@ -29,13 +29,13 @@ namespace NpcChat.Views.Utility.Behaviour
 
         private void PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            var scrollViewer = GetVisualChild<ScrollViewer>(this.AssociatedObject);
-            var scrollPos = scrollViewer.ContentVerticalOffset;
+            ScrollViewer scrollViewer = GetVisualChild<ScrollViewer>(this.AssociatedObject);
+            double scrollPos = scrollViewer.ContentVerticalOffset;
             if ((scrollPos == scrollViewer.ScrollableHeight && e.Delta < 0)
                 || (scrollPos == 0 && e.Delta > 0))
             {
                 e.Handled = true;
-                var e2 = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+                MouseWheelEventArgs e2 = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
                 e2.RoutedEvent = UIElement.MouseWheelEvent;
                 AssociatedObject.RaiseEvent(e2);
             }
