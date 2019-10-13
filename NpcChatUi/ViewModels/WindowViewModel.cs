@@ -10,7 +10,6 @@ using NpcChat.ViewModels.Editors.Script;
 using NpcChatSystem;
 using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
-using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.Identifiers;
 using Xceed.Wpf.AvalonDock.Controls;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
@@ -23,7 +22,6 @@ namespace NpcChat.ViewModels
 
         private NpcChatProject m_project;
         private DialogTree m_tree;
-
 
         public WindowViewModel()
         {

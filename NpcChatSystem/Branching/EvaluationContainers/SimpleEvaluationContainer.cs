@@ -7,16 +7,19 @@ using System.Runtime.CompilerServices;
 using NpcChatSystem.Annotations;
 using NpcChatSystem.Branching.Conditions;
 using NpcChatSystem.Data.Util;
+using NpcChatSystem.System.TypeStore;
 
 namespace NpcChatSystem.Branching.EvaluationContainers
 {
     /// <summary>
     /// Simple evaluator which takes multiple <see cref="ICondition"/> and checks each one according to the <see cref="AbstractEvaluationContainer.ComparisonType"/>
     /// </summary>
-    [Export(typeof(IEvaluationContainer))]
+    [Export(typeof(IEvaluationContainer)), NiceTypeName(Name)]
     public class SimpleEvaluationContainer : AbstractEvaluationContainer
     {
-        public override string EvaluatorName => "Simple";
+        public const string Name = "Simple";
+        public override string EvaluatorName => Name;
+        public override int Depth => 1;
         public IReadOnlyList<ICondition> Conditions => m_conditions;
 
         private readonly List<ICondition> m_conditions = new List<ICondition>();
@@ -30,6 +33,7 @@ namespace NpcChatSystem.Branching.EvaluationContainers
         {
             switch(ComparisonType)
             {
+                case EvaluationType.Default:
                 case EvaluationType.And:
                     return EvaluateAnd();
                 case EvaluationType.Or:

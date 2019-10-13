@@ -1,6 +1,5 @@
 ﻿using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
-using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.Identifiers;
 using NUnit.Framework;
 

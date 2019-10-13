@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NpcChatSystem.Annotations;
 using NpcChatSystem.Branching.Conditions;
+using NpcChatSystem.System.TypeStore;
 
 namespace NpcChatSystem.Branching.EvaluationContainers
 {
@@ -15,10 +16,11 @@ namespace NpcChatSystem.Branching.EvaluationContainers
     /// Evaluates condition by grouping the <see cref="ICondition"/> by priority and checks them in groups.
     /// If a single group matches based on the <see cref="LeveledEvaluationContainer.ComparisonType"/> it returns true.
     /// </summary>
-    [Export(typeof(IEvaluationContainer))]
+    [Export(typeof(IEvaluationContainer)), NiceTypeName(Name)]
     public class LeveledEvaluationContainer : AbstractEvaluationContainer
     {
-        public override string EvaluatorName => "Leveled";
+        public const string Name = "Leveled";
+        public override string EvaluatorName => Name;
 
         public override bool Evaluate(int level)
         {

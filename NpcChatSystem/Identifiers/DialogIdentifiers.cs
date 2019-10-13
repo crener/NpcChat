@@ -1,6 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.Dialog;
-using NpcChatSystem.Data.Dialog.DialogTreeItems;
 
 namespace NpcChatSystem.Identifiers
 {
@@ -24,9 +25,38 @@ namespace NpcChatSystem.Identifiers
         /// <returns>true if identifiers reference the same <see cref="DialogTree"/></returns>
         public bool Compatible(DialogTreeIdentifier tree)
         {
+            if(ReferenceEquals(tree, null)) return false;
             if (DialogTreeId != tree.DialogTreeId) return false;
 
             return true;
+        }
+
+        public static bool operator ==(DialogTreeIdentifier a, DialogTreeIdentifier b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(DialogTreeIdentifier a, DialogTreeIdentifier b)
+        {
+            return !(a == b);
+        }
+
+        protected bool Equals(DialogTreeIdentifier other)
+        {
+            return Compatible(other);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((DialogTreeIdentifier)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return DialogTreeId;
         }
     }
 
@@ -59,10 +89,41 @@ namespace NpcChatSystem.Identifiers
         /// <returns>true if identifiers reference the same <see cref="DialogTreeBranch"/></returns>
         public bool Compatible(DialogTreeBranchIdentifier branch)
         {
-            if(!base.Compatible(branch)) return false;
-            if(DialogTreeBranchId != branch.DialogTreeBranchId) return false;
+            if (!base.Compatible(branch)) return false;
+            if (DialogTreeBranchId != branch.DialogTreeBranchId) return false;
 
             return true;
+        }
+
+        public static bool operator ==(DialogTreeBranchIdentifier a, DialogTreeBranchIdentifier b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(DialogTreeBranchIdentifier a, DialogTreeBranchIdentifier b)
+        {
+            return !(a == b);
+        }
+
+        protected bool Equals(DialogTreeBranchIdentifier other)
+        {
+            return Compatible(other);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((DialogTreeBranchIdentifier)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (base.GetHashCode() * 397) ^ DialogTreeBranchId;
+            }
         }
     }
 
@@ -99,6 +160,37 @@ namespace NpcChatSystem.Identifiers
             if (DialogSegmentId != segment.DialogSegmentId) return false;
 
             return true;
+        }
+
+        public static bool operator ==(DialogSegmentIdentifier a, DialogSegmentIdentifier b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(DialogSegmentIdentifier a, DialogSegmentIdentifier b)
+        {
+            return !(a == b);
+        }
+
+        protected bool Equals(DialogSegmentIdentifier other)
+        {
+            return Compatible(other);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((DialogSegmentIdentifier)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (base.GetHashCode() * 397) ^ DialogTreeBranchId;
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ namespace NpcChatTest.Data.Dialog.DialogParts
         [Test]
         public void Instantiate()
         {
-            DialogText element = DialogTypeStore.Instance.CreateElement<DialogText>();
+            DialogText element = DialogTypeStore.Instance.CreateEntity<DialogText>();
             Assert.NotNull(element);
             Assert.NotNull(element.Text);
         }
@@ -23,14 +23,14 @@ namespace NpcChatTest.Data.Dialog.DialogParts
         [Test]
         public void HasElementName()
         {
-            DialogText element = DialogTypeStore.Instance.CreateElement<DialogText>();
+            DialogText element = DialogTypeStore.Instance.CreateEntity<DialogText>();
             Assert.NotNull(element.ElementName);
         }
 
         [Test]
         public void TextChangedCallback()
         {
-            DialogText element = DialogTypeStore.Instance.CreateElement<DialogText>();
+            DialogText element = DialogTypeStore.Instance.CreateEntity<DialogText>();
 
             bool changed = false;
             element.PropertyChanged += (s, a) => { changed = true; };

@@ -6,19 +6,22 @@ using System.Windows.Input;
 using NpcChat.Properties;
 using NpcChat.Util;
 using NpcChatSystem;
+using NpcChatSystem.Branching.EvaluationContainers;
 using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
-using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.System.TypeStore.Stores;
+using NpcChatSystem.Utilities;
 using Prism.Commands;
 
 namespace NpcChat.ViewModels.Editors.Script
 {
     public class TreePartVM : NotificationObject
     {
+        // general properties which shouldn't really change over time
         public NpcChatProject Project { get; }
-        public ObservableCollection<CharacterDialogVM> Speech { get; } = new ObservableCollection<CharacterDialogVM>();
         public IReadOnlyCollection<string> EvaluationContainers => EvaluationContainerTypeStore.ContainerNames;
+
+        public ObservableCollection<CharacterDialogVM> Speech { get; } = new ObservableCollection<CharacterDialogVM>();
         public DialogTreeBranch DialogTree { get; }
 
         public int NewDialogCharacterId
@@ -46,10 +49,49 @@ namespace NpcChat.ViewModels.Editors.Script
             }
         }
 
+        public string UsedEvaluationContainer
+        {
+            get
+            {
+                if (m_evaluationCache == null)
+                {
+                    IEvaluationContainer container = DialogTree?.BranchCondition;
+                    if(container == null && DialogTree != null)
+                    {
+                        m_evaluationCache = EvaluationContainers.First();
+                        DialogTree.BranchCondition = EvaluationContainerTypeStore.Instance.CreateEntity(SimpleEvaluationContainer.);
+                    }
+                    else
+                    {
+                        m_evaluationCache = EvaluationContainerTypeStore.Instance.GetContainerKey(container);
+                    }
+                }
+
+                return m_evaluationCache;
+            }
+            set
+            {
+                if(m_evaluationCache == value) return;
+                if(DialogTree == null)
+                {
+                    Logging.Logger.Error($"Unable to change EvaluationContainer due to null '{nameof(DialogTreeBranch)}'");
+                    return;
+                }
+
+                m_evaluationCache = value;
+                IEvaluationContainer newContainer = EvaluationContainerTypeStore.Instance.CreateEntity(m_evaluationCache);
+                DialogTree.BranchCondition = newContainer;
+
+                RaisePropertyChanged();
+            }
+        }
+
+        // commands
         public ICommand AddNewDialogCommand => m_addNewDialogCommand;
 
         private int? m_newDialogCharacterId = null;
         private DelegateCommand m_addNewDialogCommand;
+        private string m_evaluationCache = null;
 
         public TreePartVM(NpcChatProject project, [NotNull] DialogTreeBranch dialogTree)
         {
@@ -60,7 +102,7 @@ namespace NpcChat.ViewModels.Editors.Script
             {
                 dialogTree.OnDialogCreated += added =>
                 {
-                    if(!Project.ProjectDialogs.HasDialog(added)) return;
+                    if (!Project.ProjectDialogs.HasDialog(added)) return;
                     Speech.Add(new CharacterDialogVM(Project, Project.ProjectDialogs[added]));
                 };
                 dialogTree.OnDialogDestroyed += removed =>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using NpcChatSystem.Annotations;
-using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.Data.Util;
 using NpcChatSystem.Identifiers;
 
@@ -26,7 +25,7 @@ namespace NpcChatSystem.Data.Dialog
         {
             Id = new DialogTreeIdentifier(id);
             DialogTreeBranch branch = CreateNewBranch();
-            branch.isTreeRoot = true;
+            branch.IsTreeRoot = true;
         }
 
         public DialogTreeBranch CreateNewBranch()
@@ -47,9 +46,9 @@ namespace NpcChatSystem.Data.Dialog
 
         public bool RemoveBranch(DialogTreeBranchIdentifier id)
         {
-            if(!HasTree(id)) return false;
+            if (!HasTree(id)) return false;
 
-            m_branches.Remove(GetTree(id));
+            m_branches.Remove(GetBranch(id));
             BranchRemoved?.Invoke(id);
 
             return true;
@@ -57,14 +56,35 @@ namespace NpcChatSystem.Data.Dialog
 
         public DialogTreeBranch GetStart()
         {
-            return m_branches.First();
+            return m_branches.FirstOrDefault(b => b.IsTreeRoot);
         }
 
-        public DialogTreeBranch GetTree(DialogTreeBranchIdentifier id)
+        public DialogTreeBranchIdentifier GetNextBranch(DialogTreeBranchIdentifier branchId)
+        {
+            throw new NotImplementedException();
+            /*DialogTreeBranch branchTree = this[branchId];
+            List<IGrouping<int, DialogTreeBranch>> depth = branchTree.Children
+                .Select(b => m_project[b])
+                .GroupBy(g => g.BranchCondition.Depth)
+                .ToList();
+            int maxDepth = depth.Last().Key;
+
+            for (int i = maxDepth - 1; i >= 0; i--)
+            {
+                foreach (IGrouping<int, DialogTreeBranch> dialogTreeBranches in depth)
+                {
+
+                }
+            }
+
+            return branchTree.Children.First();*/
+        }
+
+        public DialogTreeBranch GetBranch(DialogTreeBranchIdentifier id)
         {
             if (!Id.Compatible(id)) return null;
 
-            return m_branches.FirstOrDefault(d => d.Id.Compatible(id));
+            return m_branches.FirstOrDefault(d => d.Id == id);
         }
 
         public bool HasTree(DialogTreeBranchIdentifier id)
@@ -74,10 +94,9 @@ namespace NpcChatSystem.Data.Dialog
             return m_branches.Any(d => d.Id == id);
         }
 
-        public DialogTreeBranch this[DialogTreeBranchIdentifier id] => GetTree(id);
-        public DialogSegment this[DialogSegmentIdentifier id] => GetTree(id)?[id];
+        public DialogTreeBranch this[DialogTreeBranchIdentifier id] => GetBranch(id);
+        public DialogSegment this[DialogSegmentIdentifier id] => GetBranch(id)?[id];
 
         public static implicit operator DialogTreeIdentifier(DialogTree d) => d.Id;
-
     }
 }

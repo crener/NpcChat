@@ -7,7 +7,6 @@ using NpcChatSystem;
 using NpcChatSystem.Data;
 using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
-using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.Identifiers;
 using NUnit.Framework;
 
@@ -39,7 +38,7 @@ namespace NpcChatTest.Managers
         {
             DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
             Assert.IsNotNull(tree.GetStart());
-            Assert.IsTrue(tree.GetStart().isTreeRoot);
+            Assert.IsTrue(tree.GetStart().IsTreeRoot);
         }
 
         [Test]
@@ -103,19 +102,20 @@ namespace NpcChatTest.Managers
         public void DialogGetter(int offset)
         {
             DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
+            Assert.IsNotNull(tree);
             Assert.IsNotNull(m_project.ProjectDialogs[tree]);
             DialogTreeIdentifier fakeTreeId = new DialogTreeIdentifier(tree.Id.DialogTreeId + offset);
             Assert.IsNull(m_project.ProjectDialogs[fakeTreeId]);
 
             DialogTreeBranch branch = tree.CreateNewBranch();
-            Assert.NotNull(branch);
+            Assert.IsNotNull(branch);
             Assert.IsNotNull(m_project.ProjectDialogs[branch]);
             DialogTreeBranchIdentifier fakeBranchId = new DialogTreeBranchIdentifier(branch.Id, branch.Id.DialogTreeBranchId + offset);
             Assert.IsNull(m_project.ProjectDialogs[fakeBranchId]);
 
             DialogSegment dialogSegment = branch.CreateNewDialog(CharacterId.DefaultId);
-            Assert.NotNull(dialogSegment);
-            Assert.IsNotNull(m_project.ProjectDialogs[dialogSegment]);
+            Assert.IsNotNull(dialogSegment);
+            Assert.IsNotNull(m_project.ProjectDialogs[dialogSegment.Id]);
             DialogSegmentIdentifier fakeSegmentId = new DialogSegmentIdentifier(dialogSegment.Id, dialogSegment.Id.DialogSegmentId + offset);
             Assert.IsNull(m_project.ProjectDialogs[fakeSegmentId]);
         }

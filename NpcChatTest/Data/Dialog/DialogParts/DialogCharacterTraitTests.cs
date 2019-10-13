@@ -17,7 +17,7 @@ namespace NpcChatTest.Data.Dialog.DialogParts
         [Test]
         public void Instantiate()
         {
-            DialogCharacterTrait element = DialogTypeStore.Instance.CreateElement<DialogCharacterTrait>();
+            DialogCharacterTrait element = DialogTypeStore.Instance.CreateEntity<DialogCharacterTrait>();
             Assert.NotNull(element);
             Assert.NotNull(element.Text);
         }
@@ -25,14 +25,14 @@ namespace NpcChatTest.Data.Dialog.DialogParts
         [Test]
         public void HasElementName()
         {
-            DialogCharacterTrait element = DialogTypeStore.Instance.CreateElement<DialogCharacterTrait>();
+            DialogCharacterTrait element = DialogTypeStore.Instance.CreateEntity<DialogCharacterTrait>();
             Assert.NotNull(element.ElementName);
         }
 
         [Test]
         public void IdChangedCallback()
         {
-            DialogCharacterTrait element = DialogTypeStore.Instance.CreateElement<DialogCharacterTrait>();
+            DialogCharacterTrait element = DialogTypeStore.Instance.CreateEntity<DialogCharacterTrait>();
 
             bool changed = false;
             element.PropertyChanged += (s, a) => { changed = true; };
@@ -44,7 +44,7 @@ namespace NpcChatTest.Data.Dialog.DialogParts
         [Test]
         public void TraitChangedCallback()
         {
-            DialogCharacterTrait element = DialogTypeStore.Instance.CreateElement<DialogCharacterTrait>();
+            DialogCharacterTrait element = DialogTypeStore.Instance.CreateEntity<DialogCharacterTrait>();
 
             bool changed = false;
             element.PropertyChanged += (s, a) => { changed = true; };
@@ -57,7 +57,7 @@ namespace NpcChatTest.Data.Dialog.DialogParts
         [Test]
         public void NoProject()
         {
-            DialogCharacterTrait element = DialogTypeStore.Instance.CreateElement<DialogCharacterTrait>();
+            DialogCharacterTrait element = DialogTypeStore.Instance.CreateEntity<DialogCharacterTrait>();
             Assert.AreEqual("<???>", element.Text, "missing project should return a fallback value");
         }
 
@@ -66,7 +66,7 @@ namespace NpcChatTest.Data.Dialog.DialogParts
         {
             NpcChatProject project = new NpcChatProject();
 
-            DialogCharacterTrait element = DialogTypeStore.Instance.CreateElement<DialogCharacterTrait>(project);
+            DialogCharacterTrait element = DialogTypeStore.Instance.CreateEntity<DialogCharacterTrait>(project);
             Assert.IsFalse(project.ProjectCharacters.HasCharacter(element.CharacterId));
             Assert.AreEqual("<???>", element.Text, "missing character should return a fallback value");
         }
@@ -78,7 +78,7 @@ namespace NpcChatTest.Data.Dialog.DialogParts
             if (project.ProjectCharacters.RegisterNewCharacter(out int id,
                 new NpcChatSystem.Data.CharacterData.Character("Tim")))
             {
-                DialogCharacterTrait element = DialogTypeStore.Instance.CreateElement<DialogCharacterTrait>(project);
+                DialogCharacterTrait element = DialogTypeStore.Instance.CreateEntity<DialogCharacterTrait>(project);
                 element.CharacterTrait = "Name";
 
                 Assert.IsFalse(project.ProjectCharacters.HasCharacter(element.CharacterId));

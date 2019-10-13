@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using NpcChatSystem.Data;
 using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
-using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.Data.Util;
 using NpcChatSystem.Identifiers;
 
@@ -32,7 +31,8 @@ namespace NpcChatSystem.System
         {
             return m_dialogs.FirstOrDefault(c => c.Id.DialogTreeId == id);
         }
-        /// <summary>
+
+        /// <summary>  
         /// Find specific dialog by id
         /// </summary>
         /// <param name="id">id of the character</param>

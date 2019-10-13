@@ -40,7 +40,8 @@ namespace NpcChatSystem.System.TypeStore
         /// <param name="assembly">assembly to add</param>
         internal static void AddAssembly(Assembly assembly)
         {
-            if(m_assemblies.Contains(assembly)) return;
+            if (assembly == null) return;
+            if (m_assemblies.Contains(assembly)) return;
 
             m_assemblies.Add(assembly);
             foreach(ITypeStore store in m_store)

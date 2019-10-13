@@ -20,6 +20,11 @@ namespace NpcChatSystem.Branching.EvaluationContainers
         int Priority { get; set; }
 
         /// <summary>
+        /// Amount of evaluation levels the container currently contains
+        /// </summary>
+        int Depth { get; set; }
+
+        /// <summary>
         /// When comparing multiple conditions how should this be handled (and, or, etc) 
         /// </summary>
         EvaluationType ComparisonType { get; set; }
@@ -56,7 +61,7 @@ namespace NpcChatSystem.Branching.EvaluationContainers
 
     public enum EvaluationType {
         Default,
-        And = Default,
+        And,
         Or
     }
 }

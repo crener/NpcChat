@@ -13,7 +13,8 @@ namespace NpcChatSystem.Branching.EvaluationContainers
     public abstract class AbstractEvaluationContainer : IEvaluationContainer
     {
         public virtual string EvaluatorName => GetType().FullName;
-        public int Priority { get; set; } = 100;
+        public virtual int Priority { get; set; } = 100;
+        public virtual int Depth { get; set; }
         public EvaluationType ComparisonType { get; set; }
 
         public abstract bool Evaluate(int level);

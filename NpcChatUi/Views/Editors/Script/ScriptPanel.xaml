@@ -8,6 +8,7 @@
              xmlns:behaviour="clr-namespace:NpcChat.Views.Utility.Behaviour"
              xmlns:script="clr-namespace:NpcChat.ViewModels.Editors.Script"
              xmlns:reusable="clr-namespace:NpcChat.Views.Reusable"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <ScrollViewer Margin="5">
@@ -35,12 +36,18 @@
                                     <StackPanel>
                                         <StackPanel Orientation="Horizontal">
                                             <Label Content="Evaluation Type "/>
-                                            <ComboBox ItemsSource="{Binding EvaluationContainers}">
-                                                <!--<ComboBoxItem>Simple</ComboBoxItem>
-                                                <ComboBoxItem>Leveled</ComboBoxItem>-->
-                                            </ComboBox>
+                                            <ComboBox ItemsSource="{Binding EvaluationContainers}" 
+                                                      SelectedValue="{Binding UsedEvaluationContainer}"/>
                                         </StackPanel>
-
+                                        <xctk:PropertyGrid 
+                                            SelectedObject="{Binding DialogTree.BranchCondition}"
+                                            ShowPreview="False"
+                                            ShowTitle="False"
+                                            ShowAdvancedOptions="False"
+                                            ShowSearchBox="False"
+                                            ShowSummary="False"
+                                            ShowSortOptions="False"
+                                        />
                                     </StackPanel>
                                 </Expander>
 

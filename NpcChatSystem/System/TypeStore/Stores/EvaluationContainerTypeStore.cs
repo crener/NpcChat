@@ -21,6 +21,20 @@ namespace NpcChatSystem.System.TypeStore.Stores
             Instance = new EvaluationContainerTypeStore();
         }
 
+        public string GetContainerKey(IEvaluationContainer container)
+        {
+            if(container == null) return null;
+
+            Type type = container.GetType();
+            if(m_elementLookup.ContainsValue(type))
+            {
+                IEnumerable<KeyValuePair<string, Type>> types = m_elementLookup.Where(s => s.Value == type);
+                return types.First().Key;
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Checks that the IDialogElement type can be created via reflection
         /// </summary>

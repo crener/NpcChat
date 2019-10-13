@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using NpcChatSystem.Data;
 using NpcChatSystem.Data.CharacterData;
+using NpcChatSystem.Data.Dialog;
+using NpcChatSystem.Identifiers;
 using NpcChatSystem.System;
 
 namespace NpcChatSystem
@@ -41,5 +43,10 @@ namespace NpcChatSystem
         {
             ProjectCharacters.RegisterNewCharacter(out int _, new Character("Fiona"));
         }
+
+        // convenient dialog lookup
+        public DialogTree this[DialogTreeIdentifier id] => ProjectDialogs[id];
+        public DialogTreeBranch this[DialogTreeBranchIdentifier id] => ProjectDialogs[id];
+        public DialogSegment this[DialogSegmentIdentifier id] => ProjectDialogs[id];
     }
 }

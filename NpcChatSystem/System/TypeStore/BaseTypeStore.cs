@@ -22,6 +22,8 @@ namespace NpcChatSystem.System.TypeStore
 
         public void ScanAssembly(Assembly ass)
         {
+            if(ass == null) return;
+
             foreach (TypeInfo type in ass.DefinedTypes.Where(t => t.ImplementedInterfaces.Contains(typeof(T))))
             {
                 if (type.ImplementedInterfaces.Contains(typeof(T)))
