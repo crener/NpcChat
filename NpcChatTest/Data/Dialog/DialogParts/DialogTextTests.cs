@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NpcChatSystem.Data.Dialog.DialogParts;
 using NpcChatSystem.System.TypeStore;
+using NpcChatSystem.System.TypeStore.Stores;
 using NUnit.Framework;
 
 namespace NpcChatTest.Data.Dialog.DialogParts
@@ -14,7 +15,7 @@ namespace NpcChatTest.Data.Dialog.DialogParts
         [Test]
         public void Instantiate()
         {
-            DialogText element = DialogTypeStore.CreateDialogElement<DialogText>();
+            DialogText element = DialogTypeStore.Instance.CreateElement<DialogText>();
             Assert.NotNull(element);
             Assert.NotNull(element.Text);
         }
@@ -22,14 +23,14 @@ namespace NpcChatTest.Data.Dialog.DialogParts
         [Test]
         public void HasElementName()
         {
-            DialogText element = DialogTypeStore.CreateDialogElement<DialogText>();
+            DialogText element = DialogTypeStore.Instance.CreateElement<DialogText>();
             Assert.NotNull(element.ElementName);
         }
 
         [Test]
         public void TextChangedCallback()
         {
-            DialogText element = DialogTypeStore.CreateDialogElement<DialogText>();
+            DialogText element = DialogTypeStore.Instance.CreateElement<DialogText>();
 
             bool changed = false;
             element.PropertyChanged += (s, a) => { changed = true; };

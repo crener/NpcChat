@@ -12,6 +12,8 @@ namespace NpcChatSystem.Branching.EvaluationContainers
     /// </summary>
     public interface IEvaluationContainer : INotifyPropertyChanged
     {
+        string EvaluatorName { get; }
+
         /// <summary>
         /// Priority which this container should be evaluated in 
         /// </summary>

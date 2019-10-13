@@ -10,6 +10,7 @@ using NpcChatSystem.Data.Dialog.DialogParts;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.Identifiers;
 using NpcChatSystem.System.TypeStore;
+using NpcChatSystem.System.TypeStore.Stores;
 using Prism.Commands;
 
 namespace NpcChat.ViewModels.Editors.Script
@@ -63,7 +64,7 @@ namespace NpcChat.ViewModels.Editors.Script
 
         private void AddDialogElement(string dialogElementName)
         {
-            IDialogElement element = DialogTypeStore.CreateDialogElement(dialogElementName, Project);
+            IDialogElement element = DialogTypeStore.Instance.CreateEntity(dialogElementName, Project);
 
             if (element != null) DialogSegment.AddDialogElement(element);
         }

@@ -4,6 +4,7 @@ using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogParts;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
 using NpcChatSystem.System.TypeStore;
+using NpcChatSystem.System.TypeStore.Stores;
 using NUnit.Framework;
 
 namespace NpcChatTest.Data.Dialog
@@ -45,7 +46,7 @@ namespace NpcChatTest.Data.Dialog
                 segment.PropertyChanged += (sender, args) => callback = true;
 
                 int before = segment.SegmentParts.Count;
-                IDialogElement element = DialogTypeStore.CreateDialogElement(dialogType);
+                IDialogElement element = DialogTypeStore.Instance.CreateElement(dialogType);
                 segment.AddDialogElement(element);
 
                 Assert.AreEqual(before + 1, segment.SegmentParts.Count);

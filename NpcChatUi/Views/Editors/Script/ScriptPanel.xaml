@@ -33,6 +33,13 @@
 
                                 <Expander IsExpanded="True" Header="Conditions">
                                     <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label Content="Evaluation Type "/>
+                                            <ComboBox ItemsSource="{Binding EvaluationContainers}">
+                                                <!--<ComboBoxItem>Simple</ComboBoxItem>
+                                                <ComboBoxItem>Leveled</ComboBoxItem>-->
+                                            </ComboBox>
+                                        </StackPanel>
 
                                     </StackPanel>
                                 </Expander>

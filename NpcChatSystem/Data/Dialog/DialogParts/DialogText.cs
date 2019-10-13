@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using NpcChatSystem.Annotations;
@@ -9,7 +10,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
     /// <summary>
     /// Piece of text
     /// </summary>
-    [DebuggerDisplay("{Text}"), DialogElementName(c_elementName)]
+    [DebuggerDisplay("{Text}"), Export(typeof(IDialogElement)), NiceTypeName(c_elementName)]
     public class DialogText : IDialogElement, INotifyPropertyChanged
     {
         private const string c_elementName = "Plain Text";

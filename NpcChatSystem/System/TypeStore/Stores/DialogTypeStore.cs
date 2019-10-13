@@ -1,44 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Reflection;
 using NpcChatSystem.Data.Dialog.DialogParts;
+using NpcChatSystem.Utilities;
 
-namespace NpcChatSystem.System.TypeStore
+namespace NpcChatSystem.System.TypeStore.Stores
 {
-    public static class DialogTypeStore
+    [Export(typeof(ITypeStore))]
+    public class DialogTypeStore : BaseTypeStore<IDialogElement>
     {
-        public static IReadOnlyList<string> Dialogs => m_elementNames;
+        public static IReadOnlyList<string> Dialogs => Instance.m_elementNames;
 
-        private static List<string> m_elementNames = new List<string>();
-        private static Dictionary<string, Type> m_elementLookup = new Dictionary<string, Type>();
+        public static DialogTypeStore Instance { get; }
 
         static DialogTypeStore()
         {
-            ScanAssembly(Assembly.GetAssembly(typeof(IDialogElement)));
-        }
-
-        public static void ScanAssembly(Assembly ass)
-        {
-            foreach (TypeInfo type in ass.DefinedTypes.Where(t => t.ImplementedInterfaces.Contains(typeof(IDialogElement))))
-            {
-                if (type.ImplementedInterfaces.Contains(typeof(IDialogElement)))
-                {
-                    if (ValidateDialogConstructors(type))
-                    {
-                        string name = type.Name;
-
-                        if (type.CustomAttributes.Any(a => a.AttributeType == typeof(DialogElementNameAttribute)))
-                        {
-                            DialogElementNameAttribute dialog = type.GetCustomAttribute<DialogElementNameAttribute>();
-                            name = dialog.Name;
-                        }
-
-                        m_elementNames.Add(name);
-                        m_elementLookup.Add(name, type);
-                    }
-                }
-            }
+            Instance = new DialogTypeStore();
         }
 
         /// <summary>
@@ -46,10 +25,9 @@ namespace NpcChatSystem.System.TypeStore
         /// </summary>
         /// <param name="type">IDialogElement type</param>
         /// <returns>true if type is value</returns>
-        private static bool ValidateDialogConstructors(TypeInfo type)
+        protected override bool ValidateConstructors(TypeInfo type)
         {
             bool emptyConstructor = false, projectConstructor = false;
-
             foreach (ConstructorInfo constructor in type.DeclaredConstructors)
             {
                 if (!constructor.IsPublic) continue;
@@ -90,21 +68,21 @@ namespace NpcChatSystem.System.TypeStore
 
             if (emptyConstructor || projectConstructor) return true;
 
-            //todo log msg once logging is in place
             string msg =
                 $"Failed to add Dialog Element type '{type.FullName}' as it does not have any supported constructors! At least one of the following public constructors must be implemented:" +
                 $"    public {type.Name}()..." +
                 $"    public {type.Name}({nameof(NpcChatProject)} project)..." +
                 $"Variation of this is possible but all none '{nameof(NpcChatProject)}' parameters must have a default value!";
+            Logging.Logger.Error(msg);
 
             return false;
         }
 
-        public static IDialogElement CreateDialogElement(string dialogName, NpcChatProject project = null)
+        public override IDialogElement CreateEntity(string elementName, NpcChatProject project = null)
         {
-            if (m_elementLookup.ContainsKey(dialogName))
+            if (m_elementLookup.ContainsKey(elementName))
             {
-                Type type = m_elementLookup[dialogName];
+                Type type = m_elementLookup[elementName];
 
                 if (type.GetConstructors().Any(c => c.GetParameters().Length == 0))
                 {
@@ -136,7 +114,7 @@ namespace NpcChatSystem.System.TypeStore
                                     break;
                                 }
                             }
-                            else if(!param.HasDefaultValue)
+                            else if (!param.HasDefaultValue)
                             {
                                 defaultTypes = false;
                                 break;
@@ -157,38 +135,16 @@ namespace NpcChatSystem.System.TypeStore
                 return Activator.CreateInstance(type, project) as IDialogElement;
             }
 
-            //todo dialog creation error once logging library is in
+            Logging.Logger.Warn($"Unable to instantiate '{elementName}'");
             return null;
         }
 
-        public static IDialogElement CreateDialogElement(Type dialogType, NpcChatProject project = null)
+        public override IDialogElement CreateEntity(Type elementType, NpcChatProject project = null)
         {
-            if (!m_elementLookup.ContainsValue(dialogType))
-            {
-                //todo log error
-                return null;
-            }
+            if (!m_elementLookup.ContainsValue(elementType)) return null;
 
-            KeyValuePair<string, Type> key = m_elementLookup.First(k => k.Value == dialogType);
-            return CreateDialogElement(key.Key, project);
-        }
-
-        public static T CreateDialogElement<T>(NpcChatProject project = null) where T : class, IDialogElement
-        {
-            Type desiredType = typeof(T);
-            if(!m_elementLookup.ContainsValue(desiredType))
-            {
-                //todo log error
-                return null;
-            }
-
-            KeyValuePair<string, Type> key = m_elementLookup.First(k => k.Value == desiredType);
-            return CreateDialogElement(key.Key, project) as T;
-        }
-
-        public static T CreateDialogElement<T>(string dialogName, NpcChatProject project = null) where T : class, IDialogElement
-        {
-            return CreateDialogElement(dialogName, project) as T;
+            KeyValuePair<string, Type> key = m_elementLookup.First(k => k.Value == elementType);
+            return CreateEntity(key.Key, project);
         }
     }
 }

@@ -73,6 +73,7 @@
     <Compile Include="Managers\CharacterManagerTests.cs" />
     <Compile Include="Managers\DialogTreeManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\TypeStore\MasterTypeStoreTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NpcChatSystem\NpcChatSystem.csproj">

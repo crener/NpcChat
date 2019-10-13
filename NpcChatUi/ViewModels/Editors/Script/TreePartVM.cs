@@ -9,6 +9,7 @@ using NpcChatSystem;
 using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogTreeItems;
+using NpcChatSystem.System.TypeStore.Stores;
 using Prism.Commands;
 
 namespace NpcChat.ViewModels.Editors.Script
@@ -17,6 +18,7 @@ namespace NpcChat.ViewModels.Editors.Script
     {
         public NpcChatProject Project { get; }
         public ObservableCollection<CharacterDialogVM> Speech { get; } = new ObservableCollection<CharacterDialogVM>();
+        public IReadOnlyCollection<string> EvaluationContainers => EvaluationContainerTypeStore.ContainerNames;
         public DialogTreeBranch DialogTree { get; }
 
         public int NewDialogCharacterId

@@ -6,17 +6,12 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using NpcChatSystem.Annotations;
-using NpcChatSystem.Branching.Conditions;
 
-namespace NpcChatSystem.Branching.EvaluationContainers
+namespace NpcChatSystem.Branching.Conditions
 {
-    public abstract class AbstractEvaluationContainer : IEvaluationContainer
+    public abstract class AbstractCondition : ICondition, INotifyPropertyChanged
     {
-        public virtual string EvaluatorName => GetType().FullName;
-        public int Priority { get; set; } = 100;
-        public EvaluationType ComparisonType { get; set; }
-
-        public abstract bool Evaluate(int level);
+        public abstract bool Evaluate();
 
         public event PropertyChangedEventHandler PropertyChanged;
 

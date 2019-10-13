@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Runtime.CompilerServices;
 using NpcChatSystem.Annotations;
 using NpcChatSystem.Branching.Conditions;
@@ -12,14 +13,15 @@ namespace NpcChatSystem.Branching.EvaluationContainers
     /// <summary>
     /// Simple evaluator which takes multiple <see cref="ICondition"/> and checks each one according to the <see cref="AbstractEvaluationContainer.ComparisonType"/>
     /// </summary>
+    [Export(typeof(IEvaluationContainer))]
     public class SimpleEvaluationContainer : AbstractEvaluationContainer
     {
+        public override string EvaluatorName => "Simple";
         public IReadOnlyList<ICondition> Conditions => m_conditions;
-
 
         private readonly List<ICondition> m_conditions = new List<ICondition>();
 
-        internal SimpleEvaluationContainer()
+        public SimpleEvaluationContainer()
         {
 
         }

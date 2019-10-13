@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 using NpcChatSystem.Data.Dialog.DialogParts;
+using NpcChatSystem.System.TypeStore.Stores;
 
 namespace NpcChatSystem.System.TypeStore
 {
@@ -13,11 +14,11 @@ namespace NpcChatSystem.System.TypeStore
     /// Data attribute used to markup <see cref="IDialogElement"/> for <see cref="DialogTypeStore"/> to use when showing a list of all possible dialog options
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public sealed class DialogElementNameAttribute : Attribute
+    public sealed class NiceTypeNameAttribute : Attribute
     {
         public string Name { get; }
 
-        public DialogElementNameAttribute(string name)
+        public NiceTypeNameAttribute(string name)
         {
             Name = name;
         }

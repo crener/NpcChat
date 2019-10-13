@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime;
 using System.Windows;
+using NpcChatSystem.System;
+using NpcChatSystem.System.TypeStore;
 
 namespace NpcChat
 {

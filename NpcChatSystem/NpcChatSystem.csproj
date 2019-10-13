@@ -50,14 +50,25 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.7\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Branching\Conditions\AbstractCondition.cs" />
     <Compile Include="Branching\Conditions\ICondition.cs" />
+    <Compile Include="Branching\Conditions\StartCondition.cs" />
     <Compile Include="Branching\EvaluationContainers\AbstractEvaluationContainer.cs" />
     <Compile Include="Branching\EvaluationContainers\LeveledEvaluationContainer.cs" />
     <Compile Include="Data\Character\Character.cs" />
@@ -80,9 +91,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System\CharacterStore.cs" />
     <Compile Include="System\DialogManager.cs" />
-    <Compile Include="System\TypeStore\DialogElementNameAttribute.cs" />
-    <Compile Include="System\TypeStore\DialogTypeStore.cs" />
+    <Compile Include="System\TypeStore\Stores\EvaluationContainerTypeStore.cs" />
+    <Compile Include="Utilities\Logging.cs" />
+    <Compile Include="System\TypeStore\MasterTypeStore.cs" />
+    <Compile Include="System\TypeStore\BaseTypeStore.cs" />
+    <Compile Include="System\TypeStore\NiceTypeNameAttribute.cs" />
+    <Compile Include="System\TypeStore\Stores\DialogTypeStore.cs" />
     <Compile Include="System\StoryElementManager.cs" />
+    <Compile Include="System\TypeStore\ITypeStore.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

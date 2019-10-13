@@ -11,7 +11,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
     /// Information about a particular character
     /// For example the name or a trait value
     /// </summary>
-    [DebuggerDisplay("{Text}"), Export(typeof(IDialogElement)), DialogElementName(c_elementName)]
+    [DebuggerDisplay("{Text}"), Export(typeof(IDialogElement)), NiceTypeName(c_elementName)]
     public class DialogCharacterTrait : ProjectNotificationObject, IDialogElement
     {
         private const string c_elementName = "Character Trait";
@@ -43,7 +43,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
             {
                 m_characterId = value;
 
-                Character? character = m_project.ProjectCharacters[CharacterId];
+                Character? character = m_project?.ProjectCharacters[CharacterId];
                 if(character.HasValue)
                 {
                     CharacterProperties = character.Value.TraitNames;
