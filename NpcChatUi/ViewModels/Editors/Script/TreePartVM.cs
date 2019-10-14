@@ -58,8 +58,8 @@ namespace NpcChat.ViewModels.Editors.Script
                     IEvaluationContainer container = DialogTree?.BranchCondition;
                     if(container == null && DialogTree != null)
                     {
-                        m_evaluationCache = EvaluationContainers.First();
-                        DialogTree.BranchCondition = EvaluationContainerTypeStore.Instance.CreateEntity(SimpleEvaluationContainer.);
+                        m_evaluationCache = SimpleEvaluationContainer.Name;
+                        DialogTree.BranchCondition = EvaluationContainerTypeStore.Instance.CreateEntity(m_evaluationCache);
                     }
                     else
                     {

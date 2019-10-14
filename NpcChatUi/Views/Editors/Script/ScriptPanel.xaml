@@ -32,7 +32,8 @@
                             <StackPanel Margin="3">
                                 <TextBox Text="{Binding DialogTree.Name}"/>
 
-                                <Expander IsExpanded="True" Header="Conditions">
+                                <Expander IsExpanded="False" Header="Branch Selection Conditions" Foreground="{DynamicResource ButtonText}"
+                                          ToolTip="Conditions which will be checked when searching for the next branch to present to the user when multiple branches are available">
                                     <StackPanel>
                                         <StackPanel Orientation="Horizontal">
                                             <Label Content="Evaluation Type "/>
@@ -51,7 +52,7 @@
                                     </StackPanel>
                                 </Expander>
 
-                                <ListView ItemsSource="{Binding Speech}" Margin="5" SelectionMode="Single" ItemContainerStyle="{StaticResource DialogSubtleHighlightListBoxItem}" 
+                                <ListView ItemsSource="{Binding Speech}" Margin="5,0" SelectionMode="Single" ItemContainerStyle="{StaticResource DialogSubtleHighlightListBoxItem}" 
                                               ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="false" HorizontalContentAlignment="Stretch">
                                     <i:Interaction.Behaviors>
                                         <behaviour:ScrollParentWhenAtMax />
