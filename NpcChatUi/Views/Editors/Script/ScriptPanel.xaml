@@ -42,8 +42,7 @@
                                             <ComboBox ItemsSource="{Binding EvaluationContainers}" 
                                                       SelectedValue="{Binding UsedEvaluationContainer}"/>
                                         </StackPanel>
-                                        <xctk:PropertyGrid 
-                                            SelectedObject="{Binding DialogTree.BranchCondition}"
+                                        <xctk:PropertyGrid SelectedObject="{Binding DialogTree.BranchCondition}"
                                             ShowPreview="False"
                                             ShowTitle="False"
                                             ShowAdvancedOptions="False"
@@ -75,23 +74,29 @@
                                     <Button Command="{Binding AddNewDialogCommand}" Content="Add" Margin="8,0,0,0"/>
                                 </StackPanel>
 
-                                <!-- Next branch Settings -->
-                                <Separator/>
+                                <!-- Next branch Options -->
+                                <Separator Name="BranchSeparator"/>
                                 <Label>Possible next branches</Label>
-                                <ListBox ItemsSource="{Binding BranchOptions}" SelectionMode="Single" SelectedIndex="{Binding VisibleBranchIndex}" Name="BranchesList">
+                                <ListBox ItemsSource="{Binding BranchOptions}" SelectionMode="Single" SelectedIndex="{Binding VisibleBranchIndex}">
                                     <ListBox.Resources>
                                         <DataTemplate DataType="{x:Type util:TreeBranchLinkInfoVM}">
-                                            <Button Content="{Binding ChildName}" Command="{Binding RebaseScriptView}" Height="27"/>
+                                            <Button Content="{Binding ChildName}" Command="{Binding RebaseScriptView}"/>
                                         </DataTemplate>
                                     </ListBox.Resources>
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <WrapPanel>
+                                            <WrapPanel Width="{Binding ElementName=BranchSeparator, Path=ActualWidth}">
                                             </WrapPanel>
                                         </ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
                                 </ListBox>
-                                <Button Command="{Binding CreateNewBranchChildCommand}" CommandParameter="{Binding DialogTree.Id}" Content="Insert New Branch" Margin="5,3" />
+                                <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                    <!-- todo add available branches for addition in the tree branch -->
+                                    <!--<ComboBox></ComboBox>-->
+                                    <!--<Button Command="{Binding CreateNewBranchChildCommand}" CommandParameter="{Binding DialogTree.Id}" Content="Link Existing Branch"/>-->
+                                    <!--<Separator Style="{DynamicResource VerticalSeparatorStyle}" Margin="3,0"/>-->
+                                    <Button Command="{Binding CreateNewBranchChildCommand}" CommandParameter="{Binding DialogTree.Id}" Content="Insert New Branch" />
+                                </StackPanel>
                             </StackPanel>
                         </Border>
                     </DataTemplate>

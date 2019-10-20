@@ -162,6 +162,10 @@
     </Compile>
     <Compile Include="Views\Utility\Behaviour\IgnoreMouseWheelBehaviour.cs" />
     <Compile Include="Views\Utility\Behaviour\ScrollParentWhenAtMax.cs" />
+    <Page Include="Style\BasicStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Style\DialogEditorElementViewStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -242,7 +246,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
-    <Folder Include="Views\ResourceDirectories\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
