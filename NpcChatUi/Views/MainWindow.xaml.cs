@@ -15,13 +15,13 @@ namespace NpcChat.Views
     {
         private WindowViewModel m_viewModel { get; }
 
+        private string WorkspaceLocation => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NpcChat", "workspace.xml");
+
         public MainWindow()
         {
             DataContext = m_viewModel = new WindowViewModel();
             InitializeComponent();
         }
-
-        private string WorkspaceLocation => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NpcChat", "workspace.xml");
 
         private void SaveLayout(object sender, RoutedEventArgs e)
         {
