@@ -54,6 +54,11 @@ namespace NpcChatSystem.Identifiers
             return Equals((DialogTreeIdentifier)obj);
         }
 
+        public override string ToString()
+        {
+            return $"T{DialogTreeId}";
+        }
+
         public override int GetHashCode()
         {
             return DialogTreeId;
@@ -116,6 +121,11 @@ namespace NpcChatSystem.Identifiers
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
             return Equals((DialogTreeBranchIdentifier)obj);
+        }
+
+        public override string ToString()
+        {
+            return $"{base.ToString()}.B{DialogTreeBranchId}";
         }
 
         public override int GetHashCode()
@@ -183,6 +193,11 @@ namespace NpcChatSystem.Identifiers
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
             return Equals((DialogSegmentIdentifier)obj);
+        }
+
+        public override string ToString()
+        {
+            return $"{base.ToString()}.S{DialogSegmentId}";
         }
 
         public override int GetHashCode()

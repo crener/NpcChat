@@ -9,6 +9,7 @@
              xmlns:script="clr-namespace:NpcChat.ViewModels.Editors.Script"
              xmlns:reusable="clr-namespace:NpcChat.Views.Reusable"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:util="clr-namespace:NpcChat.ViewModels.Editors.Script.Util"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <ScrollViewer Margin="5">
@@ -27,11 +28,12 @@
                     <behaviour:ScrollParentWhenAtMax />
                 </i:Interaction.Behaviors>
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="script:TreePartVM">
+                    <DataTemplate DataType="script:TreeBranchVM">
                         <Border BorderBrush="{DynamicResource BranchBoarder}" BorderThickness="1">
                             <StackPanel Margin="3">
-                                <TextBox Text="{Binding DialogTree.Name}"/>
+                                <TextBox Text="{Binding DialogTree.Name}" FontWeight="Bold"/>
 
+                                <!-- Branch selection conditions -->
                                 <Expander IsExpanded="False" Header="Branch Selection Conditions" Foreground="{DynamicResource ButtonText}"
                                           ToolTip="Conditions which will be checked when searching for the next branch to present to the user when multiple branches are available">
                                     <StackPanel>
@@ -52,6 +54,7 @@
                                     </StackPanel>
                                 </Expander>
 
+                                <!-- Dialog inside branch -->
                                 <ListView ItemsSource="{Binding Speech}" Margin="5,0" SelectionMode="Single" ItemContainerStyle="{StaticResource DialogSubtleHighlightListBoxItem}" 
                                               ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="false" HorizontalContentAlignment="Stretch">
                                     <i:Interaction.Behaviors>
@@ -65,11 +68,30 @@
                                     </ListView.Resources>
                                 </ListView>
 
+                                <!-- New Dialog -->
                                 <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
                                     <Label Content="Add new dialog for " VerticalAlignment="Center"/>
                                     <reusable:CharacterSelector SelectedCharacter="{Binding NewDialogCharacterId}"/>
                                     <Button Command="{Binding AddNewDialogCommand}" Content="Add" Margin="8,0,0,0"/>
                                 </StackPanel>
+
+                                <!-- Next branch Settings -->
+                                <Separator/>
+                                <Label>Possible next branches</Label>
+                                <ListBox ItemsSource="{Binding BranchOptions}" SelectionMode="Single" SelectedIndex="{Binding VisibleBranchIndex}" Name="BranchesList">
+                                    <ListBox.Resources>
+                                        <DataTemplate DataType="{x:Type util:TreeBranchLinkInfoVM}">
+                                            <Button Content="{Binding ChildName}" Command="{Binding RebaseScriptView}" Height="27"/>
+                                        </DataTemplate>
+                                    </ListBox.Resources>
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel>
+                                            </WrapPanel>
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                </ListBox>
+                                <Button Command="{Binding CreateNewBranchChildCommand}" CommandParameter="{Binding DialogTree.Id}" Content="Insert New Branch" Margin="5,3" />
                             </StackPanel>
                         </Border>
                     </DataTemplate>
@@ -82,7 +104,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!--<Button Grid.Column="0" Margin="5,3">Add Dialog</Button>-->
-                <Button Grid.Column="0" Margin="5,3">Add Branch</Button>
+                <Button Grid.Column="0" Margin="5,3" Command="{Binding NewBranchCommand}">Add Branch</Button>
             </Grid>
         </StackPanel>
     </ScrollViewer>

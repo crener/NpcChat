@@ -135,7 +135,8 @@
     <Compile Include="Util\NotificationObject.cs" />
     <Compile Include="ViewModels\Editors\Script\CharacterDialogVM.cs" />
     <Compile Include="ViewModels\Editors\Script\ScriptPanelVM.cs" />
-    <Compile Include="ViewModels\Editors\Script\TreePartVM.cs" />
+    <Compile Include="ViewModels\Editors\Script\TreeBranchVM.cs" />
+    <Compile Include="ViewModels\Editors\Script\Util\TreeBranchLinkInfoVM.cs" />
     <Compile Include="ViewModels\Editors\Tree\Nodes\BaseNodeModel.cs" />
     <Compile Include="ViewModels\Base\DockPanelVM.cs" />
     <Compile Include="ViewModels\WindowViewModel.cs" />

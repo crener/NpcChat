@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using NpcChatSystem.Branching.EvaluationContainers;
 using NpcChatSystem.Data.CharacterData;
@@ -11,6 +12,7 @@ namespace NpcChatSystem.Data.Dialog
     /// <summary>
     /// A section of dialog between between multiple <see cref="Character"/>s within part of the <see cref="DialogTree"/>
     /// </summary>
+    [DebuggerDisplay("{Name}")]
     public class DialogTreeBranch : ProjectNotificationObject
     {
         public static readonly Random Rand = new Random();
@@ -60,6 +62,10 @@ namespace NpcChatSystem.Data.Dialog
 
         public event Action<DialogSegmentIdentifier> OnDialogCreated;
         public event Action<DialogSegmentIdentifier> OnDialogDestroyed;
+        public event Action<DialogTreeBranchIdentifier> OnBranchParentAdded;
+        public event Action<DialogTreeBranchIdentifier> OnBranchChildAdded;
+        public event Action<DialogTreeBranchIdentifier> OnBranchParentRemoved;
+        public event Action<DialogTreeBranchIdentifier> OnBranchChildRemoved;
 
         private string m_name = "New Tree Branch";
         private IEvaluationContainer m_branchCondition = null;
@@ -94,25 +100,51 @@ namespace NpcChatSystem.Data.Dialog
             return id;
         }
 
-        public bool AddChild(DialogTreeBranchIdentifier id)
+        public bool AddChild(DialogTreeBranchIdentifier childId)
         {
-            if(m_children.Contains(id)) return false;
-            if(this.Id == id) return false;
+            if (m_children.Contains(childId)) return false;
+            if (Id == childId) return false;
+            if (!m_project.ProjectDialogs.HasDialog(childId)) return false;
 
-            m_children.Add(id);
-            m_project[id].m_parents.Add(this.Id);
+            m_children.Add(childId);
+            m_project[childId].AddParent(Id);
 
+            OnBranchChildAdded?.Invoke(childId);
             return true;
         }
 
-        public bool AddParent(DialogTreeBranchIdentifier id)
+        public bool RemoveChild(DialogTreeBranchIdentifier childId)
         {
-            if(m_parents.Contains(id)) return false;
-            if (this.Id == id) return false;
+            if (!m_children.Contains(childId)) return false;
 
-            m_project[id].m_children.Add(this.Id);
-            m_parents.Add(id);
+            m_children.Remove(childId);
+            m_project[childId].RemoveParent(Id);
 
+            OnBranchChildRemoved?.Invoke(childId);
+            return true;
+        }
+
+        public bool AddParent(DialogTreeBranchIdentifier parentId)
+        {
+            if (m_parents.Contains(parentId)) return false;
+            if (this.Id == parentId) return false;
+            if (!m_project.ProjectDialogs.HasDialog(parentId)) return false;
+
+            m_parents.Add(parentId);
+            m_project[parentId].AddChild(Id);
+
+            OnBranchParentAdded?.Invoke(parentId);
+            return true;
+        }
+
+        public bool RemoveParent(DialogTreeBranchIdentifier id)
+        {
+            if (!m_parents.Contains(id)) return false;
+
+            m_parents.Remove(id);
+            m_project[id].RemoveChild(Id);
+
+            OnBranchParentRemoved?.Invoke(id);
             return true;
         }
 

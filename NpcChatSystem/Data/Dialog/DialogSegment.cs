@@ -24,7 +24,6 @@ namespace NpcChatSystem.Data.Dialog
 
         /// <summary>
         /// Who is expressing this dialog?
-        /// Id of the character
         /// </summary>
         public int CharacterId
         {
@@ -73,6 +72,16 @@ namespace NpcChatSystem.Data.Dialog
             m_dialogParts.Add(element);
         }
 
+        public void RemoveDialogElement(IDialogElement element)
+        {
+            m_dialogParts.Remove(element);
+        }
+
+        public void ClearElements()
+        {
+            m_dialogParts.Clear();
+        }
+
         private void PartsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
@@ -86,7 +95,7 @@ namespace NpcChatSystem.Data.Dialog
 
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                foreach (object item in e.NewItems)
+                foreach (object item in e.OldItems)
                 {
                     IDialogElement element = item as IDialogElement;
                     if (element != null) element.PropertyChanged -= PartChanged;
