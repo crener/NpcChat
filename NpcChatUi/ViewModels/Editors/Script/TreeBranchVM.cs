@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using NpcChat.Backend.Interfaces;
 using NpcChat.Properties;
 using NpcChat.Util;
 using NpcChat.ViewModels.Editors.Script.Util;
@@ -13,6 +14,7 @@ using NpcChatSystem;
 using NpcChatSystem.Branching.EvaluationContainers;
 using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
+using NpcChatSystem.Data.Util;
 using NpcChatSystem.Identifiers;
 using NpcChatSystem.System.TypeStore.Stores;
 using NpcChatSystem.Utilities;
@@ -95,35 +97,57 @@ namespace NpcChat.ViewModels.Editors.Script
             }
         }
 
-        public ObservableCollection<TreeBranchLinkInfoVM> BranchOptions { get; } = new ObservableCollection<TreeBranchLinkInfoVM>();
-        public int VisibleBranchIndex
+        /// <summary>
+        /// The branches which are linked to this branch
+        /// </summary>
+        public ObservableCollection<TreeBranchLinkInfoVM> BranchLinks { get; } = new ObservableCollection<TreeBranchLinkInfoVM>();
+        public int VisibleBranchLinkIndex
         {
-            get => m_visibleBranchIndex;
+            get => m_visibleBranchLinkIndex;
             set
             {
-                if(m_visibleBranchIndex == value) return;
+                if (m_visibleBranchLinkIndex == value) return;
 
-                m_visibleBranchIndex = value;
+                m_visibleBranchLinkIndex = value;
 
-                BranchOptions[m_visibleBranchIndex].RebaseScriptView.Execute(m_script.Branches);
-                VisibleBranchesChanged(m_script.Branches);
-                RaisePropertyChanged(nameof(VisibleBranchIndex));
+                BranchLinks[m_visibleBranchLinkIndex].RebaseScriptView.Execute(m_script.Branches);
+                ScriptVisibleBranchesChanged(m_script.Branches);
+                RaisePropertyChanged(nameof(VisibleBranchLinkIndex));
             }
         }
 
+        /// <summary>
+        /// Branches which could be linked to the branch
+        /// </summary>
+        public ObservableCollection<DialogTreeBranch> PotentialBranchLinks { get; } = new ObservableCollection<DialogTreeBranch>();
+        public bool AreBranchLinksPossible => PotentialBranchLinks.Any();
+        public int SelectedBranchLinkIndex
+        {
+            get => m_selectedBranchLinkIndex;
+            set
+            {
+                m_selectedBranchLinkIndex = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private DialogTree m_tree => Project[(DialogTreeIdentifier)DialogTree];
+
         // commands
         public ICommand AddNewDialogCommand { get; }
-        public ICommand CreateNewBranchChildCommand { get; }
+        public ICommand InsertBranchCommand { get; }
+        public ICommand LinkBranchCommand { get; }
 
-        private ScriptPanelVM m_script;
+        private IScriptPanelVM m_script;
         private int? m_newDialogCharacterId = null;
         private string m_evaluationCacheName = null;
-        private int m_visibleBranchIndex = -1;
+        private int m_visibleBranchLinkIndex = -1;
+        private int m_selectedBranchLinkIndex;
 
-        public TreeBranchVM(NpcChatProject project, ScriptPanelVM script, [NotNull] DialogTreeBranchIdentifier dialogTreeId)
+        public TreeBranchVM(NpcChatProject project, IScriptPanelVM script, [NotNull] DialogTreeBranchIdentifier dialogTreeId)
             : this(project, script, project[dialogTreeId]) { }
 
-        public TreeBranchVM(NpcChatProject project, ScriptPanelVM script, [NotNull] DialogTreeBranch dialogTree)
+        public TreeBranchVM(NpcChatProject project, IScriptPanelVM script, [NotNull] DialogTreeBranch dialogTree)
         {
             Project = project;
             DialogTree = dialogTree;
@@ -146,33 +170,69 @@ namespace NpcChat.ViewModels.Editors.Script
                 //add existing branching options
                 foreach (DialogTreeBranchIdentifier child in DialogTree.Children)
                 {
-                    BranchOptions.Add(CreateTreeBranchLink(child));
+                    BranchLinks.Add(CreateTreeBranchLink(child));
+                }
+
+                if (m_tree != null)
+                {
+                    m_tree.OnBranchCreated += branch =>
+                    {
+                        if (!m_tree.CheckForCircularDependency(DialogTree.Id, branch))
+                            PotentialBranchLinks.Add(branch);
+                    };
                 }
             }
 
-            DialogTree.OnBranchChildAdded += (id) => BranchLinksChanged(id, true);
-            DialogTree.OnBranchChildRemoved += (id) => BranchLinksChanged(id, false);
+            DialogTree.OnBranchChildAdded += (id) =>
+            {
+                BranchLinksChanged(id, true);
+                CheckPotentialBranchLink(id);
+            };
+            DialogTree.OnBranchChildRemoved += (id) =>
+            {
+                BranchLinksChanged(id, false);
+                CheckPotentialBranchLink(id);
+            };
+            DialogTree.OnBranchParentAdded += id => { CheckBranchCompatability(); };
+            DialogTree.OnBranchParentRemoved += id => { CheckBranchCompatability(); };
 
             AddNewDialogCommand = new DelegateCommand(() =>
-            {
-                DialogTree.CreateNewDialog(NewDialogCharacterId);
-            }, () => NewDialogCharacterId != CharacterId.DefaultId);
+                {
+                    DialogTree.CreateNewDialog(NewDialogCharacterId);
+                }, () => NewDialogCharacterId != CharacterId.DefaultId);
 
-            CreateNewBranchChildCommand = new DelegateCommand(() =>
-            {
-                m_script.AddNewBranch(DialogTree.Id, true);
-            });
+            script.OnVisibleBranchChange += ScriptVisibleBranchesChanged;
 
-            script.OnVisibleBranchChange += VisibleBranchesChanged;
+            {
+                //Possible pre existing branch links
+                CheckBranchCompatability();
+
+                PotentialBranchLinks.CollectionChanged += (sender, args) =>
+                {
+                    if (PotentialBranchLinks.Count == 1) SelectedBranchLinkIndex = 0;
+                    else if (PotentialBranchLinks.Count == 0) SelectedBranchLinkIndex = -1;
+                    RaisePropertyChanged(nameof(AreBranchLinksPossible));
+                };
+
+                LinkBranchCommand = new DelegateCommand<DialogTreeBranch>((link) =>
+                {
+                    DialogTree.AddChild(link);
+                    PotentialBranchLinks.Remove(link);
+                });
+                InsertBranchCommand = new DelegateCommand(() =>
+                {
+                    m_script.AddNewBranch(DialogTree.Id, true);
+                });
+            }
         }
 
         /// <summary>
         /// Update the selected branch index 
         /// </summary>
         /// <param name="branches">collection of active tree branches</param>
-        private void VisibleBranchesChanged(IReadOnlyList<TreeBranchVM> branches)
+        private void ScriptVisibleBranchesChanged(IReadOnlyList<TreeBranchVM> branches)
         {
-            if(!branches.Contains(this)) return;
+            if (!branches.Contains(this)) return;
 
             int activeIndex = -1;
             for (int i = 0; i < branches.Count; i++)
@@ -183,9 +243,9 @@ namespace NpcChat.ViewModels.Editors.Script
                     if (i + 1 < branches.Count)
                     {
                         DialogTreeBranchIdentifier treeId = branches[i + 1].DialogTree.Id;
-                        for (int l = 0; l < BranchOptions.Count; l++)
+                        for (int l = 0; l < BranchLinks.Count; l++)
                         {
-                            TreeBranchLinkInfoVM treeBranchLinkInfoVM = BranchOptions[l];
+                            TreeBranchLinkInfoVM treeBranchLinkInfoVM = BranchLinks[l];
                             if (treeBranchLinkInfoVM.Child == treeId)
                             {
                                 activeIndex = l;
@@ -197,22 +257,47 @@ namespace NpcChat.ViewModels.Editors.Script
                 }
             }
 
-            VisibleBranchIndex = activeIndex;
+            VisibleBranchLinkIndex = activeIndex;
         }
 
         private void BranchLinksChanged(DialogTreeBranchIdentifier id, bool added)
         {
             if (added)
             {
-                BranchOptions.Add(CreateTreeBranchLink(id));
+                BranchLinks.Add(CreateTreeBranchLink(id));
             }
             else
             {
-                for (int i = 0; i < BranchOptions.Count; i++)
+                for (int i = 0; i < BranchLinks.Count; i++)
                 {
-                    TreeBranchLinkInfoVM linkInfo = BranchOptions[i];
-                    if (id == linkInfo.Child) BranchOptions.Remove(linkInfo);
+                    TreeBranchLinkInfoVM linkInfo = BranchLinks[i];
+                    if (id == linkInfo.Child) BranchLinks.Remove(linkInfo);
                 }
+            }
+        }
+
+        private void CheckBranchCompatability()
+        {
+            foreach (DialogTreeBranchIdentifier dialog in m_tree.Branches)
+            {
+                CheckPotentialBranchLink(dialog);
+            }
+        }
+
+        private void CheckPotentialBranchLink(DialogTreeBranchIdentifier id)
+        {
+            DialogTree tree = Project[DialogTree.Id as DialogTreeIdentifier];
+            bool circle = tree.CheckForCircularDependency(DialogTree.Id, id);
+
+            if (circle || BranchLinks.Any(s => s.Child == id))
+            {
+                PotentialBranchLinks.Remove(tree[id]);
+            }
+            else
+            //else if (!PotentialBranchLinks.Contains(tree[id]))
+            //            PotentialBranchLinks.Add(Project[id]);
+            {
+                PotentialBranchLinks.Add(tree[id]);
             }
         }
 

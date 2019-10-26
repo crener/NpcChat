@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NpcChat.Backend.Interfaces;
 using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
@@ -23,7 +24,7 @@ namespace NpcChat.ViewModels.Editors.Script.Util
 
         private NpcChatProject m_project { get; }
 
-        public TreeBranchLinkInfoVM(NpcChatProject project, ScriptPanelVM script,
+        public TreeBranchLinkInfoVM(NpcChatProject project, IScriptPanelVM script,
             DialogTreeBranchIdentifier parent, DialogTreeBranchIdentifier child)
         {
             m_project = project;

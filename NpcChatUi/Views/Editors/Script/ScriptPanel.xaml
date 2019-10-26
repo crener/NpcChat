@@ -10,8 +10,13 @@
              xmlns:reusable="clr-namespace:NpcChat.Views.Reusable"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:util="clr-namespace:NpcChat.ViewModels.Editors.Script.Util"
+             xmlns:converters="clr-namespace:NpcChat.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+    </UserControl.Resources>
+
     <ScrollViewer Margin="5">
         <StackPanel >
             <!--<Grid VerticalAlignment="Top" Height="26">
@@ -77,7 +82,7 @@
                                 <!-- Next branch Options -->
                                 <Separator Name="BranchSeparator"/>
                                 <Label>Possible next branches</Label>
-                                <ListBox ItemsSource="{Binding BranchOptions}" SelectionMode="Single" SelectedIndex="{Binding VisibleBranchIndex}">
+                                <ListBox ItemsSource="{Binding BranchLinks}" SelectionMode="Single" SelectedIndex="{Binding VisibleBranchLinkIndex}">
                                     <ListBox.Resources>
                                         <DataTemplate DataType="{x:Type util:TreeBranchLinkInfoVM}">
                                             <Button Content="{Binding ChildName}" Command="{Binding RebaseScriptView}"/>
@@ -90,12 +95,14 @@
                                         </ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
                                 </ListBox>
+
                                 <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
-                                    <!-- todo add available branches for addition in the tree branch -->
-                                    <!--<ComboBox></ComboBox>-->
-                                    <!--<Button Command="{Binding CreateNewBranchChildCommand}" CommandParameter="{Binding DialogTree.Id}" Content="Link Existing Branch"/>-->
-                                    <!--<Separator Style="{DynamicResource VerticalSeparatorStyle}" Margin="3,0"/>-->
-                                    <Button Command="{Binding CreateNewBranchChildCommand}" CommandParameter="{Binding DialogTree.Id}" Content="Insert New Branch" />
+                                    <ComboBox ItemsSource="{Binding PotentialBranchLinks}" Name="LinkBranchCombo" DisplayMemberPath="Name" SelectedIndex="{Binding SelectedBranchLinkIndex}"
+                                              Visibility="{Binding AreBranchLinksPossible, Converter={StaticResource BooleanToVisibility}}"/>
+                                    <Button Command="{Binding LinkBranchCommand}" CommandParameter="{Binding ElementName=LinkBranchCombo, Path=SelectedValue}" Content="Link" Visibility="{Binding AreBranchLinksPossible, Converter={StaticResource BooleanToVisibility}}"/>
+                                    <Separator Style="{DynamicResource VerticalSeparatorStyle}" Margin="3,0" Visibility="{Binding AreBranchLinksPossible, Converter={StaticResource BooleanToVisibility}}"/>
+
+                                    <Button Command="{Binding InsertBranchCommand}" Content="Insert New Branch" />
                                 </StackPanel>
                             </StackPanel>
                         </Border>

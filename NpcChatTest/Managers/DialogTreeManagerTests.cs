@@ -48,16 +48,16 @@ namespace NpcChatTest.Managers
 
             bool created = false, destroyed = false;
 
-            tree.BranchCreated += newBranch => created = true;
-            tree.BranchRemoved += newBranch => destroyed = true;
+            tree.OnBranchCreated += newBranch => created = true;
+            tree.OnBranchRemoved += newBranch => destroyed = true;
 
             DialogTreeBranch branch = tree.CreateNewBranch();
             Assert.NotNull(branch);
-            Assert.IsTrue(created, $"Failed to call '{nameof(tree.BranchCreated)}' callback");
+            Assert.IsTrue(created, $"Failed to call '{nameof(tree.OnBranchCreated)}' callback");
 
             bool removeReported = tree.RemoveBranch(branch);
             Assert.IsTrue(removeReported);
-            Assert.IsTrue(destroyed, $"Failed to call '{nameof(tree.BranchRemoved)}' callback");
+            Assert.IsTrue(destroyed, $"Failed to call '{nameof(tree.OnBranchRemoved)}' callback");
         }
 
         [Test]

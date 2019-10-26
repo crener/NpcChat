@@ -80,6 +80,7 @@
     <Compile Include="Data\Dialog\DialogParts\IDialogElement.cs" />
     <Compile Include="Branching\EvaluationContainers\IEvaluationContainer.cs" />
     <Compile Include="Branching\EvaluationContainers\SimpleEvaluationContainer.cs" />
+    <Compile Include="Data\Util\DialogUtilities.cs" />
     <Compile Include="Identifiers\DialogIdentifiers.cs" />
     <Compile Include="Data\Dialog\DialogTreeBranch.cs" />
     <Compile Include="Data\StoryElement.cs" />

@@ -130,6 +130,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Backend\CurrentProject.cs" />
+    <Compile Include="Backend\Interfaces\IScriptPanelVM.cs" />
+    <Compile Include="Converters\TreeBranchNameConverter.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Util\DependencyNotificationObject.cs" />

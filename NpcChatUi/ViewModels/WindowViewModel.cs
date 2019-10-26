@@ -33,7 +33,7 @@ namespace NpcChat.ViewModels
             {
                 m_tree = m_project.ProjectDialogs.CreateNewDialogTree();
                 //SetDialogTree(m_tree.Id);
-                DialogTreeBranch branch = m_tree.GetStart();
+                /*DialogTreeBranch branch = m_tree.GetStart();
                 branch.Name = "Start";
 
                 DialogSegment segment = branch.CreateNewDialog(diane);
@@ -43,7 +43,7 @@ namespace NpcChat.ViewModels
                 branch.Name = "First Branch";
                 //Branches.Add(new TreePartVM(m_project, branch));
                 DialogSegment segment3 = branch.CreateNewDialog(gran);
-                DialogSegment segment4 = branch.CreateNewDialog(banana);
+                DialogSegment segment4 = branch.CreateNewDialog(banana);*/
             }
 
             Windows = new ObservableCollection<DockPanelVM>();

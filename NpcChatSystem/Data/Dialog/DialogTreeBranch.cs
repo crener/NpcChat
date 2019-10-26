@@ -40,7 +40,7 @@ namespace NpcChatSystem.Data.Dialog
         /// <summary>
         /// Determines the order that branches are evaluated in
         /// </summary>
-        public int BranchEvaluationPriority => BranchCondition.Priority;
+        public int BranchEvaluationPriority => BranchCondition?.Priority ?? 0;
 
         public IReadOnlyList<DialogTreeBranchIdentifier> Children => m_children.ToList();
         public IReadOnlyList<DialogTreeBranchIdentifier> Parents => m_parents.ToList();

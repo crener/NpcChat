@@ -71,7 +71,7 @@ namespace NpcChat.Views.Dialogs
             string title = $"Unhandled Exception: '{(m_exception.ToString().Split('\n')[0])}'";
             string body = "Please add any any steps needed to get the error you experienced here!\n\n\n\n" +
                           "---------------------------\n" +
-                          "Please leave the following text as is since it will give vital information needed to fix the issue.\n" +
+                          "Please leave the following text as is since it will give vital information needed to fix the issue.\n\n" +
                           $"{m_exception}\n" +
                           $"Terminal Exception: {(m_unhandledArgs.IsTerminating ? "Yes" : "No")}";
             string url = $"https://github.com/crener/NpcChat/issues/new?title={title}&body={HttpUtility.UrlEncode(body)}";

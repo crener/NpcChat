@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using FirstFloor.ModernUI.Presentation;
+using NpcChat.Backend.Interfaces;
 using NpcChat.Util;
 using NpcChat.ViewModels.Base;
 using NpcChatSystem;
@@ -19,14 +21,11 @@ using Prism.Commands;
 
 namespace NpcChat.ViewModels.Editors.Script
 {
-    public class ScriptPanelVM : DockPanelVM
+    public class ScriptPanelVM : DockPanelVM, IScriptPanelVM
     {
         public ObservableCollection<TreeBranchVM> Branches { get; } = new ObservableCollection<TreeBranchVM>();
 
         public ICommand NewBranchCommand { get; }
-        public ICommand CreateNewBranchChildCommand { get; }
-
-        public event Action<IReadOnlyList<TreeBranchVM>> OnVisibleBranchChange;
 
         private NpcChatProject m_project { get; set; }
         private DialogTree m_tree;
@@ -39,12 +38,6 @@ namespace NpcChat.ViewModels.Editors.Script
             if (dialog != null) SetDialogTree(dialog);
 
             NewBranchCommand = new DelegateCommand(() => AddNewBranch(Branches.Last()?.DialogTree?.Id, true));
-            CreateNewBranchChildCommand = new DelegateCommand<DialogTreeBranchIdentifier>(
-                parentId =>
-                {
-                    DialogTreeBranchIdentifier newId = CreateNewBranch(parentId);
-                    RebaseBranchList(parentId, newId);
-                });
         }
 
         /// <summary>
@@ -54,7 +47,7 @@ namespace NpcChat.ViewModels.Editors.Script
         public void SetDialogTree(DialogTreeIdentifier dialogTreeId)
         {
             m_tree = m_project.ProjectDialogs.GetDialog(dialogTreeId);
-            m_tree.BranchCreated += OnBranchCreated;
+            m_tree.OnBranchCreated += OnBranchCreated;
             Branches.Clear();
             Branches.Add(new TreeBranchVM(m_project, this, m_tree.GetStart()));
             OnVisibleBranchChange?.Invoke(Branches);
@@ -142,5 +135,8 @@ namespace NpcChat.ViewModels.Editors.Script
             Branches.Add(new TreeBranchVM(m_project, this, child));
             OnVisibleBranchChange?.Invoke(Branches);
         }
+
+
+        public event Action<IReadOnlyList<TreeBranchVM>> OnVisibleBranchChange;
     }
 }

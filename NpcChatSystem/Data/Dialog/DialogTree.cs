@@ -15,10 +15,12 @@ namespace NpcChatSystem.Data.Dialog
         private static Random s_random = new Random();
 
         public DialogTreeIdentifier Id { get; }
-        private List<DialogTreeBranch> m_branches = new List<DialogTreeBranch>();
+        public IReadOnlyList<DialogTreeBranchIdentifier> Branches => m_branches.Select(b => (DialogTreeBranchIdentifier) b).ToList();
 
-        public event Action<DialogTreeBranch> BranchCreated;
-        public event Action<DialogTreeBranchIdentifier> BranchRemoved;
+        public event Action<DialogTreeBranch> OnBranchCreated;
+        public event Action<DialogTreeBranchIdentifier> OnBranchRemoved;
+
+        private List<DialogTreeBranch> m_branches = new List<DialogTreeBranch>();
 
         internal DialogTree(NpcChatProject project, int id)
             : base(project)
@@ -30,18 +32,25 @@ namespace NpcChatSystem.Data.Dialog
 
         public DialogTreeBranch CreateNewBranch()
         {
+            int id = GenerateId();
+
+            DialogTreeBranch branch = new DialogTreeBranch(m_project, Id, id);
+            m_branches.Add(branch);
+
+            OnBranchCreated?.Invoke(branch);
+
+            return branch;
+        }
+
+        private int GenerateId()
+        {
             int id;
             do
             {
                 id = s_random.Next(1, int.MaxValue);
             } while (m_branches.Any(d => d.Id.DialogTreeId == id));
 
-            DialogTreeBranch branch = new DialogTreeBranch(m_project, Id, id);
-            m_branches.Add(branch);
-
-            BranchCreated?.Invoke(branch);
-
-            return branch;
+            return id;
         }
 
         public bool RemoveBranch(DialogTreeBranchIdentifier id)
@@ -49,7 +58,7 @@ namespace NpcChatSystem.Data.Dialog
             if (!HasTree(id)) return false;
 
             m_branches.Remove(GetBranch(id));
-            BranchRemoved?.Invoke(id);
+            OnBranchRemoved?.Invoke(id);
 
             return true;
         }
@@ -61,7 +70,9 @@ namespace NpcChatSystem.Data.Dialog
 
         public DialogTreeBranchIdentifier GetNextBranch(DialogTreeBranchIdentifier branchId)
         {
+            //todo implement branch evaluation
             throw new NotImplementedException();
+
             /*DialogTreeBranch branchTree = this[branchId];
             List<IGrouping<int, DialogTreeBranch>> depth = branchTree.Children
                 .Select(b => m_project[b])
