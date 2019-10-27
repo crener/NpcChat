@@ -55,10 +55,8 @@ namespace NpcChatSystem.System
         {
             if (dialog.Id.DialogTreeId == CharacterId.DefaultId) return false;
 
-            if (m_dialogs.Contains(dialog))
-            {
+            if (m_dialogs.Contains(dialog)) 
                 m_dialogs.Remove(dialog);
-            }
 
             return true;
         }

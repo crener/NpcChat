@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using NpcChat.Backend.Interfaces;
 using NpcChat.ViewModels.Editors.Script;
+using NpcChat.ViewModels.Editors.Script.Util;
 using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
@@ -29,14 +30,12 @@ namespace NpcChatTestUi.ViewModels.Editors.Script
             TreeBranchVM aBranch = new TreeBranchVM(project, branchTest, a);
             branchTest.Branches.Add(aBranch);
 
-            Assert.IsFalse(aBranch.AreBranchLinksPossible, "Branch links are possible as there are no other branches");
-            Assert.AreEqual(0, aBranch.PotentialBranchLinks.Count);
+            TestBranchPossibility(aBranch);
 
             DialogTreeBranch b = tree.CreateNewBranch();
             b.Name = "B";
 
-            Assert.IsTrue(aBranch.AreBranchLinksPossible);
-            Assert.IsTrue(aBranch.PotentialBranchLinks.Contains(b));
+            TestBranchPossibility(aBranch, b);
         }
 
         [Test]
@@ -57,26 +56,18 @@ namespace NpcChatTestUi.ViewModels.Editors.Script
             DialogTreeBranch b = tree.CreateNewBranch();
             b.Name = "B";
             TreeBranchVM bBranch = new TreeBranchVM(project, branchTest, b);
-            branchTest.Branches.Add(aBranch);
+            branchTest.Branches.Add(bBranch);
 
             //no relation between the branches so all links are possible
-            Assert.IsTrue(aBranch.AreBranchLinksPossible);
-            Assert.IsTrue(aBranch.PotentialBranchLinks.Any(s => s == b));
-            Assert.GreaterOrEqual(0, aBranch.SelectedBranchLinkIndex);
-            Assert.IsTrue(bBranch.AreBranchLinksPossible, "B should be able to add A as a child");
-            Assert.IsTrue(bBranch.PotentialBranchLinks.Any(s => s == a));
-            Assert.GreaterOrEqual(0, bBranch.SelectedBranchLinkIndex);
+            TestBranchPossibility(aBranch, b);
+            TestBranchPossibility(bBranch, a);
 
             // link a to b so that the options for both branches are limited
             RelationshipCreate(a, b);
 
             //A is parent of B so there should be no possible actions
-            Assert.IsFalse(aBranch.AreBranchLinksPossible);
-            Assert.IsFalse(bBranch.AreBranchLinksPossible);
-            Assert.AreEqual(0, aBranch.PotentialBranchLinks.Count);
-            Assert.AreEqual(0, bBranch.PotentialBranchLinks.Count);
-            Assert.Less(aBranch.SelectedBranchLinkIndex, 0);
-            Assert.Less(bBranch.SelectedBranchLinkIndex, 0);
+            TestBranchPossibility(aBranch);
+            TestBranchPossibility(bBranch);
         }
 
         [Test]
@@ -91,8 +82,7 @@ namespace NpcChatTestUi.ViewModels.Editors.Script
             TreeBranchVM aBranch = new TreeBranchVM(project, branchTest, a);
             branchTest.Branches.Add(aBranch);
 
-            Assert.IsFalse(aBranch.AreBranchLinksPossible, "Branch links are possible as there are no other branches");
-            Assert.AreEqual(0, aBranch.PotentialBranchLinks.Count);
+            TestBranchPossibility(aBranch);
 
             DialogTreeBranch b = tree.CreateNewBranch();
             b.Name = "B";
@@ -108,11 +98,8 @@ namespace NpcChatTestUi.ViewModels.Editors.Script
 
             RelationshipCreate(b, c);
 
-            Assert.IsFalse(cBranch.AreBranchLinksPossible, "A and B are parents or indirect parents of C");
-            Assert.AreEqual(0, cBranch.PotentialBranchLinks.Count);
-            Assert.IsTrue(aBranch.AreBranchLinksPossible, "A and B are parents or indirect parents of C");
-            Assert.AreEqual(1, aBranch.PotentialBranchLinks.Count);
-            Assert.IsTrue(aBranch.PotentialBranchLinks.Any(l => l == c));
+            TestBranchPossibility(cBranch);
+            TestBranchPossibility(aBranch, c);
         }
 
         [Test]
@@ -133,40 +120,30 @@ namespace NpcChatTestUi.ViewModels.Editors.Script
             DialogTreeBranch b = tree.CreateNewBranch();
             b.Name = "B";
             TreeBranchVM bBranch = new TreeBranchVM(project, branchTest, b);
-            branchTest.Branches.Add(aBranch);
+            branchTest.Branches.Add(bBranch);
 
             //no relation between the branches so all links are possible
-            Assert.IsTrue(aBranch.AreBranchLinksPossible);
-            Assert.IsTrue(aBranch.PotentialBranchLinks.Any(s => s == b));
-            Assert.IsTrue(bBranch.AreBranchLinksPossible, "B should be able to add A as a child");
-            Assert.IsTrue(bBranch.PotentialBranchLinks.Any(s => s == a));
+            TestBranchPossibility(aBranch, b);
+            TestBranchPossibility(bBranch, a);
 
             // link a to b so that the options for both branches are limited
             RelationshipCreate(a, b);
 
             //A is parent of B so there should be no possible actions
-            Assert.IsFalse(aBranch.AreBranchLinksPossible);
-            Assert.IsFalse(bBranch.AreBranchLinksPossible);
-            Assert.AreEqual(0, aBranch.PotentialBranchLinks.Count);
-            Assert.AreEqual(0, bBranch.PotentialBranchLinks.Count);
+            TestBranchPossibility(aBranch);
+            TestBranchPossibility(bBranch);
 
             RelationshipDestroy(a, b);
 
             //no relation between the branches so all links should be possible
-            Assert.IsTrue(aBranch.AreBranchLinksPossible);
-            Assert.AreEqual(1, aBranch.PotentialBranchLinks.Count);
-            Assert.IsTrue(aBranch.PotentialBranchLinks.Any(s => s == b));
-            Assert.IsTrue(bBranch.AreBranchLinksPossible, "B should be able to add A as a child");
-            Assert.IsTrue(bBranch.PotentialBranchLinks.Any(s => s == a));
-            Assert.AreEqual(1, bBranch.PotentialBranchLinks.Count);
+            TestBranchPossibility(aBranch, b);
+            TestBranchPossibility(bBranch, a);
 
             RelationshipCreate(a, b);
 
             //A is parent of B so there should be no possible actions
-            Assert.IsFalse(aBranch.AreBranchLinksPossible);
-            Assert.IsFalse(bBranch.AreBranchLinksPossible);
-            Assert.AreEqual(0, aBranch.PotentialBranchLinks.Count);
-            Assert.AreEqual(0, bBranch.PotentialBranchLinks.Count);
+            TestBranchPossibility(aBranch);
+            TestBranchPossibility(bBranch);
         }
 
         [Test]
@@ -181,21 +158,81 @@ namespace NpcChatTestUi.ViewModels.Editors.Script
             TreeBranchVM aBranch = new TreeBranchVM(project, branchTest, a);
             branchTest.Branches.Add(aBranch);
 
-            Assert.IsFalse(aBranch.AreBranchLinksPossible, "Branch links are possible as there are no other branches");
-            Assert.AreEqual(0, aBranch.PotentialBranchLinks.Count);
+            TestBranchPossibility(aBranch);
+
+            DialogTreeBranch b = tree.CreateNewBranch();
+            b.Name = "B";
+            RelationshipCreate(a, b);
+
+            TreeBranchVM bBranch = new TreeBranchVM(project, branchTest, b);
+            branchTest.Branches.Add(bBranch);
+
+            //branches already linked so there shouldn't be any possible links
+            TestBranchPossibility(aBranch);
+            TestBranchPossibility(bBranch);
+        }
+
+        [Test]
+        public void PossibleBranchLinkDeleted()
+        {
+            NpcChatProject project = new NpcChatProject();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+            BranchTestScriptView branchTest = new BranchTestScriptView();
+
+            DialogTreeBranch a = tree.GetStart();
+            a.Name = "A";
+            TreeBranchVM aBranch = new TreeBranchVM(project, branchTest, a);
+            branchTest.Branches.Add(aBranch);
 
             DialogTreeBranch b = tree.CreateNewBranch();
             b.Name = "B";
             TreeBranchVM bBranch = new TreeBranchVM(project, branchTest, b);
-            branchTest.Branches.Add(aBranch);
+            branchTest.Branches.Add(bBranch);
 
-            //no relation between the branches so all links are possible
-            Assert.IsTrue(aBranch.AreBranchLinksPossible);
-            Assert.IsTrue(aBranch.PotentialBranchLinks.Any(s => s == b));
-            Assert.GreaterOrEqual(0, aBranch.SelectedBranchLinkIndex);
-            Assert.IsTrue(bBranch.AreBranchLinksPossible);
-            Assert.IsTrue(bBranch.PotentialBranchLinks.Any(s => s == a));
-            Assert.GreaterOrEqual(0, bBranch.SelectedBranchLinkIndex);
+            DialogTreeBranch c = tree.CreateNewBranch();
+            c.Name = "C";
+            TreeBranchVM cBranch = new TreeBranchVM(project, branchTest, c);
+            branchTest.Branches.Add(cBranch);
+
+            RelationshipCreate(a, b);
+            RelationshipCreate(b, c);
+
+            TestBranchPossibility(aBranch, c);
+            TestBranchPossibility(bBranch);
+            TestBranchPossibility(cBranch);
+
+            tree.RemoveBranch(b);
+
+            TestBranchPossibility(aBranch, c);
+            TestBranchPossibility(cBranch, a);
+        }
+
+        /// <summary>
+        /// Performs a series of tests to ensure a tree branches possible links are correct based on the expected links in the <see cref="children"/> parameter
+        /// </summary>
+        /// <param name="branch">tree branch VM to test</param>
+        /// <param name="children">all expected links, if any</param>
+        private void TestBranchPossibility(TreeBranchVM branch, params DialogTreeBranch[] children)
+        {
+            bool shouldHaveLinks = children.Any();
+            Assert.AreEqual(shouldHaveLinks, branch.AreBranchLinksPossible);
+            if (shouldHaveLinks)
+                Assert.GreaterOrEqual(0, branch.SelectedBranchLinkIndex);
+
+            Assert.AreEqual(children.Length, branch.PotentialBranchLinks.Count, "Unexpected amount of children found");
+            foreach (DialogTreeBranch link in children)
+            {
+                Assert.IsTrue(branch.PotentialBranchLinks.Any(s => s == link),
+                    $"branch '{branch.DialogBranch.Name}' is expected to have '{link.Name}' as a potential link... but it doesn't!");
+            }
+
+            foreach(TreeBranchLinkInfoVM link in branch.BranchLinks)
+            {
+                if(children.Any(c => c == link.Child))
+                {
+                    Assert.Fail($"Potential branch link contained inside '{branch.DialogBranch.Name}' that is an actual branch link!");
+                }
+            }
         }
 
         protected abstract void RelationshipCreate(DialogTreeBranch parent, DialogTreeBranch child);

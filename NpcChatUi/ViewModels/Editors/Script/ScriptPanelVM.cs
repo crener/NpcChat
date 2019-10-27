@@ -18,6 +18,7 @@ using NpcChatSystem.Data.Util;
 using NpcChatSystem.Identifiers;
 using NpcChatSystem.Utilities;
 using Prism.Commands;
+using LogLevel = NLog.LogLevel;
 
 namespace NpcChat.ViewModels.Editors.Script
 {
@@ -37,7 +38,7 @@ namespace NpcChat.ViewModels.Editors.Script
 
             if (dialog != null) SetDialogTree(dialog);
 
-            NewBranchCommand = new DelegateCommand(() => AddNewBranch(Branches.Last()?.DialogTree?.Id, true));
+            NewBranchCommand = new DelegateCommand(() => AddNewBranch(Branches.Last()?.DialogBranch?.Id, true));
         }
 
         /// <summary>
@@ -48,23 +49,37 @@ namespace NpcChat.ViewModels.Editors.Script
         {
             m_tree = m_project.ProjectDialogs.GetDialog(dialogTreeId);
             m_tree.OnBranchCreated += OnBranchCreated;
+            m_tree.OnBranchRemoved += OnBranchRemoved;
             Branches.Clear();
             Branches.Add(new TreeBranchVM(m_project, this, m_tree.GetStart()));
             OnVisibleBranchChange?.Invoke(Branches);
-
-            /*List<CharacterDialogVM> tempList = new List<CharacterDialogVM>();
-            foreach (DialogSegment segment in part.Dialog)
-            {
-                tempList.Add(new CharacterDialogVM(m_project, segment));
-            }*/
-
-            //Speech.Clear();
-            //Speech.AddRange(tempList);
         }
 
         private void OnBranchCreated(DialogTreeBranch obj)
         {
 
+        }
+
+        private void OnBranchRemoved(DialogTreeBranch removed)
+        {
+            bool remove = false;
+            for(int i = 0; i < Branches.Count; i++)
+            {
+                if(remove)
+                {
+                    Branches.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+
+                TreeBranchVM branch = Branches[i];
+                if(branch.DialogBranch.Id == removed)
+                {
+                    remove = true;
+                    Branches.RemoveAt(i);
+                    i--;
+                }
+            }
         }
 
         /// <summary>
@@ -75,12 +90,18 @@ namespace NpcChat.ViewModels.Editors.Script
         /// <returns>id of the new tree branch</returns>
         public DialogTreeBranchIdentifier AddNewBranch(DialogTreeBranchIdentifier parentId, bool updateView)
         {
+            if(!m_tree.HasBranch(parentId))
+            {
+                Logging.Logger.Log(LogLevel.Error, $"Unable to Add branch to tree '{m_tree.Id}' as parent ({parentId}) isn't inside the tree!");
+                return null;
+            }
+
             DialogTreeBranchIdentifier identifier = CreateNewBranch(parentId);
 
             //auto add the new branch to the ui
             if (updateView)
             {
-                if(Branches.Last()?.DialogTree?.Id == parentId)
+                if(Branches.Last()?.DialogBranch?.Id == parentId)
                 {
                     Branches.Add(new TreeBranchVM(m_project, this, identifier));
                     OnVisibleBranchChange?.Invoke(Branches);
@@ -120,7 +141,7 @@ namespace NpcChat.ViewModels.Editors.Script
             int found = -1;
             for (int i = 0; i < Branches.Count; i++)
             {
-                if (Branches[i].DialogTree.Id == parent)
+                if (Branches[i].DialogBranch.Id == parent)
                 {
                     found = i;
                     break;

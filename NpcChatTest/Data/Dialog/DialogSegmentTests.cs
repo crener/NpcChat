@@ -199,5 +199,32 @@ namespace NpcChatTest.Data.Dialog
                 Assert.Fail("Failed to create character");
             }
         }
+
+        [TestCase("This is a test")]
+        [TestCase("This text should be the segment text")]
+        public void Text(string text)
+        {
+            NpcChatProject project = new NpcChatProject();
+
+            if (project.ProjectCharacters.RegisterNewCharacter(out int bill, new NpcChatSystem.Data.CharacterData.Character("bill")))
+            {
+                DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+                DialogTreeBranch branch = tree.CreateNewBranch();
+
+                DialogSegment segment = branch.CreateNewDialog(bill);
+                Assert.NotNull(segment);
+                Assert.AreEqual(segment.CharacterId, bill, "Unexpected Character");
+
+                segment.ClearElements();
+                Assert.AreEqual(0, segment.SegmentParts.Count);
+
+                segment.AddDialogElement(new DialogText(){Text = text });
+                Assert.AreEqual(text, segment.Text);
+            }
+            else
+            {
+                Assert.Fail("Failed to create character");
+            }
+        }
     }
 }

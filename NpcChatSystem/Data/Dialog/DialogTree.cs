@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NLog;
 using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.Util;
 using NpcChatSystem.Identifiers;
+using NpcChatSystem.Utilities;
 
 namespace NpcChatSystem.Data.Dialog
 {
@@ -15,10 +17,10 @@ namespace NpcChatSystem.Data.Dialog
         private static Random s_random = new Random();
 
         public DialogTreeIdentifier Id { get; }
-        public IReadOnlyList<DialogTreeBranchIdentifier> Branches => m_branches.Select(b => (DialogTreeBranchIdentifier) b).ToList();
+        public IReadOnlyList<DialogTreeBranchIdentifier> Branches => m_branches.Select(b => (DialogTreeBranchIdentifier)b).ToList();
 
         public event Action<DialogTreeBranch> OnBranchCreated;
-        public event Action<DialogTreeBranchIdentifier> OnBranchRemoved;
+        public event Action<DialogTreeBranch> OnBranchRemoved;
 
         private List<DialogTreeBranch> m_branches = new List<DialogTreeBranch>();
 
@@ -35,8 +37,20 @@ namespace NpcChatSystem.Data.Dialog
             int id = GenerateId();
 
             DialogTreeBranch branch = new DialogTreeBranch(m_project, Id, id);
-            m_branches.Add(branch);
+            if (m_branches.Any(b => b.Name == branch.Name))
+            {
+                int iteration = 0;
+                string potentialName;
+                do
+                {
+                    iteration++;
+                    potentialName = $"{branch.Name} ({iteration})";
+                } while(m_branches.Any(b => b.Name == potentialName));
 
+                branch.Name = potentialName;
+            }
+
+            m_branches.Add(branch);
             OnBranchCreated?.Invoke(branch);
 
             return branch;
@@ -55,10 +69,19 @@ namespace NpcChatSystem.Data.Dialog
 
         public bool RemoveBranch(DialogTreeBranchIdentifier id)
         {
-            if (!HasTree(id)) return false;
+            if (!HasBranch(id)) return false;
 
-            m_branches.Remove(GetBranch(id));
-            OnBranchRemoved?.Invoke(id);
+            DialogTreeBranch branch = GetBranch(id);
+            foreach(DialogTreeBranchIdentifier child in branch.Children)
+            {
+                Logging.Logger.Log(LogLevel.Warn, $"Orphaned child of '{branch.Name}' called '{this[child].Name}'");
+                branch.RemoveChild(child);
+            }
+            foreach (DialogTreeBranchIdentifier parent in branch.Parents)
+                branch.RemoveParent(parent);
+
+            m_branches.Remove(branch);
+            OnBranchRemoved?.Invoke(branch);
 
             return true;
         }
@@ -98,7 +121,7 @@ namespace NpcChatSystem.Data.Dialog
             return m_branches.FirstOrDefault(d => d.Id == id);
         }
 
-        public bool HasTree(DialogTreeBranchIdentifier id)
+        public bool HasBranch(DialogTreeBranchIdentifier id)
         {
             if (!Id.Compatible(id)) return false;
 

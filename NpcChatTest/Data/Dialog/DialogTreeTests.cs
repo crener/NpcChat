@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
+using NpcChatSystem.Identifiers;
 using NUnit.Framework;
 
 namespace NpcChatTest.Data.Dialog
@@ -18,7 +19,7 @@ namespace NpcChatTest.Data.Dialog
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
             DialogTreeBranch start = tree.GetStart();
 
-            Assert.NotNull(start);
+            Assert.NotNull(start, "There should be a default start node when creating a dialog tree");
         }
 
         [Test]
@@ -31,7 +32,7 @@ namespace NpcChatTest.Data.Dialog
             Assert.NotNull(start);
 
             Assert.IsTrue(tree.RemoveBranch(start));
-            Assert.IsFalse(tree.HasTree(start));
+            Assert.IsFalse(tree.HasBranch(start));
 
             start = tree.GetStart();
             Assert.Null(start);
@@ -45,10 +46,10 @@ namespace NpcChatTest.Data.Dialog
             DialogTreeBranch start = tree.GetStart();
 
             Assert.NotNull(start);
-            Assert.IsTrue(tree.HasTree(start));
+            Assert.IsTrue(tree.HasBranch(start));
 
             DialogTreeBranch aBranch = tree.CreateNewBranch();
-            Assert.IsTrue(tree.HasTree(aBranch));
+            Assert.IsTrue(tree.HasBranch(aBranch));
         }
 
         [Test]
@@ -60,11 +61,11 @@ namespace NpcChatTest.Data.Dialog
             DialogTree tree2 = project.ProjectDialogs.CreateNewDialogTree();
             DialogTreeBranch start2 = tree2.GetStart();
 
-            Assert.IsTrue(tree.HasTree(start));
-            Assert.IsTrue(tree2.HasTree(start2));
+            Assert.IsTrue(tree.HasBranch(start));
+            Assert.IsTrue(tree2.HasBranch(start2));
 
-            Assert.IsFalse(tree2.HasTree(start));
-            Assert.IsFalse(tree.HasTree(start2));
+            Assert.IsFalse(tree2.HasBranch(start));
+            Assert.IsFalse(tree.HasBranch(start2));
         }
 
         [Test]
@@ -132,6 +133,68 @@ namespace NpcChatTest.Data.Dialog
 
             DialogTreeBranch aBranch = tree.CreateNewBranch();
             Assert.Null(tree2.GetBranch(aBranch));
+        }
+
+        [Test]
+        public void AddBranch()
+        {
+            NpcChatProject project = new NpcChatProject();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+
+            DialogTreeBranch start = tree.GetStart();
+            Assert.NotNull(start);
+
+            DialogTreeBranch newBranch = tree.CreateNewBranch();
+            Assert.NotNull(newBranch);
+            Assert.AreNotSame(newBranch, start);
+            Assert.AreNotEqual(newBranch, start);
+            Assert.AreNotEqual(newBranch.Id, start.Id);
+        }
+
+        [Test]
+        public void AddBranch2()
+        {
+            NpcChatProject project = new NpcChatProject();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+
+            for (int i = 0; i < 10; i++)
+            {
+                DialogTreeBranch newBranch = tree.CreateNewBranch();
+                Assert.NotNull(newBranch);
+            }
+
+            IReadOnlyList<DialogTreeBranchIdentifier> branches = tree.Branches;
+            for (int inner = 0; inner < branches.Count; inner++)
+                for (int outer = 0; inner < branches.Count; inner++)
+                {
+                    if (inner == outer) continue;
+                    Assert.AreNotEqual(branches[inner], branches[outer]);
+                    Assert.AreNotEqual(tree[branches[inner]], tree[branches[outer]]);
+                }
+        }
+
+        [Test]
+        public void NewBranchNameDuplication()
+        {
+            NpcChatProject project = new NpcChatProject();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+
+            List<string> newNames = new List<string>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                DialogTreeBranch newBranch = tree.CreateNewBranch();
+                Assert.NotNull(newBranch);
+
+                newNames.Add(newBranch.Name);
+            }
+
+            for (int inner = 0; inner < newNames.Count; inner++)
+                for (int outer = 0; inner < newNames.Count; inner++)
+                {
+                    if (inner == outer) continue;
+                    Assert.AreNotEqual(newNames[inner], newNames[outer]);
+                }
         }
     }
 }

@@ -16,7 +16,8 @@ namespace NpcChatSystem.Data.Util
         /// <returns>true if adding this item would have a circular dependency</returns>
         public static bool CheckForCircularDependency(this DialogTree tree, DialogTreeBranchIdentifier parent, DialogTreeBranchIdentifier potentialChild)
         {
-            if (!tree.Id.Compatible(parent) || !tree.Id.Compatible(potentialChild))
+            if (!tree.Id.Compatible(parent) || !tree.Id.Compatible(potentialChild) || 
+                !tree.HasBranch(parent) || !tree.HasBranch(potentialChild))
             {
                 // If the segment isn't compatible with the tree there can't be a circular dependency
                 return false;

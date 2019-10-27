@@ -22,7 +22,7 @@ using Prism.Commands;
 
 namespace NpcChat.ViewModels.Editors.Script
 {
-    [DebuggerDisplay("BranchVM: {DialogTree.Name}")]
+    [DebuggerDisplay("BranchVM: {DialogBranch.Name}")]
     public class TreeBranchVM : NotificationObject
     {
         // general properties which shouldn't really change over time
@@ -30,7 +30,7 @@ namespace NpcChat.ViewModels.Editors.Script
         public IReadOnlyCollection<string> EvaluationContainers => EvaluationContainerTypeStore.ContainerNames;
 
         public ObservableCollection<CharacterDialogVM> Speech { get; } = new ObservableCollection<CharacterDialogVM>();
-        public DialogTreeBranch DialogTree { get; }
+        public DialogTreeBranch DialogBranch { get; }
 
         public int NewDialogCharacterId
         {
@@ -66,11 +66,11 @@ namespace NpcChat.ViewModels.Editors.Script
             {
                 if (m_evaluationCacheName == null)
                 {
-                    IEvaluationContainer container = DialogTree?.BranchCondition;
-                    if (container == null && DialogTree != null)
+                    IEvaluationContainer container = DialogBranch?.BranchCondition;
+                    if (container == null && DialogBranch != null)
                     {
                         m_evaluationCacheName = SimpleEvaluationContainer.Name;
-                        DialogTree.BranchCondition = EvaluationContainerTypeStore.Instance.CreateEntity(m_evaluationCacheName);
+                        DialogBranch.BranchCondition = EvaluationContainerTypeStore.Instance.CreateEntity(m_evaluationCacheName);
                     }
                     else
                     {
@@ -83,7 +83,7 @@ namespace NpcChat.ViewModels.Editors.Script
             set
             {
                 if (m_evaluationCacheName == value) return;
-                if (DialogTree == null)
+                if (DialogBranch == null)
                 {
                     Logging.Logger.Error($"Unable to change EvaluationContainer due to null '{nameof(DialogTreeBranch)}'");
                     return;
@@ -91,7 +91,7 @@ namespace NpcChat.ViewModels.Editors.Script
 
                 m_evaluationCacheName = value;
                 IEvaluationContainer newContainer = EvaluationContainerTypeStore.Instance.CreateEntity(m_evaluationCacheName);
-                DialogTree.BranchCondition = newContainer;
+                DialogBranch.BranchCondition = newContainer;
 
                 RaisePropertyChanged();
             }
@@ -109,6 +109,7 @@ namespace NpcChat.ViewModels.Editors.Script
                 if (m_visibleBranchLinkIndex == value) return;
 
                 m_visibleBranchLinkIndex = value;
+                if (m_visibleBranchLinkIndex < 0) return;
 
                 BranchLinks[m_visibleBranchLinkIndex].RebaseScriptView.Execute(m_script.Branches);
                 ScriptVisibleBranchesChanged(m_script.Branches);
@@ -131,12 +132,13 @@ namespace NpcChat.ViewModels.Editors.Script
             }
         }
 
-        private DialogTree m_tree => Project[(DialogTreeIdentifier)DialogTree];
+        private DialogTree m_tree => Project[(DialogTreeIdentifier)DialogBranch];
 
         // commands
         public ICommand AddNewDialogCommand { get; }
         public ICommand InsertBranchCommand { get; }
         public ICommand LinkBranchCommand { get; }
+        public ICommand DeleteBranchCommand { get; }
 
         private IScriptPanelVM m_script;
         private int? m_newDialogCharacterId = null;
@@ -147,28 +149,28 @@ namespace NpcChat.ViewModels.Editors.Script
         public TreeBranchVM(NpcChatProject project, IScriptPanelVM script, [NotNull] DialogTreeBranchIdentifier dialogTreeId)
             : this(project, script, project[dialogTreeId]) { }
 
-        public TreeBranchVM(NpcChatProject project, IScriptPanelVM script, [NotNull] DialogTreeBranch dialogTree)
+        public TreeBranchVM(NpcChatProject project, IScriptPanelVM script, [NotNull] DialogTreeBranch dialogBranch)
         {
             Project = project;
-            DialogTree = dialogTree;
+            DialogBranch = dialogBranch;
             m_script = script;
 
-            if (dialogTree != null)
+            if (dialogBranch != null)
             {
-                dialogTree.OnDialogCreated += added =>
+                dialogBranch.OnDialogCreated += added =>
                 {
                     if (!Project.ProjectDialogs.HasDialog(added)) return;
                     Speech.Add(new CharacterDialogVM(Project, Project.ProjectDialogs[added]));
                 };
-                dialogTree.OnDialogDestroyed += removed =>
+                dialogBranch.OnDialogDestroyed += removed =>
                 {
                     Speech.Clear();
-                    foreach (DialogSegment segment in dialogTree.Dialog)
+                    foreach (DialogSegment segment in dialogBranch.Dialog)
                         Speech.Add(new CharacterDialogVM(Project, segment));
                 };
 
                 //add existing branching options
-                foreach (DialogTreeBranchIdentifier child in DialogTree.Children)
+                foreach (DialogTreeBranchIdentifier child in DialogBranch.Children)
                 {
                     BranchLinks.Add(CreateTreeBranchLink(child));
                 }
@@ -177,35 +179,42 @@ namespace NpcChat.ViewModels.Editors.Script
                 {
                     m_tree.OnBranchCreated += branch =>
                     {
-                        if (!m_tree.CheckForCircularDependency(DialogTree.Id, branch))
+                        if (!m_tree.CheckForCircularDependency(DialogBranch.Id, branch))
                             PotentialBranchLinks.Add(branch);
+                    };
+                    m_tree.OnBranchRemoved += branch =>
+                    {
+                        if (PotentialBranchLinks.Contains(branch))
+                        {
+                            CheckBranchCompatibility();
+                        }
                     };
                 }
             }
 
-            DialogTree.OnBranchChildAdded += (id) =>
+            DialogBranch.OnBranchChildAdded += (id) =>
             {
                 BranchLinksChanged(id, true);
                 CheckPotentialBranchLink(id);
             };
-            DialogTree.OnBranchChildRemoved += (id) =>
+            DialogBranch.OnBranchChildRemoved += (id) =>
             {
                 BranchLinksChanged(id, false);
                 CheckPotentialBranchLink(id);
             };
-            DialogTree.OnBranchParentAdded += id => { CheckBranchCompatability(); };
-            DialogTree.OnBranchParentRemoved += id => { CheckBranchCompatability(); };
+            DialogBranch.OnBranchParentAdded += id => { CheckBranchCompatibility(); };
+            DialogBranch.OnBranchParentRemoved += id => { CheckBranchCompatibility(); };
 
             AddNewDialogCommand = new DelegateCommand(() =>
                 {
-                    DialogTree.CreateNewDialog(NewDialogCharacterId);
+                    DialogBranch.CreateNewDialog(NewDialogCharacterId);
                 }, () => NewDialogCharacterId != CharacterId.DefaultId);
 
             script.OnVisibleBranchChange += ScriptVisibleBranchesChanged;
 
             {
                 //Possible pre existing branch links
-                CheckBranchCompatability();
+                CheckBranchCompatibility();
 
                 PotentialBranchLinks.CollectionChanged += (sender, args) =>
                 {
@@ -216,14 +225,19 @@ namespace NpcChat.ViewModels.Editors.Script
 
                 LinkBranchCommand = new DelegateCommand<DialogTreeBranch>((link) =>
                 {
-                    DialogTree.AddChild(link);
+                    DialogBranch.AddChild(link);
                     PotentialBranchLinks.Remove(link);
                 });
                 InsertBranchCommand = new DelegateCommand(() =>
                 {
-                    m_script.AddNewBranch(DialogTree.Id, true);
+                    m_script.AddNewBranch(DialogBranch.Id, true);
                 });
             }
+
+            DeleteBranchCommand = new DelegateCommand(() =>
+            {
+                m_tree.RemoveBranch(DialogBranch.Id);
+            });
         }
 
         /// <summary>
@@ -242,7 +256,7 @@ namespace NpcChat.ViewModels.Editors.Script
                 {
                     if (i + 1 < branches.Count)
                     {
-                        DialogTreeBranchIdentifier treeId = branches[i + 1].DialogTree.Id;
+                        DialogTreeBranchIdentifier treeId = branches[i + 1].DialogBranch.Id;
                         for (int l = 0; l < BranchLinks.Count; l++)
                         {
                             TreeBranchLinkInfoVM treeBranchLinkInfoVM = BranchLinks[l];
@@ -276,8 +290,9 @@ namespace NpcChat.ViewModels.Editors.Script
             }
         }
 
-        private void CheckBranchCompatability()
+        private void CheckBranchCompatibility()
         {
+            PotentialBranchLinks.Clear();
             foreach (DialogTreeBranchIdentifier dialog in m_tree.Branches)
             {
                 CheckPotentialBranchLink(dialog);
@@ -286,16 +301,14 @@ namespace NpcChat.ViewModels.Editors.Script
 
         private void CheckPotentialBranchLink(DialogTreeBranchIdentifier id)
         {
-            DialogTree tree = Project[DialogTree.Id as DialogTreeIdentifier];
-            bool circle = tree.CheckForCircularDependency(DialogTree.Id, id);
+            DialogTree tree = Project[DialogBranch.Id as DialogTreeIdentifier];
+            bool circle = tree.CheckForCircularDependency(DialogBranch.Id, id);
 
             if (circle || BranchLinks.Any(s => s.Child == id))
             {
                 PotentialBranchLinks.Remove(tree[id]);
             }
             else
-            //else if (!PotentialBranchLinks.Contains(tree[id]))
-            //            PotentialBranchLinks.Add(Project[id]);
             {
                 PotentialBranchLinks.Add(tree[id]);
             }
@@ -304,7 +317,7 @@ namespace NpcChat.ViewModels.Editors.Script
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private TreeBranchLinkInfoVM CreateTreeBranchLink(DialogTreeBranchIdentifier id)
         {
-            return new TreeBranchLinkInfoVM(Project, m_script, DialogTree.Id, id);
+            return new TreeBranchLinkInfoVM(Project, m_script, DialogBranch.Id, id);
         }
     }
 }
