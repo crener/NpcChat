@@ -150,11 +150,14 @@ namespace NpcChatSystem.Data.Dialog
 
         public bool RemoveDialog(DialogSegment id)
         {
+            if (id == null) return false;
             return RemoveDialog(id.Id);
         }
 
         public bool RemoveDialog(DialogSegmentIdentifier id)
         {
+            if(id == null) return false;
+
             for (int i = m_dialog.Count - 1; i >= 0; i--)
             {
                 if (m_dialog[i].Id == id)

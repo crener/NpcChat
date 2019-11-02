@@ -25,14 +25,20 @@ namespace NpcChatSystem.Identifiers
         /// <returns>true if identifiers reference the same <see cref="DialogTree"/></returns>
         public bool Compatible(DialogTreeIdentifier tree)
         {
-            if(ReferenceEquals(tree, null)) return false;
-            if (DialogTreeId != tree.DialogTreeId) return false;
+            if (ReferenceEquals(tree, null)) return false;
 
+            if (DialogTreeId != tree.DialogTreeId) return false;
             return true;
         }
 
         public static bool operator ==(DialogTreeIdentifier a, DialogTreeIdentifier b)
         {
+            bool aNull = ReferenceEquals(a, null);
+            bool bNull = ReferenceEquals(b, null);
+
+            if (aNull && bNull) return true;
+            if (aNull || bNull) return false;
+
             return a.Equals(b);
         }
 
@@ -102,6 +108,12 @@ namespace NpcChatSystem.Identifiers
 
         public static bool operator ==(DialogTreeBranchIdentifier a, DialogTreeBranchIdentifier b)
         {
+            bool aNull = ReferenceEquals(a, null);
+            bool bNull = ReferenceEquals(b, null);
+
+            if (aNull && bNull) return true;
+            if (aNull || bNull) return false;
+
             return a.Equals(b);
         }
 
@@ -174,6 +186,9 @@ namespace NpcChatSystem.Identifiers
 
         public static bool operator ==(DialogSegmentIdentifier a, DialogSegmentIdentifier b)
         {
+            if (ReferenceEquals(null, a)) return false;
+            if (ReferenceEquals(null, b)) return false;
+
             return a.Equals(b);
         }
 

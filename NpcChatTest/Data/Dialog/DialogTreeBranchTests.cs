@@ -48,11 +48,11 @@ namespace NpcChatTest.Data.Dialog.DialogTreeItems
             DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
             DialogTreeBranch branch = tree.CreateNewBranch();
             DialogSegment one = branch.CreateNewDialog(12);
-            
+
             Assert.IsTrue(branch.ContainsDialogSegment(one));
             Assert.IsTrue(branch.ContainsDialogSegment(one.Id));
 
-            branch.RemoveDialog(one);
+            Assert.IsTrue(branch.RemoveDialog(one));
 
             Assert.IsFalse(branch.ContainsDialogSegment(one));
             Assert.IsFalse(branch.ContainsDialogSegment(one.Id));
@@ -64,7 +64,7 @@ namespace NpcChatTest.Data.Dialog.DialogTreeItems
             DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
             DialogTreeBranch branch = tree.CreateNewBranch();
             DialogSegment one = branch.CreateNewDialog(12);
-            
+
             Assert.IsTrue(branch.ContainsDialogSegment(one));
             Assert.IsTrue(branch.ContainsDialogSegment(one.Id));
 
@@ -75,6 +75,39 @@ namespace NpcChatTest.Data.Dialog.DialogTreeItems
 
             Assert.IsFalse(branch.ContainsDialogSegment(fakeId));
         }
+
+        [Test]
+        public void NoRemove()
+        {
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
+            DialogTreeBranch branch = tree.CreateNewBranch();
+            DialogSegment one = branch.CreateNewDialog(12);
+
+            Assert.IsTrue(branch.ContainsDialogSegment(one));
+            Assert.IsTrue(branch.ContainsDialogSegment(one.Id));
+
+            // remove existing
+            Assert.IsTrue(branch.RemoveDialog(one.Id));
+
+            Assert.IsFalse(branch.ContainsDialogSegment(one));
+            Assert.IsFalse(branch.ContainsDialogSegment(one.Id));
+
+            // remove not existing
+            Assert.IsFalse(branch.RemoveDialog(one));
+        }
+
+        [Test]
+        public void NullRemove()
+        {
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
+            DialogTreeBranch branch = tree.CreateNewBranch();
+            DialogSegment one = branch.CreateNewDialog(12);
+
+            // remove existing
+            Assert.IsFalse(branch.RemoveDialog((DialogSegment)null));
+            Assert.IsFalse(branch.RemoveDialog((DialogSegmentIdentifier)null));
+        }
+
         /// <summary>
         /// S -> A
         /// </summary>

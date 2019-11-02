@@ -158,6 +158,7 @@ namespace NpcChatTestUi.ViewModels.Editors.Script
             TreeBranchVM aBranch = new TreeBranchVM(project, branchTest, a);
             branchTest.Branches.Add(aBranch);
 
+            //no other branches so there shouldn't be any possibilities
             TestBranchPossibility(aBranch);
 
             DialogTreeBranch b = tree.CreateNewBranch();

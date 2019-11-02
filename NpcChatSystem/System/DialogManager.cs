@@ -39,6 +39,7 @@ namespace NpcChatSystem.System
         /// <returns>character if found, null if not found</returns>
         public DialogTree GetDialog(DialogTreeIdentifier id)
         {
+            if(id == null) return null;
             return GetDialog(id.DialogTreeId);
         }
 

@@ -155,60 +155,55 @@ namespace NpcChat.ViewModels.Editors.Script
             DialogBranch = dialogBranch;
             m_script = script;
 
+            if (m_tree != null)
+            {
+                m_tree.OnBranchCreated += branch =>
+                {
+                    if (!m_tree.CheckForCircularDependency(DialogBranch.Id, branch))
+                        PotentialBranchLinks.Add(branch);
+                };
+                m_tree.OnBranchRemoved += branch =>
+                {
+                    if (PotentialBranchLinks.Contains(branch))
+                    {
+                        CheckBranchCompatibility();
+                    }
+                };
+            }
+
             if (dialogBranch != null)
             {
-                dialogBranch.OnDialogCreated += added =>
-                {
-                    if (!Project.ProjectDialogs.HasDialog(added)) return;
-                    Speech.Add(new CharacterDialogVM(Project, Project.ProjectDialogs[added]));
-                };
-                dialogBranch.OnDialogDestroyed += removed =>
-                {
-                    Speech.Clear();
-                    foreach (DialogSegment segment in dialogBranch.Dialog)
-                        Speech.Add(new CharacterDialogVM(Project, segment));
-                };
-
                 //add existing branching options
                 foreach (DialogTreeBranchIdentifier child in DialogBranch.Children)
                 {
                     BranchLinks.Add(CreateTreeBranchLink(child));
                 }
 
-                if (m_tree != null)
+                // register callbacks
+                DialogBranch.OnDialogCreated += added =>
                 {
-                    m_tree.OnBranchCreated += branch =>
-                    {
-                        if (!m_tree.CheckForCircularDependency(DialogBranch.Id, branch))
-                            PotentialBranchLinks.Add(branch);
-                    };
-                    m_tree.OnBranchRemoved += branch =>
-                    {
-                        if (PotentialBranchLinks.Contains(branch))
-                        {
-                            CheckBranchCompatibility();
-                        }
-                    };
-                }
+                    if (!Project.ProjectDialogs.HasDialog(added)) return;
+                    Speech.Add(new CharacterDialogVM(Project, Project.ProjectDialogs[added]));
+                };
+                DialogBranch.OnDialogDestroyed += removed =>
+                {
+                    Speech.Clear();
+                    foreach (DialogSegment segment in dialogBranch.Dialog)
+                        Speech.Add(new CharacterDialogVM(Project, segment));
+                };
+                DialogBranch.OnBranchChildAdded += (id) =>
+                {
+                    BranchLinksChanged(id, true);
+                    CheckPotentialBranchLink(id);
+                };
+                DialogBranch.OnBranchChildRemoved += (id) =>
+                {
+                    BranchLinksChanged(id, false);
+                    CheckPotentialBranchLink(id);
+                };
+                DialogBranch.OnBranchParentAdded += id => { CheckBranchCompatibility(); };
+                DialogBranch.OnBranchParentRemoved += id => { CheckBranchCompatibility(); };
             }
-
-            DialogBranch.OnBranchChildAdded += (id) =>
-            {
-                BranchLinksChanged(id, true);
-                CheckPotentialBranchLink(id);
-            };
-            DialogBranch.OnBranchChildRemoved += (id) =>
-            {
-                BranchLinksChanged(id, false);
-                CheckPotentialBranchLink(id);
-            };
-            DialogBranch.OnBranchParentAdded += id => { CheckBranchCompatibility(); };
-            DialogBranch.OnBranchParentRemoved += id => { CheckBranchCompatibility(); };
-
-            AddNewDialogCommand = new DelegateCommand(() =>
-                {
-                    DialogBranch.CreateNewDialog(NewDialogCharacterId);
-                }, () => NewDialogCharacterId != CharacterId.DefaultId);
 
             script.OnVisibleBranchChange += ScriptVisibleBranchesChanged;
 
@@ -234,6 +229,10 @@ namespace NpcChat.ViewModels.Editors.Script
                 });
             }
 
+            AddNewDialogCommand = new DelegateCommand(() =>
+            {
+                DialogBranch?.CreateNewDialog(NewDialogCharacterId);
+            }, () => NewDialogCharacterId != CharacterId.DefaultId);
             DeleteBranchCommand = new DelegateCommand(() =>
             {
                 m_tree.RemoveBranch(DialogBranch.Id);

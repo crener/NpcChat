@@ -21,6 +21,8 @@ namespace NpcChat.Views
         {
             DataContext = m_viewModel = new WindowViewModel();
             InitializeComponent();
+
+            this.Closed += (sender, args) => SaveLayout(sender, null);
         }
 
         private void SaveLayout(object sender, RoutedEventArgs e)
