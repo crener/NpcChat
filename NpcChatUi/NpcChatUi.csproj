@@ -148,10 +148,6 @@
     </Compile>
     <Compile Include="Views\Utility\Behaviour\IgnoreMouseWheelBehaviour.cs" />
     <Compile Include="Views\Utility\Behaviour\ScrollParentWhenAtMax.cs" />
-    <Page Include="Style\DockStyle.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Style\BasicStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -228,6 +224,14 @@
     <ProjectReference Include="..\External\FirstFloor.ModernUI\FirstFloor.ModernUI\FirstFloor.ModernUI.csproj">
       <Project>{9a653a28-fe46-40e8-a14f-48b0e325165d}</Project>
       <Name>FirstFloor.ModernUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\External\mui.extended.toolkit\ModernUI.Xceed\ModernUI.Xceed.AvalonDock\ModernUI.Xceed.AvalonDock.csproj">
+      <Project>{10fae934-1213-48f3-99f7-3ddc7a196838}</Project>
+      <Name>ModernUI.Xceed.AvalonDock</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\External\mui.extended.toolkit\ModernUI.Xceed\ModernUI.Xceed.Toolkit\ModernUI.Xceed.Toolkit.csproj">
+      <Project>{5a634859-f873-42b4-a533-f05404a22378}</Project>
+      <Name>ModernUI.Xceed.Toolkit</Name>
     </ProjectReference>
     <ProjectReference Include="..\NpcChatSystem\NpcChatSystem.csproj">
       <Project>{42513f8f-9551-443a-9a37-3420109b95b8}</Project>

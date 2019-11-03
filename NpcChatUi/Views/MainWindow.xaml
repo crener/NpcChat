@@ -7,6 +7,7 @@
         xmlns:data="clr-namespace:NpcChat.ViewModels.Editors.Script"
         xmlns:script="clr-namespace:NpcChat.Views.Editors.Script"
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:avalonDock="clr-namespace:ModernUI.Xceed.AvalonDock;assembly=ModernUI.Xceed.AvalonDock"
         mc:Ignorable="d"
         Title="Npc Chat" 
         Height="500" Width="600"
@@ -31,6 +32,9 @@
         </Menu>
 
         <xcad:DockingManager x:Name="DockingManager" DocumentsSource="{Binding Windows}" Grid.Row="1">
+            <xcad:DockingManager.Theme>
+                <avalonDock:ModernUiTheme />
+            </xcad:DockingManager.Theme>
             <xcad:DockingManager.Resources>
                 <DataTemplate DataType="{x:Type data:ScriptPanelVM}">
                     <script:ScriptPanel />
@@ -46,10 +50,7 @@
 
                 <!--<Style TargetType="{x:Type data:ScriptPanelVM}" BasedOn="{StaticResource BaseStyle}"/>-->
             </xcad:DockingManager.LayoutItemContainerStyle>
-
             <xcad:LayoutRoot/>
         </xcad:DockingManager>
-
-
     </Grid>
 </mui:ModernWindow>

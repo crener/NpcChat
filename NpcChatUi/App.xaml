@@ -8,11 +8,11 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/ModernUI.xaml"/>
                 <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/modernui.dark.xaml"/>
+                <ResourceDictionary Source="/ModernUI.Xceed.Toolkit;component/Assets/ModernUI.Xceed.Toolkit.xaml" />
 
                 <ResourceDictionary Source="/Style/WindowStyle.xaml"/>
                 <ResourceDictionary Source="/Style/DialogEditorElementViewStyles.xaml"/>
                 <ResourceDictionary Source="/Style/BasicStyle.xaml"/>
-                <ResourceDictionary Source="/Style/DockStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
