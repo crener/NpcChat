@@ -93,19 +93,17 @@
 
             <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
 
-            <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,0,0,2" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <ComboBox Name="DialogElementTypeSelector" ItemsSource="{Binding DialogElementTypes}" IsSynchronizedWithCurrentItem="True" Grid.Column="0"></ComboBox>
-                <Button Grid.Column="1" ToolTip="Add new dialog part" Command="{Binding AddDialogElementCommand}" CommandParameter="{Binding ElementName=DialogElementTypeSelector, Path=SelectedValue}" Margin="5,0">
+            <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,0,0,2">
+                <ComboBox Name="DialogElementTypeSelector" ItemsSource="{Binding DialogElementTypes}" IsSynchronizedWithCurrentItem="True"></ComboBox>
+                <Button ToolTip="Add new dialog part" Command="{Binding AddDialogElementCommand}" CommandParameter="{Binding ElementName=DialogElementTypeSelector, Path=SelectedValue}" Margin="5,0,0,0">
                     <!--<Path Data="{StaticResource AddPath}" Fill="{DynamicResource ButtonText}" Height="18" Width="18" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
                     <!--<Path Data="{StaticResource AddPath}" Fill="Red" Height="15" Width="15" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="UniformToFill"/>-->
                     <Label Content="Add"/>
                 </Button>
-            </Grid>
+
+                <Separator Style="{StaticResource VerticalSeparatorStyle}"/>
+                <Button Command="{Binding DestroyCommand}">Destroy Dialog</Button>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

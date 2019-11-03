@@ -13,6 +13,7 @@
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.MenuTextBrushKey}}"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorder}"/>
+        <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Menu}">
@@ -23,5 +24,14 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!--<Style TargetType="{x:Type MenuItem}">
+        <Setter Property="Background" Value="{DynamicResource MenuBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.MenuTextBrushKey}}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorder}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="7,2,8,2"/>
+    </Style>-->
 
 </ResourceDictionary>

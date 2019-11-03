@@ -96,6 +96,7 @@
                                             <Button Content="{Binding ChildName}" Command="{Binding RebaseScriptView}"/>
                                         </DataTemplate>
                                     </ListBox.Resources>
+
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <WrapPanel Width="{Binding ElementName=BranchSeparator, Path=ActualWidth}">
