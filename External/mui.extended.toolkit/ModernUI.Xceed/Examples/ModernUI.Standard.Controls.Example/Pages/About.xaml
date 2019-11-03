@@ -1,0 +1,11 @@
+﻿<Page x:Class="ModernUI.Standard.Controls.Example.Pages.About"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="About">
+
+    <TextBlock TextWrapping="Wrap">
+      The aim of the ModernUI.Standard.Controls library is to implement
+      ModernUI styles for all standard windows controls which are not currently
+      implemented by the core library.
+    </TextBlock>
+</Page>

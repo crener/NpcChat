@@ -1,0 +1,17 @@
+﻿<Page x:Class="ModernUI.Xceed.Toolkit.Example.Pages.About"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="About">
+
+    <TextBlock TextWrapping="Wrap">
+        ModernUI.Xceed.AvalonDock contains all style resources to seamlessly integrate Xceeds AvalonDock into the ModernUI framework.
+        <LineBreak />
+        <LineBreak />
+        WPF Extended Toolkit:
+        <Hyperlink NavigateUri="http://wpftoolkit.codeplex.com/">http://wpftoolkit.codeplex.com/</Hyperlink>
+        <LineBreak />
+        ModernUI Framework:
+        <Hyperlink NavigateUri="https://github.com/firstfloorsoftware/mui">https://github.com/firstfloorsoftware/mui</Hyperlink>
+        <LineBreak />
+    </TextBlock>
+</Page>

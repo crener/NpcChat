@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ModernUI.Xceed.AvalonDock</id>
+    <version>0.3.1</version>
+    <authors>SamOatesGames</authors>
+    <owners>SamOatesGames</owners>
+    <licenseUrl>https://github.com/samoatesgames/mui.extended.toolkit/raw/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/samoatesgames/mui.extended.toolkit</projectUrl>
+    <iconUrl>https://github.com/samoatesgames/mui.extended.toolkit/raw/master/ModernUI.Xceed/Examples/ModernUI.Xceed.Toolkit.Example/Resources/Icon.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Modern UI support for the Extended WPF Toolkit</description>
+    <releaseNotes>Update to support Extended Toolkit version 3.5.0</releaseNotes>
+    <copyright>Copyright 2019</copyright>
+    <tags>CSharp ModernUI Avalon Dock Xceed</tags>
+	<dependencies>
+		<dependency id="ModernUI.WPF" version="1.0.9" />
+		<dependency id="Extended.Wpf.Toolkit" version="3.5.0" />
+	</dependencies>
+  </metadata>
+  <files>
+    <file src="ModernUI.Xceed.AvalonDock.dll" target="lib\net45" />
+  </files>
+</package>

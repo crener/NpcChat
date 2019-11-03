@@ -1,0 +1,33 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Controls/AutoSelectTextBox.xaml" />
+        <ResourceDictionary Source="Controls/ButtonChrome.xaml" />
+        <ResourceDictionary Source="Controls/ButtonSpinner.xaml" />
+        <ResourceDictionary Source="Controls/Calculator.xaml" />
+        <ResourceDictionary Source="Controls/CalculatorUpDown.xaml" />
+        <ResourceDictionary Source="Controls/CheckListBox.xaml" />
+        <ResourceDictionary Source="Controls/CheckComboBox.xaml" />
+        <ResourceDictionary Source="Controls/CollectionControl.xaml" />
+        <ResourceDictionary Source="Controls/ColorCanvas.xaml" />
+        <ResourceDictionary Source="Controls/ColorPicker.xaml" />
+        <ResourceDictionary Source="Controls/DateTimePicker.xaml" />
+        <ResourceDictionary Source="Controls/DateTimeUpDown.xaml" />
+        <ResourceDictionary Source="Controls/DropDownButton.xaml" />
+        <ResourceDictionary Source="Controls/NumericUpDown.xaml" />
+        <ResourceDictionary Source="Controls/MaskedTextBox.xaml" />
+        <ResourceDictionary Source="Controls/MultiLineTextEditor.xaml" />
+        <ResourceDictionary Source="Controls/PropertyGrid.xaml" />
+        <ResourceDictionary Source="Controls/RangeSlider.xaml" />
+        <ResourceDictionary Source="Controls/RichTextBox.xaml" />
+        <ResourceDictionary Source="Controls/RichTextBoxFormatBar.xaml" />
+        <ResourceDictionary Source="Controls/SelectorItem.xaml" />
+        <ResourceDictionary Source="Controls/SplitButton.xaml" />
+        <ResourceDictionary Source="Controls/TimePicker.xaml" />
+        <ResourceDictionary Source="Controls/TimeSpanUpDown.xaml" />
+        <ResourceDictionary Source="Controls/ValueRangeTextBox.xaml" />
+        <ResourceDictionary Source="Controls/WatermarkComboBox.xaml" />
+        <ResourceDictionary Source="Controls/WatermarkTextBox.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>
