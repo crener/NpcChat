@@ -1,0 +1,4 @@
+<Licenses>
+  <License Name="ModernUI" Link="https://github.com/firstfloorsoftware/mui" licenseFile="ModernUI.txt"/>
+  <License Name="ModernUI.Xceed.Toolkit" Link="https://github.com/samoatesgames/mui.extended.toolkit" licenseFile="ModernUI.Xceed.Toolkit.txt"/>
+</Licenses>

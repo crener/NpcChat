@@ -22,9 +22,14 @@
         <Border BorderBrush="Black" BorderThickness="2" Margin="15,5,15,0" Padding="3" Grid.Row="1">
             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <TextBlock Margin="0,0,0,5">Exception Message: <TextBox Text="{Binding ExMessage, Mode=OneWay}" IsReadOnly="True"/></TextBlock>
                     <TextBlock>Exception Details:</TextBlock>
-                    <TextBox Text="{Binding ExStack, Mode=OneWay}" IsReadOnly="True"/>
+                    <TextBox Text="{Binding ExStack, Mode=OneWay}" IsReadOnly="True">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Setter Property="Background" Value="White"/>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                 </StackPanel>
             </ScrollViewer>
         </Border>

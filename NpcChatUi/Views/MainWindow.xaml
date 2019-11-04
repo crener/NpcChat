@@ -8,6 +8,7 @@
         xmlns:script="clr-namespace:NpcChat.Views.Editors.Script"
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:avalonDock="clr-namespace:ModernUI.Xceed.AvalonDock;assembly=ModernUI.Xceed.AvalonDock"
+        xmlns:converters="clr-namespace:NpcChat.Converters"
         mc:Ignorable="d"
         Title="Npc Chat" 
         Height="500" Width="600"
@@ -15,8 +16,9 @@
 
         Style="{DynamicResource BlankWindow}">
     <mui:ModernWindow.Resources>
-
+        <converters:BoolToVisibilityConverter x:Key="BoolToVis"></converters:BoolToVisibilityConverter>
     </mui:ModernWindow.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -25,9 +27,16 @@
 
         <Menu>
             <MenuItem Header="File">
-                <MenuItem Header="Open" Click="LoadLayout"/>
+                <MenuItem Header="Open"/>
                 <MenuItem Header="Close"/>
-                <MenuItem Header="Save" Click="SaveLayout"/>
+                <MenuItem Header="Save"/>
+            </MenuItem>
+            <MenuItem Header="About" Command="{Binding ShowAboutCommand}"/>
+            <MenuItem Header="Debug" Visibility="{Binding DebugBuild, Converter={StaticResource BoolToVis}}">
+                <MenuItem Header="Layout">
+                    <MenuItem Header="Reload Layout" Click="LoadLayout"></MenuItem>
+                    <MenuItem Header="Save Current Layout" Click="SaveLayout"></MenuItem>
+                </MenuItem>
             </MenuItem>
         </Menu>
 
