@@ -16,7 +16,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Label VerticalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="0">This contains a collection of libraries used and their respective licenses for clarity and finding the work of others that made this possible (or at the very least easier to make)</Label>
+        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Grid.ColumnSpan="2" Grid.Row="0" Margin="0,0,0,3">This contains a collection of libraries used and their respective licenses for clarity and finding the work of others that made this possible (or at the very least easier to make)</TextBlock>
         <Grid Grid.Column="0" Margin="0,0,4,0" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -33,6 +33,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -42,7 +43,8 @@
                     <Run Text="{Binding Link}"/>
                 </Hyperlink>
             </TextBlock>
-            <ScrollViewer VerticalScrollBarVisibility="Visible" Margin="0,8,0,0" Grid.Row="2">
+            <Separator Grid.Row="2"/>
+            <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Row="3">
                 <TextBlock Text="{Binding License}" TextWrapping="Wrap"/>
             </ScrollViewer>
         </Grid>

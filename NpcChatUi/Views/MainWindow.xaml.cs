@@ -15,32 +15,11 @@ namespace NpcChat.Views
     {
         private WindowViewModel m_viewModel { get; }
 
-        private string WorkspaceLocation => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NpcChat", "workspace.xml");
-
         public MainWindow()
         {
             DataContext = m_viewModel = new WindowViewModel();
             InitializeComponent();
-
-            this.Closed += (sender, args) => SaveLayout(sender, null);
-        }
-
-        private void SaveLayout(object sender, RoutedEventArgs e)
-        {
-            using (StreamWriter writer = new StreamWriter(WorkspaceLocation))
-            {
-                XmlLayoutSerializer layoutSerializer = new XmlLayoutSerializer(DockingManager);
-                layoutSerializer.Serialize(writer);
-            }
-        }
-
-        private void LoadLayout(object sender, RoutedEventArgs e)
-        {
-            using (StreamReader reader = new StreamReader(WorkspaceLocation))
-            {
-                XmlLayoutSerializer layoutSerializer = new XmlLayoutSerializer(DockingManager);
-                layoutSerializer.Deserialize(reader);
-            }
+            m_viewModel.SetDockingManager(DockingManager);
         }
     }
 }

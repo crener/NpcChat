@@ -34,8 +34,8 @@
             <MenuItem Header="About" Command="{Binding ShowAboutCommand}"/>
             <MenuItem Header="Debug" Visibility="{Binding DebugBuild, Converter={StaticResource BoolToVis}}">
                 <MenuItem Header="Layout">
-                    <MenuItem Header="Reload Layout" Click="LoadLayout"></MenuItem>
-                    <MenuItem Header="Save Current Layout" Click="SaveLayout"></MenuItem>
+                    <MenuItem Header="Reload Layout" Command="{Binding ForceLoadLayoutCommand}"></MenuItem>
+                    <MenuItem Header="Save Current Layout" Command="{Binding ForceSaveLayoutCommand}"></MenuItem>
                 </MenuItem>
             </MenuItem>
         </Menu>
@@ -53,7 +53,7 @@
             <xcad:DockingManager.LayoutItemContainerStyle>
                 <Style TargetType="{x:Type xcad:LayoutItem}" >
                     <Setter Property="Title" Value="{Binding Model.Title}" />
-                    <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
+                    <!--<Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />-->
                     <Setter Property="CanClose" Value="{Binding Model.CanClose}" />
                 </Style>
 

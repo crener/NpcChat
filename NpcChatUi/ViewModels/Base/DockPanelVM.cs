@@ -69,7 +69,10 @@ namespace NpcChat.ViewModels.Base
 
         public void Close()
         {
-            IsClosed = true;
+            if (CanClose)
+            {
+                IsClosed = true;
+            }
         }
     }
 }

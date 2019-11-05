@@ -13,7 +13,9 @@ using NpcChatSystem;
 using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
+using NpcChatSystem.Utilities;
 using Prism.Commands;
+using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Controls;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
@@ -21,15 +23,23 @@ namespace NpcChat.ViewModels
 {
     public class WindowViewModel : NotificationObject
     {
+        /// <summary>
+        /// Collection of possible windows. Note this isn't a set of active windows as some may be hidden (ie closed)
+        /// </summary>
         public ObservableCollection<DockPanelVM> Windows { get; }
 
         public ICommand OpenProjectCommand { get; }
         public ICommand NewProjectCommand { get; }
         public ICommand ShowAboutCommand { get; }
-        public ICommand ShowLicencesCommand { get; }
+        public ICommand ForceSaveLayoutCommand { get; }
+        public ICommand ForceLoadLayoutCommand { get; }
+
 
         private NpcChatProject m_project;
         private DialogTree m_tree;
+        private string WorkspaceLocation => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NpcChat", "workspace.xml");
+        private DockingManager m_dockingManager;
+
 
         public WindowViewModel()
         {
@@ -64,6 +74,10 @@ namespace NpcChat.ViewModels
 
                 //About
                 ShowAboutCommand = new DelegateCommand(ShowAbout);
+
+                //Debug
+                ForceLoadLayoutCommand = new DelegateCommand(LoadLayout);
+                ForceSaveLayoutCommand = new DelegateCommand(SaveLayout);
             }
         }
 
@@ -81,6 +95,48 @@ namespace NpcChat.ViewModels
         {
             AboutDialog about = new AboutDialog();
             about.ShowDialog();
+        }
+
+        public void SetDockingManager(DockingManager dockingManager)
+        {
+            m_dockingManager = dockingManager;
+            m_dockingManager.DocumentClosed += WindowClosed;
+        }
+
+        private void WindowClosed(object sender, DocumentClosedEventArgs e)
+        {
+            Logging.Logger.Info($"Closed window, '{e.Document.Title}'");
+        }
+
+
+        private void LoadLayout()
+        {
+            if (m_dockingManager == null)
+            {
+                Logging.Logger.Error("Docking manager is null! Cannot load into null object");
+                return;
+            }
+
+            using (StreamReader reader = new StreamReader(WorkspaceLocation))
+            {
+                XmlLayoutSerializer layoutSerializer = new XmlLayoutSerializer(m_dockingManager);
+                layoutSerializer.Deserialize(reader);
+            }
+        }
+
+        private void SaveLayout()
+        {
+            if (m_dockingManager == null)
+            {
+                Logging.Logger.Error("Docking manager is null! Cannot save into null object");
+                return;
+            }
+
+            using (StreamWriter writer = new StreamWriter(WorkspaceLocation))
+            {
+                XmlLayoutSerializer layoutSerializer = new XmlLayoutSerializer(m_dockingManager);
+                layoutSerializer.Serialize(writer);
+            }
         }
     }
 }
