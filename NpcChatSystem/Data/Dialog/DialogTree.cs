@@ -12,17 +12,27 @@ namespace NpcChatSystem.Data.Dialog
     /// <summary>
     /// A branching tree following all options within a conversation
     /// </summary>
-    public class DialogTree : ProjectObject
+    public class DialogTree : ProjectNotificationObject
     {
         private static Random s_random = new Random();
 
         public DialogTreeIdentifier Id { get; }
         public IReadOnlyList<DialogTreeBranchIdentifier> Branches => m_branches.Select(b => (DialogTreeBranchIdentifier)b).ToList();
+        public string TreeName
+        {
+            get => m_treeName;
+            set
+            {
+                m_treeName = value;
+                RaiseChanged();
+            }
+        }
 
         public event Action<DialogTreeBranch> OnBranchCreated;
         public event Action<DialogTreeBranch> OnBranchRemoved;
 
         private List<DialogTreeBranch> m_branches = new List<DialogTreeBranch>();
+        private string m_treeName;
 
         internal DialogTree(NpcChatProject project, int id)
             : base(project)
@@ -45,7 +55,7 @@ namespace NpcChatSystem.Data.Dialog
                 {
                     iteration++;
                     potentialName = $"{branch.Name} ({iteration})";
-                } while(m_branches.Any(b => b.Name == potentialName));
+                } while (m_branches.Any(b => b.Name == potentialName));
 
                 branch.Name = potentialName;
             }
@@ -72,7 +82,7 @@ namespace NpcChatSystem.Data.Dialog
             if (!HasBranch(id)) return false;
 
             DialogTreeBranch branch = GetBranch(id);
-            foreach(DialogTreeBranchIdentifier child in branch.Children)
+            foreach (DialogTreeBranchIdentifier child in branch.Children)
             {
                 Logging.Logger.Log(LogLevel.Warn, $"Orphaned child of '{branch.Name}' called '{this[child].Name}'");
                 branch.RemoveChild(child);

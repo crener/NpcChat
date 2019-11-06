@@ -4,29 +4,28 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
-using FirstFloor.ModernUI.Presentation;
 using NpcChat.Backend.Interfaces;
-using NpcChat.Util;
-using NpcChat.ViewModels.Base;
 using NpcChatSystem;
+using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.Dialog;
-using NpcChatSystem.Data.Util;
 using NpcChatSystem.Identifiers;
 using NpcChatSystem.Utilities;
 using Prism.Commands;
 using Xceed.Wpf.AvalonDock.Layout;
 using LogLevel = NLog.LogLevel;
 
-namespace NpcChat.ViewModels.Editors.Script
+namespace NpcChat.ViewModels.Panels.Script
 {
     public class ScriptPanelVM : LayoutDocument, IScriptPanelVM
     {
         public ObservableCollection<TreeBranchVM> Branches { get; } = new ObservableCollection<TreeBranchVM>();
+
+        public DialogTree Tree
+        {
+            get => m_tree;
+            set => SetDialogTree(value);
+        }
 
         public ICommand NewBranchCommand { get; }
 
@@ -38,6 +37,8 @@ namespace NpcChat.ViewModels.Editors.Script
         public ScriptPanelVM(NpcChatProject project, DialogTreeIdentifier dialog = null)
         {
             Title = "Script Editor";
+            ToolTip = "Script Editor";
+            CanClose = true;
             m_project = project;
 
             if (dialog != null) SetDialogTree(dialog);
@@ -54,12 +55,14 @@ namespace NpcChat.ViewModels.Editors.Script
             m_tree = m_project.ProjectDialogs.GetDialog(dialogTreeId);
             m_tree.OnBranchCreated += OnBranchCreated;
             m_tree.OnBranchRemoved += OnBranchRemoved;
+            Title = string.IsNullOrWhiteSpace(m_tree.TreeName) ? "Script Editor" : m_tree.TreeName;
             Branches.Clear();
 
             DialogTreeBranch start = m_tree.GetStart();
             if (start != null) Branches.Add(new TreeBranchVM(m_project, this, start));
 
             TriggerOnVisibleBranchChange();
+            RaisePropertyChanged(nameof(Tree));
         }
 
         private void OnBranchCreated(DialogTreeBranch obj)
@@ -134,18 +137,18 @@ namespace NpcChat.ViewModels.Editors.Script
         {
             if (!m_project.ProjectDialogs.HasDialog(parent))
             {
-                Logging.Logger.Error($"Attempted to rebase ScriptPanel branches but parent '{parent}' doesn't exist");
+                Logging.Logger.Warn($"Attempted to rebase ScriptPanel branches but parent '{parent}' doesn't exist");
                 return;
             }
             if (!m_project.ProjectDialogs.HasDialog(child))
             {
-                Logging.Logger.Error($"Attempted to rebase ScriptPanel branches but child '{child}' doesn't exist");
+                Logging.Logger.Warn($"Attempted to rebase ScriptPanel branches but child '{child}' doesn't exist");
                 return;
             }
 
             if (!m_project[parent].Children.Contains(child))
             {
-                Logging.Logger.Error($"Attempted to rebase ScriptPanel branches but parnet '{parent}' doesn't child '{child}'");
+                Logging.Logger.Warn($"Attempted to rebase ScriptPanel branches but parnet '{parent}' doesn't child '{child}'");
                 return;
             }
 
@@ -200,6 +203,14 @@ namespace NpcChat.ViewModels.Editors.Script
         private void TriggerOnVisibleBranchChange()
         {
             OnVisibleBranchChange?.Invoke(Branches);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

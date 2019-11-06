@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using NpcChat.Backend.Interfaces;
 using NpcChat.Properties;
@@ -13,7 +9,7 @@ using NpcChatSystem.Identifiers;
 using NpcChatSystem.Utilities;
 using Prism.Commands;
 
-namespace NpcChat.ViewModels.Editors.Script.Util
+namespace NpcChat.ViewModels.Panels.Script.Util
 {
     public class TreeBranchLinkInfoVM : INotifyPropertyChanged
     {
@@ -46,7 +42,7 @@ namespace NpcChat.ViewModels.Editors.Script.Util
             {
                 if (Parent == Child)
                 {
-                    Logging.Logger.Error($"iu789Tree Branch link invalid, parent and child identicle '{Parent}'");
+                    Logging.Logger.Warn($"Tree Branch link invalid, parent and child identicle '{Parent}'");
                     return;
                 }
 
@@ -60,12 +56,12 @@ namespace NpcChat.ViewModels.Editors.Script.Util
             DialogTreeBranch parentBranch = m_project[(DialogTreeBranchIdentifier)Parent];
             if (parentBranch == null)
             {
-                Logging.Logger.Error($"Unable to remove branch link as parent '{Parent}' couldn't be found");
+                Logging.Logger.Warn($"Unable to remove branch link as parent '{Parent}' couldn't be found");
                 return;
             }
 
             if(!parentBranch.RemoveChild(Child))
-                Logging.Logger.Error($"Failed to remove link between '{Parent}' and '{Child}'");
+                Logging.Logger.Warn($"Failed to remove link between '{Parent}' and '{Child}'");
             else m_script.ClearBranchListAfterParent(Parent);
         }
 

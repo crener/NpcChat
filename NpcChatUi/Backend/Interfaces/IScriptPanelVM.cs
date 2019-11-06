@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using NpcChat.ViewModels.Editors.Script;
+using NpcChat.ViewModels.Panels.Script;
 using NpcChatSystem.Identifiers;
 
 namespace NpcChat.Backend.Interfaces

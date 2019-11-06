@@ -1,4 +1,8 @@
 <Licenses>
   <License Name="ModernUI" Link="https://github.com/firstfloorsoftware/mui" licenseFile="ModernUI.txt"/>
   <License Name="ModernUI.Xceed.Toolkit" Link="https://github.com/samoatesgames/mui.extended.toolkit" licenseFile="ModernUI.Xceed.Toolkit.txt"/>
+  <License Name="Extended WPF Toolkit" Link="https://github.com/xceedsoftware/wpftoolkit" licenseFile="wpfToolkit.txt"/>
+  <License Name="NLog" Link="https://github.com/NLog/NLog" licenseFile="NLog.txt"/>
+  <License Name="NLogViewer" Link="https://github.com/erizet/NlogViewer" licenseFile="NlogViewer.txt"/>
+  <License Name="Prism" Link="https://github.com/PrismLibrary/Prism" licenseFile="Prism.txt"/>
 </Licenses>

@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using System.ServiceModel;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using NpcChat.Backend;
 using NpcChat.Util;
-using NpcChat.ViewModels.Base;
-using NpcChat.ViewModels.Editors.Script;
+using NpcChat.ViewModels.Panels.Project;
+using NpcChat.ViewModels.Panels.Script;
+using NpcChat.ViewModels.Panels.UtilityPanels;
 using NpcChat.Views.Dialogs;
 using NpcChatSystem;
 using NpcChatSystem.Data.CharacterData;
@@ -27,11 +30,13 @@ namespace NpcChat.ViewModels
 {
     public class WindowViewModel : NotificationObject
     {
+        public static WindowViewModel Instance { get; private set; }
+
         /// <summary>
         /// Collection of possible windows. Note this isn't a set of active windows as some may be hidden (ie closed)
         /// </summary>
         public ObservableCollection<LayoutContent> Windows { get; }
-        public ObservableCollection<KeyValuePair<string, string>> RecentProjects { get; } = new ObservableCollection<KeyValuePair<string, string>>();
+        public IReadOnlyCollection<KeyValuePair<string, string>> RecentProjects { get; private set; }
 
         public ICommand OpenProjectCommand { get; }
         public ICommand NewProjectCommand { get; }
@@ -39,23 +44,24 @@ namespace NpcChat.ViewModels
         public ICommand ShowAboutCommand { get; }
         public ICommand ForceSaveLayoutCommand { get; }
         public ICommand ForceLoadLayoutCommand { get; }
-
+        public ICommand ShowWindowCommand { get; }
 
         private NpcChatProject m_project;
-        private DialogTree m_tree;
         private string WorkspaceLocation => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NpcChat", "workspace.xml");
         private DockingManager m_dockingManager;
 
 
         public WindowViewModel()
         {
+            Instance = this;
             CurrentProject.Project = m_project = new NpcChatProject();
+            DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
+
             if (m_project.ProjectCharacters.RegisterNewCharacter(out int diane, new Character("diane")) &&
                m_project.ProjectCharacters.RegisterNewCharacter(out int jerry, new Character("jerry")) &&
                m_project.ProjectCharacters.RegisterNewCharacter(out int gran, new Character("Granny")) &&
                m_project.ProjectCharacters.RegisterNewCharacter(out int banana, new Character("Banana")))
             {
-                m_tree = m_project.ProjectDialogs.CreateNewDialogTree();
                 //SetDialogTree(m_tree.Id);
                 /*DialogTreeBranch branch = m_tree.GetStart();
                 branch.Name = "Start";
@@ -72,13 +78,16 @@ namespace NpcChat.ViewModels
 
             FindRecentProjects();
             Windows = new ObservableCollection<LayoutContent>();
-            Windows.Add(new ScriptPanelVM(m_project, m_tree));
+            Windows.Add(new ScriptPanelVM(m_project, tree));
 
             {
                 //File
                 OpenProjectCommand = new DelegateCommand<string>(OpenProject);
                 NewProjectCommand = new DelegateCommand(NewProject);
                 SaveProjectCommand = new DelegateCommand<string>(SaveAs);
+
+                //View
+                ShowWindowCommand = new DelegateCommand<Type>(ShowWindow);
 
                 //About
                 ShowAboutCommand = new DelegateCommand(ShowAbout);
@@ -89,13 +98,37 @@ namespace NpcChat.ViewModels
             }
         }
 
+        private void ShowWindow(Type type)
+        {
+            LayoutContent panel = Windows.FirstOrDefault(p => p.GetType() == type);
+            if (panel != null)
+            {
+                panel.IsSelected = true;
+                panel.IsActive = true;
+                return;
+            }
+
+            if (type == typeof(ProjectOverviewVM)) panel = new ProjectOverviewVM(m_project);
+            else if (type == typeof(LogPanelVM)) panel = new LogPanelVM();
+            else
+            {
+                Logging.Logger.Warn($"Tried to show unknown panel: {type.FullName}");
+                return;
+            }
+
+            Logging.Logger.Info($"Adding new panel '{panel.Title}' based on requested type: {type.FullName}");
+            Windows.Add(panel);
+        }
+
         private void FindRecentProjects()
         {
-            int recentQuantity = 5;
+            const int recentQuantity = 5;
+            List<KeyValuePair<string, string>> recent = new List<KeyValuePair<string, string>>();
             for (int i = 0; i < recentQuantity; i++)
             {
-                RecentProjects.Add(new KeyValuePair<string, string>("RecentFile " + i, "c://somefile"));
+                recent.Add(new KeyValuePair<string, string>("RecentFile " + i, "c://somefile"));
             }
+            RecentProjects = recent;
         }
 
         private void NewProject()
@@ -134,7 +167,7 @@ namespace NpcChat.ViewModels
                 openFile.Filter = $"NPC Project |*.{NpcChatProject.ProjectExtension}|All files|*.*";
                 openFile.FilterIndex = 0;
 
-                if(openFile.ShowDialog() == true)
+                if (openFile.ShowDialog() == true)
                 {
                     filePath = openFile.FileName;
                 }
@@ -158,7 +191,13 @@ namespace NpcChat.ViewModels
 
         private void WindowClosed(object sender, DocumentClosedEventArgs e)
         {
-            Logging.Logger.Info($"Closed window, '{e.Document.Title}'");
+            Logging.Logger.Info($"Closed window, '{e.Document.Title}', id: '{e.Document.ContentId}'");
+
+            LayoutDocument document = e.Document?.Content as LayoutDocument;
+            if (Windows.Contains(document))
+            {
+                Windows.Remove(document);
+            }
         }
 
 
@@ -192,4 +231,6 @@ namespace NpcChat.ViewModels
             }
         }
     }
+
+
 }

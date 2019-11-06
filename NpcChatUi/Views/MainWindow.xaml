@@ -4,12 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mui="http://firstfloorsoftware.com/ModernUI"
-        xmlns:data="clr-namespace:NpcChat.ViewModels.Editors.Script"
         xmlns:script="clr-namespace:NpcChat.Views.Editors.Script"
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:avalonDock="clr-namespace:ModernUI.Xceed.AvalonDock;assembly=ModernUI.Xceed.AvalonDock"
         xmlns:converters="clr-namespace:NpcChat.Converters"
         xmlns:generic="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+        xmlns:viewModels="clr-namespace:NpcChat.ViewModels"
+        xmlns:data="clr-namespace:NpcChat.ViewModels.Panels.Script"
+        xmlns:project="clr-namespace:NpcChat.ViewModels.Panels.Project"
+        xmlns:utilityPanels="clr-namespace:NpcChat.ViewModels.Panels.UtilityPanels"
+        xmlns:utilityPanels1="clr-namespace:NpcChat.Views.Panels.UtilityPanels"
         mc:Ignorable="d"
 
         x:Name="Window"
@@ -45,6 +49,20 @@
                 <MenuItem Header="Save As..." Command="{Binding SaveProjectCommand}"/>
             </MenuItem>
 
+            <MenuItem Header="View">
+                <MenuItem Header="Project Overview" Command="{Binding ShowWindowCommand}" CommandParameter="{x:Type project:ProjectOverviewVM}"/>
+                <MenuItem Header="Log" Command="{Binding ShowWindowCommand}" CommandParameter="{x:Type utilityPanels:LogPanelVM}"/>
+            </MenuItem>
+
+            <!--<MenuItem Header="Windows" ItemsSource="{Binding Windows}" DisplayMemberPath="Title">
+                <MenuItem.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="MenuItem.Command" Value="{Binding ElementName=Window, Path=DataContext.ShowWindowCommand}"/>
+                        <Setter Property="MenuItem.CommandParameter" Value="{Binding }"/>
+                    </Style>
+                </MenuItem.ItemContainerStyle>
+            </MenuItem>-->
+
             <MenuItem Header="About" Command="{Binding ShowAboutCommand}"/>
 
             <MenuItem Header="Debug" Visibility="{Binding DebugBuild, Converter={StaticResource BoolToVis}}">
@@ -59,9 +77,16 @@
             <xcad:DockingManager.Theme>
                 <avalonDock:ModernUiTheme />
             </xcad:DockingManager.Theme>
+
             <xcad:DockingManager.Resources>
                 <DataTemplate DataType="{x:Type data:ScriptPanelVM}">
                     <script:ScriptPanel />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type project:ProjectOverviewVM}">
+                    <project:ProjectOverview />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type utilityPanels:LogPanelVM}">
+                    <utilityPanels1:LogPanel />
                 </DataTemplate>
             </xcad:DockingManager.Resources>
 
@@ -75,6 +100,7 @@
 
                 <!--<Style TargetType="{x:Type data:ScriptPanelVM}" BasedOn="{StaticResource BaseStyle}"/>-->
             </xcad:DockingManager.LayoutItemContainerStyle>
+
             <xcad:LayoutRoot/>
         </xcad:DockingManager>
     </Grid>

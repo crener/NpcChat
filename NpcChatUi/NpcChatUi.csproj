@@ -59,7 +59,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.6.7\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.6.8\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="Prism, Version=7.1.0.431, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59">
       <HintPath>..\packages\Prism.Core.7.1.0.431\lib\net45\Prism.dll</HintPath>
@@ -121,12 +121,16 @@
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Util\DependencyNotificationObject.cs" />
     <Compile Include="Util\NotificationObject.cs" />
-    <Compile Include="ViewModels\Editors\Script\CharacterDialogVM.cs" />
-    <Compile Include="ViewModels\Editors\Script\ScriptPanelVM.cs" />
-    <Compile Include="ViewModels\Editors\Script\TreeBranchVM.cs" />
-    <Compile Include="ViewModels\Editors\Script\Util\TreeBranchLinkInfoVM.cs" />
-    <Compile Include="ViewModels\Editors\Tree\Nodes\BaseNodeModel.cs" />
-    <Compile Include="ViewModels\Base\DockPanelVM.cs" />
+    <Compile Include="ViewModels\Panels\Project\ProjectOverviewVM.cs" />
+    <Compile Include="ViewModels\Panels\UtilityPanels\LogPanelVM.cs" />
+    <Compile Include="Views\Panels\Project\ProjectOverview.xaml.cs">
+      <DependentUpon>ProjectOverview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Panels\Script\CharacterDialogVM.cs" />
+    <Compile Include="ViewModels\Panels\Script\ScriptPanelVM.cs" />
+    <Compile Include="ViewModels\Panels\Script\TreeBranchVM.cs" />
+    <Compile Include="ViewModels\Panels\Script\Util\TreeBranchLinkInfoVM.cs" />
+    <Compile Include="ViewModels\Panels\Tree\Nodes\BaseNodeModel.cs" />
     <Compile Include="ViewModels\WindowViewModel.cs" />
     <Compile Include="Views\About\AboutDialog.xaml.cs">
       <DependentUpon>AboutDialog.xaml</DependentUpon>
@@ -143,14 +147,17 @@
       <DependentUpon>UnhandledExceptionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\UnhandledExceptionDialogVM.cs" />
-    <Compile Include="Views\Editors\Script\CharacterDialog.xaml.cs">
+    <Compile Include="Views\Panels\Script\CharacterDialog.xaml.cs">
       <DependentUpon>CharacterDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Editors\Script\ScriptPanel.xaml.cs">
+    <Compile Include="Views\Panels\Script\ScriptPanel.xaml.cs">
       <DependentUpon>ScriptPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Editors\Tree\Nodes\BaseNode.xaml.cs">
+    <Compile Include="Views\Panels\Tree\Nodes\BaseNode.xaml.cs">
       <DependentUpon>BaseNode.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\UtilityPanels\LogPanel.xaml.cs">
+      <DependentUpon>LogPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Reusable\CharacterLabel.xaml.cs">
       <DependentUpon>CharacterLabel.xaml</DependentUpon>
@@ -181,6 +188,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Panels\Project\ProjectOverview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\About\AboutDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -197,7 +208,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Editors\Script\ScriptPanel.xaml">
+    <Page Include="Views\Panels\Script\ScriptPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -213,11 +224,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\Editors\Script\CharacterDialog.xaml">
+    <Page Include="Views\Panels\Script\CharacterDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Editors\Tree\Nodes\BaseNode.xaml" />
+    <Page Include="Views\Panels\Tree\Nodes\BaseNode.xaml" />
+    <Page Include="Views\Panels\UtilityPanels\LogPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Reusable\CharacterLabel.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -243,6 +258,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -257,6 +275,10 @@
     <ProjectReference Include="..\External\mui.extended.toolkit\ModernUI.Xceed\ModernUI.Xceed.Toolkit\ModernUI.Xceed.Toolkit.csproj">
       <Project>{5a634859-f873-42b4-a533-f05404a22378}</Project>
       <Name>ModernUI.Xceed.Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\External\NlogViewer\NlogViewer\NlogViewer.csproj">
+      <Project>{C04E879D-287E-49B5-9933-42FC2EFF75F0}</Project>
+      <Name>NlogViewer</Name>
     </ProjectReference>
     <ProjectReference Include="..\NpcChatSystem\NpcChatSystem.csproj">
       <Project>{42513f8f-9551-443a-9a37-3420109b95b8}</Project>
@@ -288,6 +310,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Licenses\ModernUI.Xceed.Toolkit.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Licenses\NLog.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Licenses\NlogViewer.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Licenses\Prism.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Licenses\wpfToolkit.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\logo.svg" />

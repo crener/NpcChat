@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -9,7 +7,7 @@ using System.Windows.Input;
 using NpcChat.Backend.Interfaces;
 using NpcChat.Properties;
 using NpcChat.Util;
-using NpcChat.ViewModels.Editors.Script.Util;
+using NpcChat.ViewModels.Panels.Script.Util;
 using NpcChatSystem;
 using NpcChatSystem.Branching.EvaluationContainers;
 using NpcChatSystem.Data.CharacterData;
@@ -20,7 +18,7 @@ using NpcChatSystem.System.TypeStore.Stores;
 using NpcChatSystem.Utilities;
 using Prism.Commands;
 
-namespace NpcChat.ViewModels.Editors.Script
+namespace NpcChat.ViewModels.Panels.Script
 {
     [DebuggerDisplay("BranchVM: {DialogBranch.Name}")]
     public class TreeBranchVM : NotificationObject
@@ -85,7 +83,7 @@ namespace NpcChat.ViewModels.Editors.Script
                 if (m_evaluationCacheName == value) return;
                 if (DialogBranch == null)
                 {
-                    Logging.Logger.Error($"Unable to change EvaluationContainer due to null '{nameof(DialogTreeBranch)}'");
+                    Logging.Logger.Warn($"Unable to change EvaluationContainer due to null '{nameof(DialogTreeBranch)}'");
                     return;
                 }
 

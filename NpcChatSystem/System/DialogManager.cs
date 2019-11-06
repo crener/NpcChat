@@ -39,7 +39,7 @@ namespace NpcChatSystem.System
         /// <returns>character if found, null if not found</returns>
         public DialogTree GetDialog(DialogTreeIdentifier id)
         {
-            if(id == null) return null;
+            if (id == null) return null;
             return GetDialog(id.DialogTreeId);
         }
 
@@ -48,6 +48,14 @@ namespace NpcChatSystem.System
             int id = GenerateUniqueId();
 
             DialogTree tree = new DialogTree(m_project, id);
+            {
+                string testName = "Dialog Tree";
+                int i = 0;
+                while (m_dialogs.Any(t => t.TreeName == testName) && i++ <= 9999)
+                    testName = $"Dialog Tree ({i})";
+                tree.TreeName = testName;
+            }
+
             m_dialogs.Add(tree);
             return tree;
         }
@@ -56,7 +64,7 @@ namespace NpcChatSystem.System
         {
             if (dialog.Id.DialogTreeId == CharacterId.DefaultId) return false;
 
-            if (m_dialogs.Contains(dialog)) 
+            if (m_dialogs.Contains(dialog))
                 m_dialogs.Remove(dialog);
 
             return true;

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using NpcChat.ViewModels.Editors.Script;
+using NpcChat.ViewModels.Panels.Script;
 
 namespace NpcChat.Views.Editors.Script
 {

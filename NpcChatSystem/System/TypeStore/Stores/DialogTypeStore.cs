@@ -73,7 +73,7 @@ namespace NpcChatSystem.System.TypeStore.Stores
                 $"    public {type.Name}()..." +
                 $"    public {type.Name}({nameof(NpcChatProject)} project)..." +
                 $"Variation of this is possible but all none '{nameof(NpcChatProject)}' parameters must have a default value!";
-            Logging.Logger.Error(msg);
+            Logging.Logger.Warn(msg);
 
             return false;
         }

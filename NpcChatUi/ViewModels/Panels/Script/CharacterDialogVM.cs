@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Windows.Input;
 using NpcChat.Util;
 using NpcChatSystem;
@@ -9,12 +8,11 @@ using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Dialog.DialogParts;
 using NpcChatSystem.Identifiers;
-using NpcChatSystem.System.TypeStore;
 using NpcChatSystem.System.TypeStore.Stores;
 using NpcChatSystem.Utilities;
 using Prism.Commands;
 
-namespace NpcChat.ViewModels.Editors.Script
+namespace NpcChat.ViewModels.Panels.Script
 {
     public class CharacterDialogVM : NotificationObject
     {
@@ -94,14 +92,14 @@ namespace NpcChat.ViewModels.Editors.Script
             DialogTreeBranch branch = Project[(DialogTreeBranchIdentifier)DialogSegmentId];
             if (branch == null)
             {
-                Logging.Logger.Error($"Failed to remove dialog '{DialogSegmentId}' due to missing branch!");
+                Logging.Logger.Warn($"Failed to remove dialog '{DialogSegmentId}' due to missing branch!");
                 return;
             }
 
             bool success = branch.RemoveDialog(DialogSegmentId);
             if (!success)
             {
-                Logging.Logger.Error($"Failed to remove dialog '{DialogSegmentId}' from branch '{branch.Id}'");
+                Logging.Logger.Warn($"Failed to remove dialog '{DialogSegmentId}' from branch '{branch.Id}'");
             }
         }
 
