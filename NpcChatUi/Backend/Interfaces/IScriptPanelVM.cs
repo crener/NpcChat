@@ -29,8 +29,19 @@ namespace NpcChat.Backend.Interfaces
         /// <param name="updateView"></param>
         /// <returns>id of the new tree branch</returns>
         DialogTreeBranchIdentifier AddNewBranch(DialogTreeBranchIdentifier parentId, bool updateView);
-
+        
+        /// <summary>
+        /// Changes the visible branches so that the <see cref="parent"/> is visible with the <see cref="child"/>.
+        /// </summary>
+        /// <param name="parent">parent branch</param>
+        /// <param name="child">child of parent branch</param>
         void RebaseBranchList(DialogTreeBranchIdentifier parent, DialogTreeBranchIdentifier child);
+
+        /// <summary>
+        /// Changes the visible branches so that the <see cref="parent"/> is last visible 
+        /// </summary>
+        /// <param name="parent">parent branch</param>
+        void ClearBranchListAfterParent(DialogTreeBranchIdentifier parent);
 
         /// <summary>
         /// Triggered when the visible branches in <see cref="Branches"/> change

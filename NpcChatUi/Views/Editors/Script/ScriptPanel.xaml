@@ -93,14 +93,19 @@
                                 <ListBox ItemsSource="{Binding BranchLinks}" SelectionMode="Single" SelectedIndex="{Binding VisibleBranchLinkIndex}">
                                     <ListBox.Resources>
                                         <DataTemplate DataType="{x:Type util:TreeBranchLinkInfoVM}">
-                                            <Button Content="{Binding ChildName}" Command="{Binding RebaseScriptView}"/>
+                                            <Button Content="{Binding ChildName}" Command="{Binding RebaseScriptView}">
+                                                <Button.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Remove Link" Command="{Binding RemoveLinkCommand}"/>
+                                                    </ContextMenu>
+                                                </Button.ContextMenu>
+                                            </Button>
                                         </DataTemplate>
                                     </ListBox.Resources>
 
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <WrapPanel Width="{Binding ElementName=BranchSeparator, Path=ActualWidth}">
-                                            </WrapPanel>
+                                            <WrapPanel Width="{Binding ElementName=BranchSeparator, Path=ActualWidth}"/>
                                         </ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
                                 </ListBox>

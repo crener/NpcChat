@@ -25,6 +25,8 @@ namespace NpcChatSystem
         /// </summary>
         public StoryElementManager ProjectStoryElements { get; }
 
+        public const string ProjectExtension = "npcProject";
+
         /// <summary>
         /// Create a new Project
         /// </summary>

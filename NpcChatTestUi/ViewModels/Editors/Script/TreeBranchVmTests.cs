@@ -288,6 +288,11 @@ namespace NpcChatTestUi.ViewModels.Editors.Script
                 RebaseHistory.Add(parent);
             }
 
+            public void ClearBranchListAfterParent(DialogTreeBranchIdentifier parent)
+            {
+                throw new NotImplementedException();
+            }
+
             public event Action<IReadOnlyList<TreeBranchVM>> OnVisibleBranchChange;
             public event PropertyChangedEventHandler PropertyChanged;
         }

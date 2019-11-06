@@ -85,7 +85,7 @@
                             <Label Content="Trait:" Grid.Column="2"/>
                             <!--<TextBox Text="{Binding CharacterTrait}" MinWidth="60" Margin="5,0,0,0" Grid.Column="3"/>-->
                             <ComboBox ItemsSource="{Binding CharacterProperties}" SelectedValue="{Binding CharacterTrait}" Margin="5,0,0,0" Grid.Column="3"
-                                      IsReadOnly="True" IsEditable="True"/>
+                                      IsReadOnly="False" IsEditable="True"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.Resources>

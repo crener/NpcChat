@@ -9,10 +9,13 @@
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:avalonDock="clr-namespace:ModernUI.Xceed.AvalonDock;assembly=ModernUI.Xceed.AvalonDock"
         xmlns:converters="clr-namespace:NpcChat.Converters"
+        xmlns:generic="clr-namespace:System.Collections.Generic;assembly=mscorlib"
         mc:Ignorable="d"
+
+        x:Name="Window"
         Title="Npc Chat" 
         Height="500" Width="600"
-        MinHeight="120" MinWidth="300"
+        MinHeight="230" MinWidth="500"
 
         Style="{DynamicResource BlankWindow}">
     <mui:ModernWindow.Resources>
@@ -27,11 +30,23 @@
 
         <Menu>
             <MenuItem Header="File">
-                <MenuItem Header="Open"/>
-                <MenuItem Header="Close"/>
-                <MenuItem Header="Save"/>
+                <MenuItem Header="New" Command="{Binding NewProjectCommand}"/>
+                <MenuItem Header="Open" Command="{Binding OpenProjectCommand}"/>
+                <MenuItem Header="OpenRecent" ItemsSource="{Binding RecentProjects}" DisplayMemberPath="Key">
+                    <MenuItem.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="MenuItem.Command" Value="{Binding ElementName=Window, Path=DataContext.OpenProjectCommand}"/>
+                            <Setter Property="MenuItem.CommandParameter" Value="{Binding Value}"/>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="Save" Command="{Binding SaveProjectCommand}"/>
+                <MenuItem Header="Save As..." Command="{Binding SaveProjectCommand}"/>
             </MenuItem>
+
             <MenuItem Header="About" Command="{Binding ShowAboutCommand}"/>
+
             <MenuItem Header="Debug" Visibility="{Binding DebugBuild, Converter={StaticResource BoolToVis}}">
                 <MenuItem Header="Layout">
                     <MenuItem Header="Reload Layout" Command="{Binding ForceLoadLayoutCommand}"></MenuItem>
@@ -54,6 +69,7 @@
                 <Style TargetType="{x:Type xcad:LayoutItem}" >
                     <Setter Property="Title" Value="{Binding Model.Title}" />
                     <!--<Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />-->
+                    <Setter Property="ActivateCommand" Value="{Binding Model.CloseCommand}" />
                     <Setter Property="CanClose" Value="{Binding Model.CanClose}" />
                 </Style>
 

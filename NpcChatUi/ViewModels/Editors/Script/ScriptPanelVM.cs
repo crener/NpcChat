@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -18,15 +19,18 @@ using NpcChatSystem.Data.Util;
 using NpcChatSystem.Identifiers;
 using NpcChatSystem.Utilities;
 using Prism.Commands;
+using Xceed.Wpf.AvalonDock.Layout;
 using LogLevel = NLog.LogLevel;
 
 namespace NpcChat.ViewModels.Editors.Script
 {
-    public class ScriptPanelVM : DockPanelVM, IScriptPanelVM
+    public class ScriptPanelVM : LayoutDocument, IScriptPanelVM
     {
         public ObservableCollection<TreeBranchVM> Branches { get; } = new ObservableCollection<TreeBranchVM>();
 
         public ICommand NewBranchCommand { get; }
+
+        public event Action<IReadOnlyList<TreeBranchVM>> OnVisibleBranchChange;
 
         private NpcChatProject m_project { get; set; }
         private DialogTree m_tree;
@@ -55,7 +59,7 @@ namespace NpcChat.ViewModels.Editors.Script
             DialogTreeBranch start = m_tree.GetStart();
             if (start != null) Branches.Add(new TreeBranchVM(m_project, this, start));
 
-            OnVisibleBranchChange?.Invoke(Branches);
+            TriggerOnVisibleBranchChange();
         }
 
         private void OnBranchCreated(DialogTreeBranch obj)
@@ -102,11 +106,11 @@ namespace NpcChat.ViewModels.Editors.Script
             //auto add the new branch to the ui
             if (updateView)
             {
-                if (Branches.Count == 0 || 
+                if (Branches.Count == 0 ||
                     parentId != null && Branches.LastOrDefault()?.DialogBranch?.Id == parentId)
                 {
                     Branches.Add(new TreeBranchVM(m_project, this, identifier));
-                    OnVisibleBranchChange?.Invoke(Branches);
+                    TriggerOnVisibleBranchChange();
                 }
                 else RebaseBranchList(parentId, identifier);
             }
@@ -122,11 +126,10 @@ namespace NpcChat.ViewModels.Editors.Script
         }
 
         /// <summary>
-        /// Changes the current set of visible branches 
         /// Changes the visible branches so that the <see cref="parent"/> is visible with the <see cref="child"/>.
         /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="child"></param>
+        /// <param name="parent">parent branch</param>
+        /// <param name="child">child of parent branch</param>
         public void RebaseBranchList(DialogTreeBranchIdentifier parent, DialogTreeBranchIdentifier child)
         {
             if (!m_project.ProjectDialogs.HasDialog(parent))
@@ -162,10 +165,41 @@ namespace NpcChat.ViewModels.Editors.Script
             }
 
             Branches.Add(new TreeBranchVM(m_project, this, child));
-            OnVisibleBranchChange?.Invoke(Branches);
+            TriggerOnVisibleBranchChange();
         }
 
+        /// <summary>
+        /// Changes the visible branches so that the <see cref="parent"/> is last visible 
+        /// </summary>
+        /// <param name="parent">parent branch</param>
+        public void ClearBranchListAfterParent(DialogTreeBranchIdentifier parent)
+        {
+            bool removeBranches = false; // does next branch need to be removed?
+            bool removedBranches = false; // has a branch been removed?
+            for (int i = 0; i < Branches.Count; i++)
+            {
+                if (removeBranches)
+                {
+                    Branches.RemoveAt(i);
+                    removedBranches = true;
+                    i--;
+                }
 
-        public event Action<IReadOnlyList<TreeBranchVM>> OnVisibleBranchChange;
+                if (Branches[i].DialogBranch == parent)
+                {
+                    removeBranches = true;
+                }
+            }
+
+            if (!removeBranches)
+                Logging.Logger.Error($"{nameof(ClearBranchListAfterParent)} - Unable to clear, parent '{parent}' is not a visible branch");
+            if (removedBranches) TriggerOnVisibleBranchChange();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void TriggerOnVisibleBranchChange()
+        {
+            OnVisibleBranchChange?.Invoke(Branches);
+        }
     }
 }

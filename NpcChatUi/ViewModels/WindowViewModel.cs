@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using NpcChat.Backend;
 using NpcChat.Util;
@@ -17,7 +18,10 @@ using NpcChatSystem.Utilities;
 using Prism.Commands;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Controls;
+using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace NpcChat.ViewModels
 {
@@ -26,10 +30,12 @@ namespace NpcChat.ViewModels
         /// <summary>
         /// Collection of possible windows. Note this isn't a set of active windows as some may be hidden (ie closed)
         /// </summary>
-        public ObservableCollection<DockPanelVM> Windows { get; }
+        public ObservableCollection<LayoutContent> Windows { get; }
+        public ObservableCollection<KeyValuePair<string, string>> RecentProjects { get; } = new ObservableCollection<KeyValuePair<string, string>>();
 
         public ICommand OpenProjectCommand { get; }
         public ICommand NewProjectCommand { get; }
+        public ICommand SaveProjectCommand { get; }
         public ICommand ShowAboutCommand { get; }
         public ICommand ForceSaveLayoutCommand { get; }
         public ICommand ForceLoadLayoutCommand { get; }
@@ -64,13 +70,15 @@ namespace NpcChat.ViewModels
                 DialogSegment segment4 = branch.CreateNewDialog(banana);*/
             }
 
-            Windows = new ObservableCollection<DockPanelVM>();
+            FindRecentProjects();
+            Windows = new ObservableCollection<LayoutContent>();
             Windows.Add(new ScriptPanelVM(m_project, m_tree));
 
             {
                 //File
                 OpenProjectCommand = new DelegateCommand<string>(OpenProject);
                 NewProjectCommand = new DelegateCommand(NewProject);
+                SaveProjectCommand = new DelegateCommand<string>(SaveAs);
 
                 //About
                 ShowAboutCommand = new DelegateCommand(ShowAbout);
@@ -81,6 +89,15 @@ namespace NpcChat.ViewModels
             }
         }
 
+        private void FindRecentProjects()
+        {
+            int recentQuantity = 5;
+            for (int i = 0; i < recentQuantity; i++)
+            {
+                RecentProjects.Add(new KeyValuePair<string, string>("RecentFile " + i, "c://somefile"));
+            }
+        }
+
         private void NewProject()
         {
             throw new NotImplementedException();
@@ -88,6 +105,42 @@ namespace NpcChat.ViewModels
 
         private void OpenProject(string path)
         {
+            string filePath = path;
+            if (path == null)
+            {
+                OpenFileDialog openFile = new OpenFileDialog();
+                openFile.Multiselect = false;
+                openFile.Filter = $"NPC Project |*.{NpcChatProject.ProjectExtension}|All files|*.*";
+                openFile.FilterIndex = 0;
+
+                if (openFile.ShowDialog() == true)
+                {
+                    filePath = openFile.FileName;
+                }
+                else return;
+            }
+
+            if (filePath == null) return;
+
+            throw new NotImplementedException();
+        }
+
+        private void SaveAs(string path)
+        {
+            string filePath = path;
+            if (path == null)
+            {
+                SaveFileDialog openFile = new SaveFileDialog();
+                openFile.Filter = $"NPC Project |*.{NpcChatProject.ProjectExtension}|All files|*.*";
+                openFile.FilterIndex = 0;
+
+                if(openFile.ShowDialog() == true)
+                {
+                    filePath = openFile.FileName;
+                }
+                else return;
+            }
+
             throw new NotImplementedException();
         }
 

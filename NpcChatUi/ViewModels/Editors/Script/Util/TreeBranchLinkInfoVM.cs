@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using NpcChat.Backend.Interfaces;
+using NpcChat.Properties;
 using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
@@ -21,33 +22,51 @@ namespace NpcChat.ViewModels.Editors.Script.Util
         public string ChildName => m_project[Child].Name;
 
         public ICommand RebaseScriptView { get; }
+        public ICommand RemoveLinkCommand { get; }
 
-        private NpcChatProject m_project { get; }
+        private readonly NpcChatProject m_project;
+        private readonly IScriptPanelVM m_script;
 
-        public TreeBranchLinkInfoVM(NpcChatProject project, IScriptPanelVM script,
+        public TreeBranchLinkInfoVM([NotNull] NpcChatProject project, [NotNull] IScriptPanelVM script,
             DialogTreeBranchIdentifier parent, DialogTreeBranchIdentifier child)
         {
             m_project = project;
+            m_script = script;
             Parent = parent;
             Child = child;
 
             if (!project[parent].Children.Contains(child))
             {
-                Logging.Logger.Warn($"ScriptPanel - Tree Branch link created with a parent '{parent}' that doesn't have the child '{child}' as a Child relationship");
+                Logging.Logger.Warn($"Tree Branch link created with a parent '{parent}' that doesn't have the child '{child}' as a Child relationship");
                 //todo should this throw?
             }
 
-            project[child].PropertyChanged += OnChanged;
+            m_project[child].PropertyChanged += OnChanged;
             RebaseScriptView = new DelegateCommand(() =>
             {
-                if(Parent == Child)
+                if (Parent == Child)
                 {
-                    Logging.Logger.Error($"ScriptPanel - Tree Branch link invalid, parent and child identicle '{Parent}'");
+                    Logging.Logger.Error($"iu789Tree Branch link invalid, parent and child identicle '{Parent}'");
                     return;
                 }
 
-                script?.RebaseBranchList(Parent, Child);
+                m_script.RebaseBranchList(Parent, Child);
             });
+            RemoveLinkCommand = new DelegateCommand(RemoveLink);
+        }
+
+        private void RemoveLink()
+        {
+            DialogTreeBranch parentBranch = m_project[(DialogTreeBranchIdentifier)Parent];
+            if (parentBranch == null)
+            {
+                Logging.Logger.Error($"Unable to remove branch link as parent '{Parent}' couldn't be found");
+                return;
+            }
+
+            if(!parentBranch.RemoveChild(Child))
+                Logging.Logger.Error($"Failed to remove link between '{Parent}' and '{Child}'");
+            else m_script.ClearBranchListAfterParent(Parent);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
