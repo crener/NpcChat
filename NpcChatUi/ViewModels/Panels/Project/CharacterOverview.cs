@@ -56,8 +56,14 @@ namespace NpcChat.ViewModels.Panels.Project
             m_project = project;
             m_character = character;
 
+            ShowEditorCommand = new DelegateCommand(EditCharacter);
             UpdateStats = new DelegateCommand(UpdateUsageStatistics);
             UpdateUsageStatistics();
+        }
+
+        private void EditCharacter()
+        {
+            throw new NotImplementedException();
         }
 
         private void UpdateUsageStatistics()

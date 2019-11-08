@@ -105,6 +105,7 @@ namespace NpcChat.ViewModels
             {
                 panel.IsSelected = true;
                 panel.IsActive = true;
+                if (m_dockingManager != null) m_dockingManager.ActiveContent = panel;
                 return;
             }
 
@@ -118,6 +119,20 @@ namespace NpcChat.ViewModels
 
             Logging.Logger.Info($"Adding new panel '{panel.Title}' based on requested type: {type.FullName}");
             Windows.Add(panel);
+        }
+
+        public void ShowScriptPanel(DialogTreeIdentifier tree)
+        {
+            DialogTree dialogTree = m_project[tree];
+            if (dialogTree == null) return;
+
+            //todo check if the script editor for the tree already exists
+
+            ScriptPanelVM window = new ScriptPanelVM(m_project, dialogTree);
+            Windows.Add(window);
+
+            window.IsSelected = true;
+            if (m_dockingManager != null) m_dockingManager.ActiveContent = window;
         }
 
         private void FindRecentProjects()

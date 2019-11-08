@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
+using NpcChat.ViewModels.Panels.Script;
+using NpcChat.Views;
 using NpcChatSystem;
 using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.CharacterData;
@@ -73,7 +75,7 @@ namespace NpcChat.ViewModels.Panels.Project
 
         private void ShowScriptEditor()
         {
-            throw new NotImplementedException();
+            WindowViewModel.Instance.ShowScriptPanel(m_tree);
         }
 
         public static IEnumerable<DialogOverview> AnalyseProject(NpcChatProject project)
