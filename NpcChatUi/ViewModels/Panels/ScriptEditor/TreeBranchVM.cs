@@ -7,7 +7,7 @@ using System.Windows.Input;
 using NpcChat.Backend.Interfaces;
 using NpcChat.Properties;
 using NpcChat.Util;
-using NpcChat.ViewModels.Panels.Script.Util;
+using NpcChat.ViewModels.Panels.ScriptEditor.Util;
 using NpcChatSystem;
 using NpcChatSystem.Branching.EvaluationContainers;
 using NpcChatSystem.Data.CharacterData;
@@ -18,7 +18,7 @@ using NpcChatSystem.System.TypeStore.Stores;
 using NpcChatSystem.Utilities;
 using Prism.Commands;
 
-namespace NpcChat.ViewModels.Panels.Script
+namespace NpcChat.ViewModels.Panels.ScriptEditor
 {
     [DebuggerDisplay("BranchVM: {DialogBranch.Name}")]
     public class TreeBranchVM : NotificationObject

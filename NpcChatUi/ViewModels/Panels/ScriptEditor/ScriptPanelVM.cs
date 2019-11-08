@@ -15,7 +15,7 @@ using Prism.Commands;
 using Xceed.Wpf.AvalonDock.Layout;
 using LogLevel = NLog.LogLevel;
 
-namespace NpcChat.ViewModels.Panels.Script
+namespace NpcChat.ViewModels.Panels.ScriptEditor
 {
     public class ScriptPanelVM : LayoutDocument, IScriptPanelVM
     {

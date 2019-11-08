@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using NpcChat.Views.Utility;
 using Prism.Commands;
 
-namespace NpcChat.Views.Dialogs
+namespace NpcChat.Views.About
 {
     public class AboutDialogVM
     {

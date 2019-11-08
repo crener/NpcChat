@@ -1,8 +1,7 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using NpcChat.ViewModels.Panels.Script;
+﻿using System.Windows.Controls;
+using NpcChat.ViewModels.Panels.ScriptEditor;
 
-namespace NpcChat.Views.Editors.Script
+namespace NpcChat.Views.Panels.ScriptEditor
 {
     /// <summary>
     /// Interaction logic for ScriptCharDialog.xaml

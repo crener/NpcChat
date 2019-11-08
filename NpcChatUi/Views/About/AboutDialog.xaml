@@ -1,4 +1,4 @@
-﻿<mui:ModernWindow x:Class="NpcChat.Views.Dialogs.AboutDialog"
+﻿<mui:ModernWindow x:Class="NpcChat.Views.About.AboutDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"

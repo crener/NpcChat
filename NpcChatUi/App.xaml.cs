@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime;
 using System.Windows;
-using NpcChat.Views.Dialog;
 using NpcChat.Views.Dialogs;
 using NpcChatSystem.System;
 using NpcChatSystem.System.TypeStore;

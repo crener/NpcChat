@@ -1,7 +1,7 @@
 using System.Windows.Controls;
-using NpcChat.ViewModels.Editors.Tree.Nodes;
+using NpcChat.ViewModels.Panels.Tree.Nodes;
 
-namespace NpcChat.Views.Editors.Tree.Nodes
+namespace NpcChat.Views.Panels.Tree.Nodes
 {
     public partial class BaseNode : UserControl
     {

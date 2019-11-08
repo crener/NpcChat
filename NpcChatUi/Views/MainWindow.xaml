@@ -4,14 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mui="http://firstfloorsoftware.com/ModernUI"
-        xmlns:script="clr-namespace:NpcChat.Views.Editors.Script"
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:avalonDock="clr-namespace:ModernUI.Xceed.AvalonDock;assembly=ModernUI.Xceed.AvalonDock"
         xmlns:converters="clr-namespace:NpcChat.Converters"
-        xmlns:data="clr-namespace:NpcChat.ViewModels.Panels.Script"
         xmlns:project="clr-namespace:NpcChat.ViewModels.Panels.Project"
         xmlns:utilityPanels="clr-namespace:NpcChat.ViewModels.Panels.UtilityPanels"
         xmlns:utilityPanels1="clr-namespace:NpcChat.Views.Panels.UtilityPanels"
+        xmlns:data="clr-namespace:NpcChat.ViewModels.Panels.ScriptEditor"
+        xmlns:scriptEditor="clr-namespace:NpcChat.Views.Panels.ScriptEditor"
+        xmlns:project1="clr-namespace:NpcChat.Views.Panels.Project"
         mc:Ignorable="d"
 
         x:Name="Window"
@@ -78,10 +79,10 @@
 
             <xcad:DockingManager.Resources>
                 <DataTemplate DataType="{x:Type data:ScriptPanelVM}">
-                    <script:ScriptPanel />
+                    <scriptEditor:ScriptPanel />
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type project:ProjectOverviewVM}">
-                    <project:ProjectOverview />
+                    <project1:ProjectOverview />
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type utilityPanels:LogPanelVM}">
                     <utilityPanels1:LogPanel />

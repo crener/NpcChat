@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
-using NpcChat.ViewModels.Panels.Script;
 using NpcChat.Views;
 using NpcChatSystem;
 using NpcChatSystem.Annotations;

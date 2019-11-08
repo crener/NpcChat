@@ -12,7 +12,7 @@ using NpcChatSystem.System.TypeStore.Stores;
 using NpcChatSystem.Utilities;
 using Prism.Commands;
 
-namespace NpcChat.ViewModels.Panels.Script
+namespace NpcChat.ViewModels.Panels.ScriptEditor
 {
     public class CharacterDialogVM : NotificationObject
     {

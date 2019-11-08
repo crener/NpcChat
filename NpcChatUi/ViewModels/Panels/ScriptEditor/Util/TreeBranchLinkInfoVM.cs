@@ -9,7 +9,7 @@ using NpcChatSystem.Identifiers;
 using NpcChatSystem.Utilities;
 using Prism.Commands;
 
-namespace NpcChat.ViewModels.Panels.Script.Util
+namespace NpcChat.ViewModels.Panels.ScriptEditor.Util
 {
     public class TreeBranchLinkInfoVM : INotifyPropertyChanged
     {
