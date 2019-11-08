@@ -63,6 +63,7 @@ namespace NpcChat.ViewModels.Panels.Project
 
         private void EditCharacter()
         {
+            //todo link when there is a character editor
             throw new NotImplementedException();
         }
 
