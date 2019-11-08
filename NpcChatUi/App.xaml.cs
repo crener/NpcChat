@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -19,13 +20,14 @@ namespace NpcChat
     {
         public App()
         {
-#if !DEBUG
-            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            if (!Debugger.IsAttached)
             {
-                UnhandledExceptionDialog dialog = new UnhandledExceptionDialog(args);
-                dialog.ShowDialog();
-            };
-#endif
+                AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+                {
+                    UnhandledExceptionDialog dialog = new UnhandledExceptionDialog(args);
+                    dialog.ShowDialog();
+                };
+            }
 
             List<AssemblyTitleAttribute> title = Assembly.GetAssembly(typeof(App)).GetCustomAttributes<AssemblyTitleAttribute>().ToList();
             string path = Path.Combine(Path.GetTempPath(), title[0].Title);

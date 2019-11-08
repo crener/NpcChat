@@ -121,6 +121,8 @@
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Util\DependencyNotificationObject.cs" />
     <Compile Include="Util\NotificationObject.cs" />
+    <Compile Include="ViewModels\Panels\Project\CharacterOverview.cs" />
+    <Compile Include="ViewModels\Panels\Project\DialogOverview.cs" />
     <Compile Include="ViewModels\Panels\Project\ProjectOverviewVM.cs" />
     <Compile Include="ViewModels\Panels\UtilityPanels\LogPanelVM.cs" />
     <Compile Include="Views\Panels\Project\ProjectOverview.xaml.cs">

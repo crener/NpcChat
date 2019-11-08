@@ -4,9 +4,107 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NpcChat.ViewModels.Panels.Project"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Label Content="Project Overview"/>
-    </Grid>
+    <ScrollViewer>
+        <ScrollViewer.Resources>
+            <system:Double x:Key="TitleFontSize">20</system:Double>
+            <system:Double x:Key="SubTitleFontSize">12</system:Double>
+        </ScrollViewer.Resources>
+        <StackPanel>
+            <Expander Margin="0,0,0,5">
+                <Expander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" Grid.Column="0">Characters (<Run Text="{Binding CharacterCount, Mode=OneWay}"/>)</TextBlock>
+                        <Button Margin="10,0,0,0" Grid.Column="1">Character Editor</Button>
+                    </Grid>
+                </Expander.Header>
+                <StackPanel>
+                    <Button Command="{Binding RefreshCharacterDataCommand}">Refresh</Button>
+                    <ItemsControl ItemsSource="{Binding CharacterStats}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="local:CharacterOverview">
+                                <Border Name="Bd" Style="{StaticResource HighlightBorderStyle}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+                                            <Label Content="{Binding Name, Mode=OneWay}" FontSize="{StaticResource TitleFontSize}"/>
+                                            <Button Command="{Binding ShowEditorCommand}" Margin="15,0,0,0">Edit</Button>
+                                            <Button Command="{Binding UpdateStats}" Margin="2,0">Refresh</Button>
+                                        </StackPanel>
+                                        <TextBlock FontSize="{StaticResource SubTitleFontSize}" Foreground="{DynamicResource WindowText}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+                                        <Run Text="{Binding DialogCount, Mode=OneWay}"/>
+                                        piece(s) of dialog across
+                                        <Run Text="{Binding TreeCount, Mode=OneWay}"/> 
+                                        dialog tree(s)
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Expander>
+
+            <Expander Margin="0,5">
+                <Expander.Header>
+                    <TextBlock VerticalAlignment="Center" Grid.Column="0">Dialogs (<Run Text="{Binding DialogTreeCount, Mode=OneWay}"/>)</TextBlock>
+                </Expander.Header>
+
+                <StackPanel>
+                    <Button Command="{Binding RefreshDialogDataCommand}">Refresh</Button>
+                    <ItemsControl ItemsSource="{Binding DialogStats}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="local:DialogOverview">
+                                <Border Style="{StaticResource HighlightBorderStyle}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+                                            <Label Content="{Binding Name, Mode=OneWay}" FontSize="{StaticResource TitleFontSize}"/>
+                                            <Button Command="{Binding ShowEditorCommand}" Margin="15,0,0,0">Edit</Button>
+                                        </StackPanel>
+
+                                        <TextBlock FontSize="{StaticResource SubTitleFontSize}" Foreground="{DynamicResource WindowText}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+                                        Dialog branch contains
+                                        <Run Text="{Binding DialogCount, Mode=OneWay}"/>
+                                        piece(s) of dialog across
+                                        <Run Text="{Binding BranchCount, Mode=OneWay}"/> 
+                                        dialog branch(es)
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Expander>
+
+            <Expander Header="World " Margin="0,5">
+                <Label>Todo ;)</Label>
+            </Expander>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

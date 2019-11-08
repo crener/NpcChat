@@ -46,9 +46,10 @@ namespace NpcChatSystem
             ProjectCharacters.RegisterNewCharacter(out int _, new Character("Fiona"));
         }
 
-        // convenient dialog lookup
+        // convenient lookups
         public DialogTree this[DialogTreeIdentifier id] => ProjectDialogs[id];
         public DialogTreeBranch this[DialogTreeBranchIdentifier id] => ProjectDialogs[id];
         public DialogSegment this[DialogSegmentIdentifier id] => ProjectDialogs[id];
+        public Character? this[CharacterId id] => ProjectCharacters[id];
     }
 }

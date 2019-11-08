@@ -8,8 +8,6 @@
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:avalonDock="clr-namespace:ModernUI.Xceed.AvalonDock;assembly=ModernUI.Xceed.AvalonDock"
         xmlns:converters="clr-namespace:NpcChat.Converters"
-        xmlns:generic="clr-namespace:System.Collections.Generic;assembly=mscorlib"
-        xmlns:viewModels="clr-namespace:NpcChat.ViewModels"
         xmlns:data="clr-namespace:NpcChat.ViewModels.Panels.Script"
         xmlns:project="clr-namespace:NpcChat.ViewModels.Panels.Project"
         xmlns:utilityPanels="clr-namespace:NpcChat.ViewModels.Panels.UtilityPanels"

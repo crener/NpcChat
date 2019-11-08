@@ -13,7 +13,10 @@ namespace NpcChatSystem.System
 {
     public class DialogManager : ProjectObject
     {
-        public IReadOnlyCollection<int> DialogTreeIds => m_dialogs.Select(d => d.Id.DialogTreeId).ToArray();
+        public IReadOnlyCollection<DialogTreeIdentifier> DialogTreeIds => m_dialogs.Select(d => d.Id).ToArray();
+
+        public event Action<DialogTreeIdentifier> OnDialogTreeAdded;
+        public event Action<DialogTreeIdentifier> OnDialogTreeRemoved;
 
         private List<DialogTree> m_dialogs = new List<DialogTree>();
 
@@ -57,6 +60,7 @@ namespace NpcChatSystem.System
             }
 
             m_dialogs.Add(tree);
+            OnDialogTreeAdded?.Invoke(tree);
             return tree;
         }
 
@@ -65,7 +69,10 @@ namespace NpcChatSystem.System
             if (dialog.Id.DialogTreeId == CharacterId.DefaultId) return false;
 
             if (m_dialogs.Contains(dialog))
+            {
                 m_dialogs.Remove(dialog);
+                OnDialogTreeRemoved?.Invoke(dialog);
+            }
 
             return true;
         }

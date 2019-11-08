@@ -231,6 +231,4 @@ namespace NpcChat.ViewModels
             }
         }
     }
-
-
 }

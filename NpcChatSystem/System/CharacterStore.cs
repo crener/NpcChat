@@ -14,8 +14,19 @@ namespace NpcChatSystem.System
     {
         private static readonly Random s_random = new Random();
 
+        /// <summary>
+        /// Called when a character is modified
+        /// </summary>
         public event CharacterChangeEvent CharacterChanged;
+
+        /// <summary>
+        /// Called when a new character is added
+        /// </summary>
         public event CharacterEvent CharacterAdded;
+
+        /// <summary>
+        /// Called when an existing character is removed
+        /// </summary>
         public event CharacterEvent CharacterRemoved;
 
         /// <summary>
@@ -31,6 +42,11 @@ namespace NpcChatSystem.System
             }
 
             return null;
+        }
+
+        public Character? GetCharacter(CharacterId id)
+        {
+            return GetCharacter(id.Id);
         }
 
         public bool HasCharacter(int id)
@@ -91,6 +107,7 @@ namespace NpcChatSystem.System
         }
 
         public Character? this[int key] => GetCharacter(key);
+        public Character? this[CharacterId key] => GetCharacter(key);
 
         /// <summary>
         /// Event used to notify of a change in a characters information
