@@ -23,7 +23,16 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBox Text="{Binding Tree.TreeName}" TextAlignment="Center" FontWeight="Bold" Grid.Row="0" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Text="{Binding Tree.TreeName}" TextAlignment="Center" FontWeight="Bold" Grid.Row="0" />
+            <Button Command="{Binding ShowScriptDiagram}" Margin="3,0" Padding="6,0" Grid.Column="1">Diagram</Button>
+        </Grid>
+
         <Separator Grid.Row="1"/>
         <ScrollViewer Margin="0,5,0,0" Grid.Row="2">
             <StackPanel >

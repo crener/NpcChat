@@ -10,6 +10,7 @@ using System.Windows.Input;
 using NpcChat.Backend;
 using NpcChat.Util;
 using NpcChat.ViewModels.Panels.Project;
+using NpcChat.ViewModels.Panels.ScriptDiagram;
 using NpcChat.ViewModels.Panels.ScriptEditor;
 using NpcChat.ViewModels.Panels.UtilityPanels;
 using NpcChat.Views.About;
@@ -122,15 +123,45 @@ namespace NpcChat.ViewModels
             Windows.Add(panel);
         }
 
-        public void ShowScriptPanel(DialogTreeIdentifier tree)
+        /// <summary>
+        /// Shows the script editor panel for the given <see cref="tree"/> identifier
+        /// </summary>
+        /// <param name="tree">Dialog Tree to show</param>
+        public void ShowScriptEditorPanel(DialogTreeIdentifier tree)
         {
             DialogTree dialogTree = m_project[tree];
             if (dialogTree == null) return;
 
-            //todo check if the script editor for the tree already exists
+            ScriptPanelVM window = Windows.Select(w => w as ScriptPanelVM)
+                .Where(s => s != null)
+                .FirstOrDefault(s => s.Tree == tree);
+            if (window == null)
+            {
+                window = new ScriptPanelVM(m_project, dialogTree);
+                Windows.Add(window);
+            }
 
-            ScriptPanelVM window = new ScriptPanelVM(m_project, dialogTree);
-            Windows.Add(window);
+            window.IsSelected = true;
+            if (m_dockingManager != null) m_dockingManager.ActiveContent = window;
+        }
+
+        /// <summary>
+        /// Shows the script diagram panel for the given <see cref="tree"/> identifier
+        /// </summary>
+        /// <param name="tree">Dialog Tree to show</param>
+        public void ShowScriptDiagramPanel(DialogTreeIdentifier tree)
+        {
+            DialogTree dialogTree = m_project[tree];
+            if (dialogTree == null) return;
+
+            ScriptDiagramVM window = Windows.Select(w => w as ScriptDiagramVM)
+                .Where(s => s != null)
+                .FirstOrDefault(s => s.Tree == tree);
+            if (window == null)
+            {
+                window = new ScriptDiagramVM(m_project, dialogTree);
+                Windows.Add(window);
+            }
 
             window.IsSelected = true;
             if (m_dockingManager != null) m_dockingManager.ActiveContent = window;

@@ -74,7 +74,7 @@ namespace NpcChat.ViewModels.Panels.Project
 
         private void ShowScriptEditor()
         {
-            WindowViewModel.Instance.ShowScriptPanel(m_tree);
+            WindowViewModel.Instance.ShowScriptEditorPanel(m_tree);
         }
 
         public static IEnumerable<DialogOverview> AnalyseProject(NpcChatProject project)

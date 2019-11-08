@@ -28,10 +28,11 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
         }
 
         public ICommand NewBranchCommand { get; }
+        public ICommand ShowScriptDiagram { get; }
 
         public event Action<IReadOnlyList<TreeBranchVM>> OnVisibleBranchChange;
 
-        private NpcChatProject m_project { get; set; }
+        private NpcChatProject m_project { get;}
         private DialogTree m_tree;
 
         public ScriptPanelVM(NpcChatProject project, DialogTreeIdentifier dialog = null)
@@ -44,6 +45,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             if (dialog != null) SetDialogTree(dialog);
 
             NewBranchCommand = new DelegateCommand(() => AddNewBranch(Branches.LastOrDefault()?.DialogBranch?.Id, true));
+            ShowScriptDiagram = new DelegateCommand(() => WindowViewModel.Instance.ShowScriptDiagramPanel(Tree));
         }
 
         /// <summary>

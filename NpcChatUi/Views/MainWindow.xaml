@@ -13,6 +13,8 @@
         xmlns:data="clr-namespace:NpcChat.ViewModels.Panels.ScriptEditor"
         xmlns:scriptEditor="clr-namespace:NpcChat.Views.Panels.ScriptEditor"
         xmlns:project1="clr-namespace:NpcChat.Views.Panels.Project"
+        xmlns:scriptDiagram="clr-namespace:NpcChat.ViewModels.Panels.ScriptDiagram"
+        xmlns:scriptDiagram1="clr-namespace:NpcChat.Views.Panels.ScriptDiagram"
         mc:Ignorable="d"
 
         x:Name="Window"
@@ -86,6 +88,9 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type utilityPanels:LogPanelVM}">
                     <utilityPanels1:LogPanel />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type scriptDiagram:ScriptDiagramVM}">
+                    <scriptDiagram1:ScriptDiagram />
                 </DataTemplate>
             </xcad:DockingManager.Resources>
 
