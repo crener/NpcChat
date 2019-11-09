@@ -40,6 +40,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleCodeGenApp", "Exampl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StressTest", "StressTest\StressTest.csproj", "{69615CB9-4A6E-48A3-AAB8-9A0CABFACBB3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleHelloWorld", "ExampleHelloWorld\ExampleHelloWorld.csproj", "{8BA1A1E3-F23E-4856-9305-FBD6139B1469}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{69615CB9-4A6E-48A3-AAB8-9A0CABFACBB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69615CB9-4A6E-48A3-AAB8-9A0CABFACBB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69615CB9-4A6E-48A3-AAB8-9A0CABFACBB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BA1A1E3-F23E-4856-9305-FBD6139B1469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BA1A1E3-F23E-4856-9305-FBD6139B1469}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BA1A1E3-F23E-4856-9305-FBD6139B1469}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BA1A1E3-F23E-4856-9305-FBD6139B1469}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,6 +95,7 @@ Global
 		{9FF3600C-A171-4C35-948B-8579F6C9EA0C} = {0C9292C7-07B0-45AB-A787-951C8B61AB35}
 		{274A545D-8943-44F7-AF51-772904AE10A9} = {EEFF7EA4-CA97-4FFE-A955-F48C8FD522A6}
 		{69615CB9-4A6E-48A3-AAB8-9A0CABFACBB3} = {0C9292C7-07B0-45AB-A787-951C8B61AB35}
+		{8BA1A1E3-F23E-4856-9305-FBD6139B1469} = {EEFF7EA4-CA97-4FFE-A955-F48C8FD522A6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {923D42E4-533A-4A65-BB3E-A7CCC2585386}

@@ -62,38 +62,69 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
             // find all branches and create nodes
             foreach (DialogTreeBranchIdentifier branch in m_tree.Branches)
             {
+                DialogTreeBranch treeBranch = m_project[branch];
+                if (treeBranch == null) continue;
+
+                treeBranch.OnBranchChildAdded += (child) => TreeBranchOnOnBranchChildAdded(treeBranch, child);
+                treeBranch.OnBranchChildRemoved += (child) => TreeBranchOnOnBranchChildRemoved(treeBranch, child);
+
                 BranchNode branchNode = new BranchNode(m_project, branch);
                 m_branchNodes.Add(branch, branchNode);
                 Network.Nodes.Add(branchNode);
             }
 
             // link the branches
-            /*foreach (DialogTreeBranchIdentifier branch in m_tree.Branches)
+            foreach (DialogTreeBranchIdentifier branch in m_tree.Branches)
             {
                 BranchNode node = m_branchNodes[branch];
 
                 foreach (DialogTreeBranchIdentifier child in m_project[branch].Children)
                 {
                     BranchNode childNode = m_branchNodes[child];
-                    Network.Connections.Add(new ConnectionViewModel(Network, node.ParentPin, childNode.ChildPin));
+                    Network.Connections.Add(new ConnectionViewModel(Network, childNode.ParentPin, node.ChildPin));
                 }
-            }*/
+            }
 
             Logging.Logger.Info("Created new Script Dialog Panel");
             Logging.Logger.Info("Node Count: " + Network.Nodes.Count);
             Logging.Logger.Info("Connection Count: " + Network.Connections.Count);
+
             RaisePropertyChanged(nameof(Tree));
-            RaisePropertyChanged(nameof(Network));
         }
 
-        private void OnBranchCreated(DialogTreeBranch obj)
+        private void TreeBranchOnOnBranchChildAdded(DialogTreeBranchIdentifier parent, DialogTreeBranchIdentifier child)
         {
+            BranchNode node = m_branchNodes[parent];
+            BranchNode childNode = m_branchNodes[child];
+            Network.Connections.Add(new ConnectionViewModel(Network, childNode.ParentPin, node.ChildPin));
+        }
 
+        private void TreeBranchOnOnBranchChildRemoved(DialogTreeBranchIdentifier parent, DialogTreeBranchIdentifier child)
+        {
+            BranchNode node = m_branchNodes[parent];
+            BranchNode childNode = m_branchNodes[child];
+
+            if (node == null || childNode == null) return;
+
+            ConnectionViewModel connection = Network.Connections.Items.FirstOrDefault(c => c.Input == childNode.ParentPin && c.Output == node.ChildPin);
+            Network.Connections.Remove(connection);
+        }
+
+        private void OnBranchCreated(DialogTreeBranch branch)
+        {
+            BranchNode branchNode = new BranchNode(m_project, branch);
+
+            branch.OnBranchChildAdded += (child) => TreeBranchOnOnBranchChildAdded(branch, child);
+            branch.OnBranchChildRemoved += (child) => TreeBranchOnOnBranchChildRemoved(branch, child);
+
+            m_branchNodes.Add(branch, branchNode);
+            Network.Nodes.Add(branchNode);
         }
 
         private void OnBranchRemoved(DialogTreeBranch removed)
         {
-
+            Network.Nodes.Remove(m_branchNodes[removed]);
+            m_branchNodes.Remove(removed);
         }
     }
 }

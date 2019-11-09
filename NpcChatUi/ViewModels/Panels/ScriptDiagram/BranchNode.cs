@@ -5,14 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using DynamicData;
 using NodeNetwork.ViewModels;
+using NodeNetwork.Views;
 using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
+using ReactiveUI;
 
 namespace NpcChat.ViewModels.Panels.ScriptDiagram
 {
-    class BranchNode : NodeViewModel
+    public class BranchNode : NodeViewModel
     {
+        static BranchNode()
+        {
+            Splat.Locator.CurrentMutable.Register(() => new NodeView(), typeof(IViewFor<BranchNode>));
+        }
+
         public NodeInputViewModel ParentPin { get; }
         public NodeOutputViewModel ChildPin { get; }
 
@@ -24,7 +31,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
             m_project = project;
             m_branch = branchId;
 
-            /*ParentPin = new NodeInputViewModel()
+            ParentPin = new NodeInputViewModel()
             {
                 MaxConnections = int.MaxValue,
                 Name = "Parents",
@@ -36,11 +43,15 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
             };
 
             Inputs.Add(ParentPin);
-            Outputs.Add(ChildPin);*/
+            Outputs.Add(ChildPin);
             CanBeRemovedByUser = false;
 
-            if (branchId == null) return;
-            
+            if (branchId == null)
+            {
+                Name = "Branch";
+                return;
+            }
+
             DialogTreeBranch branch = project[branchId];
             Name = branch.Name;
         }
