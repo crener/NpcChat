@@ -32,6 +32,18 @@ namespace NodeNetwork.Toolkit.NodeList
         }
         #endregion
 
+        #region ShowSearch
+        public static readonly DependencyProperty ShowSearchProperty =
+            DependencyProperty.Register(nameof(ShowSearch), typeof(bool), typeof(NodeListView), new PropertyMetadata(true));
+
+        public bool ShowSearch
+        {
+            get { return (bool)GetValue(ShowSearchProperty); }
+            set { SetValue(ShowSearchProperty, value); }
+        }
+        #endregion
+
+
         public CollectionViewSource CVS { get; } = new CollectionViewSource();
 
         public NodeListView()
@@ -79,6 +91,9 @@ namespace NodeNetwork.Toolkit.NodeList
                     .Select(t => !t.Item1 && string.IsNullOrWhiteSpace(t.Item2))
                     .BindTo(this, v => v.emptySearchBoxMessage.Visibility)
                     .DisposeWith(d);
+
+                this.WhenAnyValue(v => v.ShowSearch)
+                    .BindTo(this, v => v.searchBoxGrid.Visibility).DisposeWith(d);
             });
         }
 
