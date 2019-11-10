@@ -9,8 +9,6 @@
              d:DesignHeight="500" d:DesignWidth="320"
              Background="#f1f1f1">
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="boolToVis"/>
-
         <DataTemplate x:Key="tilesTemplate">
             <Grid>
                 <controls:ViewModelViewHostNoAnimations VerticalAlignment="Top" Margin="0, 5, 0, 5" ViewModel="{Binding}" KeyboardNavigation.TabNavigation="None">

@@ -15,7 +15,8 @@
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
-        <nodeList:NodeListView ViewModel="{Binding NodeList, Mode=OneWay}" ShowSearch="False" Background="#333333" Grid.Column="0"/>
+        <nodeList:NodeListView ViewModel="{Binding NodeList, Mode=OneWay}" Background="#333333" Grid.Column="0"
+                               ShowSearch="False" ShowTitle="False" ShowDisplayModeSelector="False" />
 
         <GridSplitter Grid.Column="1" Width="5"/>
         <views:NetworkView ViewModel="{Binding Network, Mode=OneWay}" Grid.Column="2" />
