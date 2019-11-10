@@ -23,6 +23,7 @@ namespace NpcChat.ViewModels.Panels.Project
     {
         public string Name => m_tree.TreeName;
         public ICommand ShowEditorCommand { get; }
+        public ICommand ShowDiagramCommand { get; }
 
         public int DialogCount
         {
@@ -52,7 +53,8 @@ namespace NpcChat.ViewModels.Panels.Project
             m_project = project;
             m_tree = project[tree];
 
-            ShowEditorCommand = new DelegateCommand(ShowScriptEditor);
+            ShowEditorCommand = new DelegateCommand(() => WindowViewModel.Instance.ShowScriptEditorPanel(m_tree));
+            ShowDiagramCommand = new DelegateCommand(() => WindowViewModel.Instance.ShowScriptDiagramPanel(m_tree));
 
             UpdateUsageStatistics();
         }
@@ -70,11 +72,6 @@ namespace NpcChat.ViewModels.Panels.Project
                 DialogCount += branch.Dialog.Count;
                 BranchCount++;
             }
-        }
-
-        private void ShowScriptEditor()
-        {
-            WindowViewModel.Instance.ShowScriptEditorPanel(m_tree);
         }
 
         public static IEnumerable<DialogOverview> AnalyseProject(NpcChatProject project)

@@ -45,7 +45,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Node
             DialogTree tree = m_project[(DialogTreeIdentifier)Branch];
             BranchOutput branchOutput = arg.Output as BranchOutput;
 
-            if (tree == null || branchOutput == null ||
+            if (tree == null || branchOutput == null || branchOutput.Branch == null ||
                 tree.CheckForCircularDependency(branchOutput.Branch, Branch))
             {
                 return new ConnectionValidationResult(false, null);

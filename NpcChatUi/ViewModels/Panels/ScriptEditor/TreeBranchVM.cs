@@ -301,14 +301,8 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             DialogTree tree = Project[DialogBranch.Id as DialogTreeIdentifier];
             bool circle = tree.CheckForCircularDependency(DialogBranch.Id, id);
 
-            if (circle || BranchLinks.Any(s => s.Child == id))
-            {
-                PotentialBranchLinks.Remove(tree[id]);
-            }
-            else
-            {
-                PotentialBranchLinks.Add(tree[id]);
-            }
+            if (circle || BranchLinks.Any(s => s.Child == id)) PotentialBranchLinks.Remove(tree[id]);
+            else PotentialBranchLinks.Add(tree[id]);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

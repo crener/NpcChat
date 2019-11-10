@@ -1,4 +1,5 @@
-﻿using DynamicData;
+﻿using System.ComponentModel;
+using DynamicData;
 using NodeNetwork.ViewModels;
 using NodeNetwork.Views;
 using NpcChatSystem;
@@ -22,10 +23,10 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Node
         private NpcChatProject m_project;
         private readonly DialogTreeBranchIdentifier m_branch;
 
-        public BranchNode(NpcChatProject project, DialogTreeBranchIdentifier branchId)
+        public BranchNode(NpcChatProject project)
         {
             m_project = project;
-            m_branch = branchId;
+            m_branch = null;
 
             ParentPin = new BranchInput(m_project, this);
             ChildPin = new BranchOutput(this);
@@ -33,14 +34,28 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Node
             Outputs.Add(ChildPin);
             CanBeRemovedByUser = false;
 
-            if (branchId == null)
-            {
-                Name = "Branch";
-                return;
-            }
+            Name = "Dialog Branch";
+        }
 
-            DialogTreeBranch branch = project[branchId];
-            Name = branch.Name;
+        public BranchNode(NpcChatProject project, DialogTreeBranchIdentifier branchId)
+            : this(project)
+        {
+            if (branchId != null)
+            {
+                m_branch = branchId;
+
+                DialogTreeBranch branch = project[branchId];
+                Name = branch.Name;
+                branch.PropertyChanged += BranchChanged;
+            }
+        }
+
+        private void BranchChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(DialogTreeBranch.Name))
+            {
+                Name = m_project[Branch].Name;
+            }
         }
     }
 }

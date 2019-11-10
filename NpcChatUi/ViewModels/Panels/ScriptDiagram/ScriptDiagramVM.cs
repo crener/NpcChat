@@ -50,17 +50,29 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
             IObservable<IChangeSet<ConnectionViewModel>> connections = Network.Connections.Connect();
             connections.Subscribe(ConnectionChange);
 
+            // stops new branch being created for the side bar visuals
+            bool nodeListInitialized = false;
+
             NodeList = new NodeListViewModel();
             NodeList.AddNodeType(() =>
             {
-                m_ignoreBranchEvents = true;
-                DialogTreeBranch branch = m_tree.CreateNewBranch();
-                m_ignoreBranchEvents = false;
+                DialogTreeBranch branch = null;
+                BranchNode node;
 
-                BranchNode node = new BranchNode(project, branch);
-                m_branchNodes.Add(branch, node);
+                if (nodeListInitialized)
+                {
+                    m_ignoreBranchEvents = true;
+                    branch = m_tree.CreateNewBranch();
+                    m_ignoreBranchEvents = false;
+
+                    node = new BranchNode(project, branch);
+                    m_branchNodes.Add(branch, node);
+                }
+                else node = new BranchNode(project);
+
                 return node;
             });
+            nodeListInitialized = true;
         }
 
         /// <summary>
