@@ -61,6 +61,32 @@ namespace NpcChatTest.Data.Util
         }
 
         [Test]
+        public void DependencyCheckBranchedChildren()
+        {
+            NpcChatProject project = new NpcChatProject();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+            DialogTreeBranch start = tree.GetStart();
+            DialogTreeBranch a1 = tree.CreateNewBranch();
+            DialogTreeBranch a2 = tree.CreateNewBranch();
+            DialogTreeBranch b1 = tree.CreateNewBranch();
+            DialogTreeBranch b2 = tree.CreateNewBranch();
+
+            start.Name = nameof(start);
+            a1.Name = nameof(a1);
+            a2.Name = nameof(a2);
+            b1.Name = nameof(b1);
+            b2.Name = nameof(b2);
+
+            start.AddChild(a1);
+            a1.AddChild(a2);
+            b1.AddChild(b2);
+
+            Assert.IsFalse(DialogUtilities.CheckForCircularDependency(tree, a2, b1));
+            a2.AddChild(b1);
+            Assert.IsTrue(DialogUtilities.CheckForCircularDependency(tree, b2, a1));
+        }
+
+        [Test]
         public void DependencyCheckManyChildren()
         {
             NpcChatProject project = new NpcChatProject();

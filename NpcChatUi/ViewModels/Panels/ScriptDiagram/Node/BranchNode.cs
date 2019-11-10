@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DynamicData;
+﻿using DynamicData;
 using NodeNetwork.ViewModels;
 using NodeNetwork.Views;
 using NpcChatSystem;
@@ -11,7 +6,7 @@ using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
 using ReactiveUI;
 
-namespace NpcChat.ViewModels.Panels.ScriptDiagram
+namespace NpcChat.ViewModels.Panels.ScriptDiagram.Node
 {
     public class BranchNode : NodeViewModel
     {
@@ -20,28 +15,20 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
             Splat.Locator.CurrentMutable.Register(() => new NodeView(), typeof(IViewFor<BranchNode>));
         }
 
-        public NodeInputViewModel ParentPin { get; }
-        public NodeOutputViewModel ChildPin { get; }
+        public BranchInput ParentPin { get; }
+        public BranchOutput ChildPin { get; }
+        public DialogTreeBranchIdentifier Branch => m_branch;
 
         private NpcChatProject m_project;
-        private DialogTreeBranchIdentifier m_branch;
+        private readonly DialogTreeBranchIdentifier m_branch;
 
         public BranchNode(NpcChatProject project, DialogTreeBranchIdentifier branchId)
         {
             m_project = project;
             m_branch = branchId;
 
-            ParentPin = new NodeInputViewModel()
-            {
-                MaxConnections = int.MaxValue,
-                Name = "Parents",
-            };
-            ChildPin = new NodeOutputViewModel()
-            {
-                MaxConnections = int.MaxValue,
-                Name = "Children",
-            };
-
+            ParentPin = new BranchInput(m_project, this);
+            ChildPin = new BranchOutput(this);
             Inputs.Add(ParentPin);
             Outputs.Add(ChildPin);
             CanBeRemovedByUser = false;

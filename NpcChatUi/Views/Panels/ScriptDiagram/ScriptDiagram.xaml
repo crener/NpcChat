@@ -5,9 +5,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NpcChat.Views.Panels.ScriptDiagram"
              xmlns:views="clr-namespace:NodeNetwork.Views;assembly=NodeNetwork"
+             xmlns:nodeList="clr-namespace:NodeNetwork.Toolkit.NodeList;assembly=NodeNetworkToolkit"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <views:NetworkView ViewModel="{Binding Network, Mode=OneWay}" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="180"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+
+        <nodeList:NodeListView ViewModel="{Binding NodeList, Mode=OneWay}" Grid.Column="0"/>
+        <GridSplitter Grid.Column="1" Width="5"/>
+        <views:NetworkView ViewModel="{Binding Network, Mode=OneWay}" Grid.Column="2" />
     </Grid>
 </UserControl>

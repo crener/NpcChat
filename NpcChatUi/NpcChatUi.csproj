@@ -154,7 +154,9 @@
     <Compile Include="ViewModels\Panels\Project\CharacterOverview.cs" />
     <Compile Include="ViewModels\Panels\Project\DialogOverview.cs" />
     <Compile Include="ViewModels\Panels\Project\ProjectOverviewVM.cs" />
-    <Compile Include="ViewModels\Panels\ScriptDiagram\BranchNode.cs" />
+    <Compile Include="ViewModels\Panels\ScriptDiagram\Node\BranchOutput.cs" />
+    <Compile Include="ViewModels\Panels\ScriptDiagram\Node\BranchInput.cs" />
+    <Compile Include="ViewModels\Panels\ScriptDiagram\Node\BranchNode.cs" />
     <Compile Include="ViewModels\Panels\ScriptDiagram\ScriptDiagramVM.cs" />
     <Compile Include="ViewModels\Panels\UtilityPanels\LogPanelVM.cs" />
     <Compile Include="Views\Panels\Project\ProjectOverview.xaml.cs">
