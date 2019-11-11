@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Input;
 using DynamicData;
 using NodeNetwork;
 using NodeNetwork.Toolkit;
 using NodeNetwork.Toolkit.NodeList;
 using NodeNetwork.ViewModels;
+using NpcChat.ViewModels.Panels.ScriptDiagram.Layout;
 using NpcChat.ViewModels.Panels.ScriptDiagram.Node;
 using NpcChat.ViewModels.Panels.ScriptEditor;
 using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
 using NpcChatSystem.Utilities;
+using Prism.Commands;
 using Xceed.Wpf.AvalonDock.Layout;
 
 namespace NpcChat.ViewModels.Panels.ScriptDiagram
@@ -23,8 +26,11 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
         public NetworkViewModel Network { get; }
         public NodeListViewModel NodeList { get; }
 
+        public ICommand ForceLayoutCommand { get; }
+
         private NpcChatProject m_project { get; }
         private DialogTree m_tree;
+        private LeveledLayout m_layouter = new LeveledLayout();
         private readonly Dictionary<DialogTreeBranchIdentifier, BranchNode> m_branchNodes = new Dictionary<DialogTreeBranchIdentifier, BranchNode>();
         private bool m_ignoreBranchEvents = false;
 
@@ -35,7 +41,10 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
             CanClose = true;
             m_project = project;
 
+            ForceLayoutCommand = new DelegateCommand(() => m_layouter.Layout(Network));
+
             Network = new NetworkViewModel();
+            SetDialogTree(dialog);
             Network.Validator = n =>
             {
                 // don't allow loops
@@ -44,8 +53,6 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
 
                 return new NetworkValidationResult(true, true, null);
             };
-
-            SetDialogTree(dialog);
 
             IObservable<IChangeSet<ConnectionViewModel>> connections = Network.Connections.Connect();
             connections.Subscribe(ConnectionChange);

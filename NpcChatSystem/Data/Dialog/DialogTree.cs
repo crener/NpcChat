@@ -66,6 +66,13 @@ namespace NpcChatSystem.Data.Dialog
             return branch;
         }
 
+        public DialogTreeBranch CreateNewBranch(DialogTreeBranchIdentifier parent)
+        {
+            DialogTreeBranch newBranch = CreateNewBranch();
+            newBranch.AddParent(parent);
+            return newBranch;
+        }
+
         private int GenerateId()
         {
             int id;

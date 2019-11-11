@@ -10,15 +10,22 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" MinWidth="180"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" MinWidth="160"/>
+            <!--<ColumnDefinition Width="Auto"/>-->
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
-        <nodeList:NodeListView ViewModel="{Binding NodeList, Mode=OneWay}" Background="#333333" Grid.Column="0"
-                               ShowSearch="False" ShowTitle="False" ShowDisplayModeSelector="False" />
+        <StackPanel Grid.Column="0">
+            <Button Command="{Binding ForceLayoutCommand}">Layout</Button>
 
-        <GridSplitter Grid.Column="1" Width="5"/>
-        <views:NetworkView ViewModel="{Binding Network, Mode=OneWay}" Grid.Column="2" />
+            <Separator/>
+            <Label>Drag to create new branch</Label>
+            <nodeList:NodeListView ViewModel="{Binding NodeList, Mode=OneWay}" Background="Transparent"
+                               ShowSearch="False" ShowTitle="false" ShowDisplayModeSelector="False" />
+        </StackPanel>
+
+        <Border Grid.Column="1" BorderBrush="{StaticResource BranchBoarder}" BorderThickness="1" Margin="4,0,0,0">
+            <views:NetworkView ViewModel="{Binding Network, Mode=OneWay}" Background="{StaticResource BranchBackground}"/>
+        </Border>
     </Grid>
 </UserControl>

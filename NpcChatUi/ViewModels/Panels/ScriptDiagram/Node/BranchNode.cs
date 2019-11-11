@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using DynamicData;
 using NodeNetwork.ViewModels;
 using NodeNetwork.Views;
@@ -9,6 +10,7 @@ using ReactiveUI;
 
 namespace NpcChat.ViewModels.Panels.ScriptDiagram.Node
 {
+    [DebuggerDisplay("{Name}")]
     public class BranchNode : NodeViewModel
     {
         static BranchNode()
