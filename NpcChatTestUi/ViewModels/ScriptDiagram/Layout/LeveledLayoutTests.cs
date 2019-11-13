@@ -17,6 +17,25 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 {
     public class LeveledLayoutTests
     {
+        [Test]
+        public void NoNetwork()
+        {
+            LeveledLayout layout = new LeveledLayout();
+            layout.Layout(null);
+
+            Assert.IsEmpty(layout.NodeLevels);
+        }
+
+        [Test]
+        public void NoNodes()
+        {
+            NetworkViewModel network = new NetworkViewModel();
+            LeveledLayout layout = new LeveledLayout();
+            layout.Layout(network);
+
+            Assert.IsEmpty(layout.NodeLevels);
+        }
+
         /// <summary>
         /// basic tree with one branch going to two
         ///  s -> x
@@ -114,8 +133,8 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             branch2.AddChild(branch1);
 
             start.Name = "Start";
-            branch1.Name = "Level 2";
-            branch2.Name = "Level 1";
+            branch1.Name = "Branch 1";
+            branch2.Name = "Branch 2";
 
             // build network and layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
