@@ -42,7 +42,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         ///    -> x
         /// </summary>
         [Test]
-        public void BasicLayoutLevel()
+        public void BasicLayout()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -58,6 +58,8 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             Assert.AreEqual(2, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
             TestLevel(layout, 1, branch1, branch2);
+
+            TestSpacing(layout, tree);
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         /// </summary>
         [TestCase(3)]
         [TestCase(18)]
-        public void ChainLayoutLevel(int length)
+        public void ChainLayout(int length)
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -87,15 +89,18 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
                 Assert.AreEqual(1, layout.NodeLevels[i].Count);
                 Assert.AreSame(branches[i], ((BranchNode)layout.NodeLevels[i][0]).Branch);
             }
+
+            TestSpacing(layout, tree);
         }
 
         /// <summary>
         /// tree with one branch going to two but where one branch references the other
-        ///  s -> 1 \
-        ///    -----> 2
+        ///  s -> 1
+        ///   \    \
+        ///    ---> 2
         /// </summary>
         [Test]
-        public void SkipBasicLayoutLevel()
+        public void SkipBasicLayout()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -114,15 +119,18 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             TestLevel(layout, 0, start);
             TestLevel(layout, 1, branch1);
             TestLevel(layout, 2, branch2);
+
+            TestSpacing(layout, tree);
         }
 
         /// <summary>
         /// tree with one branch going to two but where one branch references the other
-        ///  s -----> 1
-        ///    -> 2 /
+        ///  s -> 1
+        ///   \  /
+        ///    2
         /// </summary>
         [Test]
-        public void SkipBasicLayout2Level()
+        public void SkipBasicLayout2()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -145,6 +153,44 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             TestLevel(layout, 0, start);
             TestLevel(layout, 1, branch2);
             TestLevel(layout, 2, branch1);
+
+            TestSpacing(layout, tree);
+        }
+
+        /// <summary>
+        /// tree with one branch going to two but where one branch references the other
+        ///  1 -> s
+        ///   \  / 
+        ///    2
+        /// </summary>
+        [Test]
+        public void BackPropagationSkipBasicLayout()
+        {
+            NpcChatProject project = new NpcChatProject();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+
+            DialogTreeBranch start = tree.GetStart();
+            DialogTreeBranch branch1 = tree.CreateNewBranch();
+            DialogTreeBranch branch2 = tree.CreateNewBranch();
+            branch1.AddChild(branch2);
+            branch1.AddChild(start);
+            branch2.AddChild(start);
+
+            start.Name = "Start";
+            branch1.Name = "Branch 1";
+            branch2.Name = "Branch 2";
+
+            // build network and layout
+            NetworkViewModel network = CreateNetworkForTree(project, tree);
+            LeveledLayout layout = new LeveledLayout();
+            layout.Layout(network);
+
+            Assert.AreEqual(3, layout.NodeLevels.Count);
+            TestLevel(layout, 0, start);
+            TestLevel(layout, -1, branch2);
+            TestLevel(layout, -2, branch1);
+
+            TestSpacing(layout, tree);
         }
 
         /// <summary>
@@ -155,7 +201,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         /// s -> 2 -------> 6 -> 7
         /// </summary>
         [Test]
-        public void SkipComplexLayoutLevel()
+        public void SkipComplexLayout()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -182,6 +228,8 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             TestLevel(layout, 3, branch4);
             TestLevel(layout, 4, branch5, branch6);
             TestLevel(layout, 5, branch7);
+
+            TestSpacing(layout, tree);
         }
 
         /// <summary>
@@ -189,7 +237,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         ///  x -> s
         /// </summary>
         [Test]
-        public void BackPropagationBasicLayoutLevel()
+        public void BackPropagationBasicLayout()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -205,6 +253,8 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             Assert.AreEqual(2, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
             TestLevel(layout, -1, branch1);
+
+            TestSpacing(layout, tree);
         }
 
         /// <summary>
@@ -213,7 +263,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         ///    s -> 1 -> 2
         /// </summary>
         [Test]
-        public void BackPropagationBasicLayout2Level()
+        public void BackPropagationBasicLayout2()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -229,6 +279,8 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             Assert.AreEqual(2, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
             TestLevel(layout, -1, branch1);
+
+            TestSpacing(layout, tree);
         }
 
         /// <summary>
@@ -238,7 +290,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         ///  s -> 1 -> 2 -> 3
         /// </summary>
         [Test]
-        public void BackPropagationComplexLayoutLevel()
+        public void BackPropagationComplexLayout()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -260,6 +312,8 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             TestLevel(layout, 1, branch1, back1);
             TestLevel(layout, 2, branch2, back2);
             TestLevel(layout, 3, branch3);
+
+            TestSpacing(layout, tree);
         }
 
         /// <summary>
@@ -281,7 +335,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         [TestCase(4)]
         [TestCase(8)]
         [TestCase(17)]
-        public void BackPropagationZigZagLayoutLevel(int length)
+        public void BackPropagationZigZagLayout(int length)
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -321,6 +375,8 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             Assert.AreEqual(2, layout.NodeLevels.Count);
             TestLevel(layout, 0, starts.ToArray());
             TestLevel(layout, 1, ends.ToArray());
+
+            TestSpacing(layout, tree);
         }
 
         /// <summary>
@@ -333,7 +389,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         ///   2
         /// </summary>
         [Test]
-        public void ConvergenceLayoutLevel()
+        public void ConvergenceLayout()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -352,6 +408,8 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             TestLevel(layout, 0, start);
             TestLevel(layout, 1, branch1, branch2);
             TestLevel(layout, 2, branch3);
+
+            TestSpacing(layout, tree);
         }
 
         /// <summary>
@@ -362,7 +420,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         /// s -> 2 -> 4
         /// </summary>
         [Test]
-        public void ConvergenceDelayedLayoutLevel()
+        public void ConvergenceDelayedLayout()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -383,6 +441,8 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             TestLevel(layout, 1, branch1, branch2);
             TestLevel(layout, 2, branch3);
             TestLevel(layout, 3, branch4);
+
+            TestSpacing(layout, tree);
         }
 
         /// <summary>
@@ -392,7 +452,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         ///        5 -> 3 -> 2  
         /// </summary>
         [Test]
-        public void BackPropagationSkipLayoutLevel()
+        public void BackPropagationSkipLayout()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -416,8 +476,11 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             Assert.AreEqual(4, layout.NodeLevels.Count);
             TestLevel(layout, 1, branch1);
             TestLevel(layout, 0, start, branch2);
-            TestLevel(layout, -1, branch4, branch3);
-            TestLevel(layout, -2, branch5);
+            TestLevel(layout, -1, branch3);
+            TestLevel(layout, -2, branch4);
+            TestLevel(layout, -3, branch5);
+            
+            TestSpacing(layout, tree);
         }
 
         /// <summary>
@@ -429,7 +492,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         ///          4
         /// </summary>
         [Test]
-        public void BackPropagationSkipLayout2Level()
+        public void BackPropagationSkipLayout2()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -453,11 +516,49 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             Assert.AreEqual(4, layout.NodeLevels.Count);
             TestLevel(layout, 1, branch1);
             TestLevel(layout, 0, start, branch2);
-            TestLevel(layout, -1, branch4, branch3);
-            TestLevel(layout, -2, branch5);
+            TestLevel(layout, -1, branch3);
+            TestLevel(layout, -2, branch4);
+            TestLevel(layout, -3, branch5);
+            TestSpacing(layout, tree);
         }
 
+        /// <summary>
+        /// basic tree with one branch (s) going to two (1, 2) then converging back to one branch (3)
+        ///    5
+        ///  /  \
+        /// s -> 1 -> 3 -> 4
+        ///  \    \  /
+        ///   ---> 2
+        /// </summary>
+        [Test]
+        public void ComplexLayout()
+        {
+            NpcChatProject project = new NpcChatProject();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
 
+            DialogTreeBranch start = tree.GetStart();
+            DialogTreeBranch branch1 = tree.CreateNewBranch(start);
+            DialogTreeBranch branch2 = tree.CreateNewBranch(start);
+            branch1.AddChild(branch2);
+            DialogTreeBranch branch3 = tree.CreateNewBranch(branch1);
+            branch2.AddChild(branch3);
+            DialogTreeBranch branch4 = tree.CreateNewBranch(branch3);
+            DialogTreeBranch branch5 = tree.CreateNewBranch(start);
+            branch5.AddChild(branch1);
+
+            NetworkViewModel network = CreateNetworkForTree(project, tree);
+            LeveledLayout layout = new LeveledLayout();
+            layout.Layout(network);
+
+            Assert.AreEqual(6, layout.NodeLevels.Count);
+            TestLevel(layout, 0, start);
+            TestLevel(layout, 1, branch5);
+            TestLevel(layout, 2, branch1);
+            TestLevel(layout, 3, branch2);
+            TestLevel(layout, 4, branch3);
+            TestLevel(layout, 5, branch4);
+            TestSpacing(layout, tree);
+        }
 
 
         private void TestLevel(LeveledLayout layout, int level, params DialogTreeBranchIdentifier[] expectedBranches)
@@ -475,6 +576,22 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             }
 
             Assert.IsEmpty(remainingBranches, $"Branch level {level} didn't contain all expected branches");
+        }
+
+        private void TestSpacing(LeveledLayout layout, DialogTree tree)
+        {
+            List<BranchNode> nodes = new List<BranchNode>();
+            for (int y = 0; y < layout.NodeLayout.GetLength(1); y++)
+                for (int x = 0; x < layout.NodeLayout.GetLength(0); x++)
+                {
+                    BranchNode branchNode = layout.NodeLayout[x, y] as BranchNode;
+                    if (branchNode != null) nodes.Add(branchNode);
+                }
+
+            List<DialogTreeBranchIdentifier> containedNodes = nodes.Distinct().Select(n => n.Branch).ToList();
+            Assert.AreEqual(tree.Branches.Count, containedNodes.Count, "Unexpected amount of nodes");
+            foreach (DialogTreeBranchIdentifier id in tree.Branches)
+                Assert.IsTrue(containedNodes.Contains(id));
         }
 
         private NetworkViewModel CreateNetworkForTree(NpcChatProject project, DialogTree tree)
