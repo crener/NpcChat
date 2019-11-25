@@ -195,6 +195,88 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
         /// <summary>
         /// tree with one branch going to two but where one branch references the other
+        /// 2 ---
+        ///  \    \
+        ///   1 -> s
+        /// </summary>
+        [Test]
+        public void BackPropagationSkipBasicLayout2()
+        {
+            NpcChatProject project = new NpcChatProject();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+
+            DialogTreeBranch start = tree.GetStart();
+            DialogTreeBranch branch1 = tree.CreateNewBranch();
+            DialogTreeBranch branch2 = tree.CreateNewBranch();
+            branch1.AddChild(start);
+            branch2.AddChild(start);
+            branch2.AddChild(branch1);
+
+            start.Name = "Start";
+            branch1.Name = "Branch 1";
+            branch2.Name = "Branch 2";
+
+            // build network and layout
+            NetworkViewModel network = CreateNetworkForTree(project, tree);
+            LeveledLayout layout = new LeveledLayout();
+            layout.Layout(network);
+
+            Assert.AreEqual(3, layout.NodeLevels.Count);
+            TestLevel(layout, 0, start);
+            TestLevel(layout, -1, branch1);
+            TestLevel(layout, -2, branch2);
+
+            TestSpacing(layout, tree);
+        }
+
+        /// <summary>
+        /// tree with one branch going to two but where one branch references the other
+        ///  1 -> s -> 3
+        ///   \  / \  /
+        ///    2    4
+        /// </summary>
+        [Test]
+        public void SkipDoubleLayout()
+        {
+            NpcChatProject project = new NpcChatProject();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+
+            DialogTreeBranch start = tree.GetStart();
+            DialogTreeBranch branch1 = tree.CreateNewBranch();
+            DialogTreeBranch branch2 = tree.CreateNewBranch();
+            branch1.AddChild(branch2);
+            branch1.AddChild(start);
+            branch2.AddChild(start);
+
+            DialogTreeBranch branch3 = tree.CreateNewBranch();
+            DialogTreeBranch branch4 = tree.CreateNewBranch();
+            start.AddChild(branch3);
+            start.AddChild(branch4);
+            branch4.AddChild(branch3);
+
+            start.Name = "Start";
+            branch1.Name = "Branch 1";
+            branch2.Name = "Branch 2";
+            branch3.Name = "Branch 3";
+            branch4.Name = "Branch 4";
+
+            // build network and layout
+            NetworkViewModel network = CreateNetworkForTree(project, tree);
+            LeveledLayout layout = new LeveledLayout();
+            layout.Layout(network);
+
+            Assert.AreEqual(5, layout.NodeLevels.Count);
+            TestLevel(layout, 2, branch3);
+            TestLevel(layout, 1, branch4);
+            TestLevel(layout, 0, start);
+            TestLevel(layout, -1, branch2);
+            TestLevel(layout, -2, branch1);
+
+            TestSpacing(layout, tree);
+        }
+
+        /// <summary>
+        /// tree with one branch going to two but where one branch references the other
         ///
         ///    1 -> 3 -> 4 -> 5
         ///   /            \ 

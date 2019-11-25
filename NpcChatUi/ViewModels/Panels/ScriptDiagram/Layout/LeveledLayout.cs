@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Xml;
 using DynamicData.Annotations;
 using NodeNetwork.ViewModels;
 using NpcChatSystem.Utilities;
-using ReactiveUI;
 
 namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
 {
@@ -94,21 +88,19 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         protected virtual NodeViewModel[,] LayoutNodesInNetwork(NetworkViewModel network, NodeViewModel centerNode)
         {
             // find all starting points
-            List<NodeViewModel> startPoint = new List<NodeViewModel>();
+            /*List<NodeViewModel> startPoint = new List<NodeViewModel>();
             foreach (NodeViewModel node in network.Nodes.Items)
             {
                 if (node.Inputs.Items.All(i => i.Connections.Count > 0)) continue;
                 if (startPoint.Contains(node)) continue;
                 startPoint.Add(node);
-            }
+            }*/
 
             HashSet<NodeViewModel> seen = new HashSet<NodeViewModel>(m_nodeLevelLookup.Count);
             List<NodeViewModel> criticalPath = FindMainNodeSet(centerNode, seen);
 
-            //int xKeyOffset = Math.Abs(Math.Min(0, NodeLevels.Keys.Min()));
-            int height = FindSpaceUsageHeight();
-            NodeViewModel[,] spaceUsage = new NodeViewModel[NodeLevels.Count, height];
-            int middle = height / 2;
+            NodeViewModel[,] spaceUsage = CreateSpaceUsage();
+            int middle = spaceUsage.GetLength(1) / 2;
 
             // align the main points
             int centerOffset = Math.Abs(NodeLevels.Select(l => l.Key).Min());
@@ -161,7 +153,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
 
                 seen.Add(currentModel);
 
-                //find the closest possible empty slot to 'currentModel' in 'spaceUsage'
+                // find the closest possible empty slot to 'currentModel' in 'spaceUsage'
                 XyPosition? pos = FindClosest(spaceUsage, modelParent, currentModel);
                 if (pos != null)
                 {
@@ -177,26 +169,25 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
 
                 for (int i = search.Count - 1; i >= 0; i--)
                     if (seen.Contains(search[i].Value)) search.RemoveAt(i);
-
-                /*if (search.Count == 0)
-                {
-                    search.AddRange(startPoint.Select(m => new KeyValuePair<NodeViewModel, NodeViewModel>(null, m)));
-
-                    for (int i = search.Count - 1; i >= 0; i--)
-                        if (seen.Contains(search[i].Value)) search.RemoveAt(i);
-                }*/
             }
 
             return spaceUsage;
         }
 
-        private XyPosition? FindClosest(NodeViewModel[,] spaceUsage, NodeViewModel origin, NodeViewModel destination)
+        /// <summary>
+        /// Finds the closest available position to <see cref="origin"/> in <see cref="spaceUsage"/> for <see cref="destination"/>
+        /// </summary>
+        /// <param name="spaceUsage">layout object</param>
+        /// <param name="origin">node to start from</param>
+        /// <param name="destination">target node placement</param>
+        /// <returns>closest position of <see cref="destination"/> to <see cref="origin"/>, null if cannot be found</returns>
+        protected XyPosition? FindClosest(NodeViewModel[,] spaceUsage, NodeViewModel origin, NodeViewModel destination)
         {
             XyPosition pos = SpaceUsagePosition(spaceUsage, origin);
             int originLevel = m_nodeLevelLookup[origin];
             int destinationLevel = m_nodeLevelLookup[destination];
 
-            if(originLevel > destinationLevel)
+            if (originLevel > destinationLevel)
             {
                 return FindClosest(spaceUsage, pos, pos.X - 1);
             }
@@ -208,7 +199,14 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             return null;
         }
 
-        private XyPosition? FindClosest(NodeViewModel[,] spaceUsage, XyPosition pos, int searchAxis)
+        /// <summary>
+        /// Finds the closest available position to <see cref="pos"/> in <see cref="spaceUsage"/> on the x axis <see cref="searchAxis"/>
+        /// </summary>
+        /// <param name="spaceUsage">layout object</param>
+        /// <param name="pos">position to look for</param>
+        /// <param name="searchAxis">x axis to look for</param>
+        /// <returns>closest position of pos in the searchAxis, null if cannot be found</returns>
+        protected XyPosition? FindClosest(NodeViewModel[,] spaceUsage, XyPosition pos, int searchAxis)
         {
             int height = spaceUsage.GetLength(1);
 
@@ -235,7 +233,11 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             return null;
         }
 
-        private XyPosition SpaceUsagePosition(NodeViewModel[,] spaceUsage, NodeViewModel currentModel)
+        /// <summary>
+        /// finds the position of <see cref="currentModel"/> in <see cref="spaceUsage"/>
+        /// </summary>
+        /// <returns>position of <see cref="currentModel"/> in <see cref="spaceUsage"/></returns>
+        protected XyPosition SpaceUsagePosition(NodeViewModel[,] spaceUsage, NodeViewModel currentModel)
         {
             int height = spaceUsage.GetLength(1);
             int centerOffset = Math.Abs(NodeLevels.Select(l => l.Key).Min());
@@ -252,7 +254,13 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             return new XyPosition(x, y);
         }
 
-        protected virtual int FindSpaceUsageHeight()
+        /// <summary>
+        /// Creates a 2d array of node models for laying out the position of nodes in space
+        /// </summary>
+        /// <returns></returns>
+        protected NodeViewModel[,] CreateSpaceUsage() => new NodeViewModel[NodeLevels.Count, FindSpaceUsageHeight()];
+
+        private int FindSpaceUsageHeight()
         {
             HashSet<NodeViewModel> seen = new HashSet<NodeViewModel>(m_nodeLevelLookup.Count);
             Dictionary<int, int> levelHeight = new Dictionary<int, int>();
@@ -334,7 +342,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         }
 
         /// <summary>
-        /// Main heuristic for determining which node to add too the main line of nodes
+        /// Main heuristic for determining which node too add to the main line of nodes
         /// </summary>
         /// <param name="checkNodes">possible nodes</param>
         /// <returns>next node to place from available options</returns>
@@ -413,7 +421,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         /// <param name="search">node to start with</param>
         private void BreadthNodeLookup(NodeViewModel search)
         {
-            List<Dictionary<int, Queue<NodeViewModel>>> forwardBuffer = new List<Dictionary<int, Queue<NodeViewModel>>>(1);
+            List<Dictionary<int, Queue<NodeViewModel>>> forwardBuffer = new List<Dictionary<int, Queue<NodeViewModel>>>();
             List<Dictionary<int, Queue<NodeViewModel>>> backBuffer = new List<Dictionary<int, Queue<NodeViewModel>>>();
             backBuffer.Add(BreadthForwardTraversal(0, search));
 
@@ -435,6 +443,16 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             }
         }
 
+        /// <summary>
+        /// traverses the node structure forwards (output to input) marking all possible paths back for future exploration.
+        ///
+        /// The return type is broken down into:
+        ///  - level node was found at
+        ///  - queue of nodes to explore next
+        /// </summary>
+        /// <param name="initialLevel">level search is at</param>
+        /// <param name="search">node to begin exploration</param>
+        /// <returns>collection of nodes to explore going the other direction</returns>
         private Dictionary<int, Queue<NodeViewModel>> BreadthForwardTraversal(int initialLevel, NodeViewModel search)
         {
             int level = initialLevel;
@@ -448,18 +466,19 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             {
                 next = forwardQueue.Dequeue();
                 currentLevelRemaining--;
+                //if (m_nodeLevelLookup.ContainsKey(next)) continue;
                 m_nodeLevelLookup[next] = level;
 
-                //mark nodes going forward through the network for future traversal
-                foreach (NodeOutputViewModel output in next.Outputs.Items)
-                    foreach (ConnectionViewModel connection in output.Connections.Items)
+                // mark nodes going forward through the network for future traversal
+                foreach (NodeOutputViewModel pin in next.Outputs.Items)
+                    foreach (ConnectionViewModel connection in pin.Connections.Items)
                     {
                         NodeViewModel node = m_inputLookup[connection.Input];
                         forwardQueue.Enqueue(node);
                         nextLevelCount++;
                     }
 
-                // make sure to mark nodes going back encase they are not already traversed
+                // make sure to mark nodes going backward encase they are not already traversed
                 foreach (NodeInputViewModel input in next.Inputs.Items)
                     foreach (ConnectionViewModel connection in input.Connections.Items)
                     {
@@ -481,6 +500,17 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             return backBuffer;
         }
 
+
+        /// <summary>
+        /// traverses the node structure backwards (input to output) marking all possible paths forward for future exploration.
+        ///
+        /// The return type is broken down into:
+        ///  - level node was found at
+        ///  - queue of nodes to explore next
+        /// </summary>
+        /// <param name="initialLevel">level search is at</param>
+        /// <param name="search">node to begin exploration</param>
+        /// <returns>collection of nodes to explore going the other direction</returns>
         private Dictionary<int, Queue<NodeViewModel>> BreadthBackwardTraversal(int initialLevel, NodeViewModel search)
         {
             int level = initialLevel;
@@ -497,6 +527,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 if (m_nodeLevelLookup.ContainsKey(next)) continue;
                 m_nodeLevelLookup[next] = level;
 
+                // mark nodes going backward through the network for future traversal
                 foreach (NodeInputViewModel pin in next.Inputs.Items)
                     foreach (ConnectionViewModel connection in pin.Connections.Items)
                     {
@@ -505,6 +536,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                         nextLevelCount++;
                     }
 
+                // make sure to mark nodes going forward encase they are not already traversed
                 foreach (NodeOutputViewModel pin in next.Outputs.Items)
                     foreach (ConnectionViewModel connection in pin.Connections.Items)
                     {
