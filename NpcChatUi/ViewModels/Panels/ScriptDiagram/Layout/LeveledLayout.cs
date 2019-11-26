@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -87,15 +88,6 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
 
         protected virtual NodeViewModel[,] LayoutNodesInNetwork(NetworkViewModel network, NodeViewModel centerNode)
         {
-            // find all starting points
-            /*List<NodeViewModel> startPoint = new List<NodeViewModel>();
-            foreach (NodeViewModel node in network.Nodes.Items)
-            {
-                if (node.Inputs.Items.All(i => i.Connections.Count > 0)) continue;
-                if (startPoint.Contains(node)) continue;
-                startPoint.Add(node);
-            }*/
-
             HashSet<NodeViewModel> seen = new HashSet<NodeViewModel>(m_nodeLevelLookup.Count);
             List<NodeViewModel> criticalPath = FindMainNodeSet(centerNode, seen);
 
@@ -114,7 +106,8 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 search.AddRange(InputNodes(model).Select(m => new KeyValuePair<NodeViewModel, NodeViewModel>(model, m)));
 
                 int nodeLevel = m_nodeLevelLookup[model];
-                spaceUsage[centerOffset + nodeLevel, middle] = model;
+                int spaceX = centerOffset + nodeLevel;
+                spaceUsage[spaceX, middle] = model;
 
                 int currentDepth = nodeLevel;
                 if (lastDepth != null)
@@ -421,25 +414,41 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         /// <param name="search">node to start with</param>
         private void BreadthNodeLookup(NodeViewModel search)
         {
-            List<Dictionary<int, Queue<NodeViewModel>>> forwardBuffer = new List<Dictionary<int, Queue<NodeViewModel>>>();
-            List<Dictionary<int, Queue<NodeViewModel>>> backBuffer = new List<Dictionary<int, Queue<NodeViewModel>>>();
-            backBuffer.Add(BreadthForwardTraversal(0, search));
+            Dictionary<int, Queue<NodeViewModel>> forwardBuffer = new Dictionary<int, Queue<NodeViewModel>>();
+            Dictionary<int, Queue<NodeViewModel>> backBuffer = new Dictionary<int, Queue<NodeViewModel>>();
+
+            Dictionary<int, Queue<NodeViewModel>> initialTraversal = BreadthForwardTraversal(0, search);
+            MergeTraversals(backBuffer, initialTraversal);
 
             while (backBuffer.Count != 0)
             {
                 // Go backwards through network to find uncatalogued nodes
-                foreach (Dictionary<int, Queue<NodeViewModel>> dict in backBuffer)
-                    foreach (KeyValuePair<int, Queue<NodeViewModel>> pair in dict)
-                        foreach (NodeViewModel searchModel in pair.Value)
-                            forwardBuffer.Add(BreadthBackwardTraversal(pair.Key - 1, searchModel));
+                foreach (KeyValuePair<int, Queue<NodeViewModel>> pair in backBuffer)
+                    foreach (NodeViewModel searchModel in pair.Value)
+                    {
+                        Dictionary<int, Queue<NodeViewModel>> traversal = BreadthBackwardTraversal(pair.Key - 1, searchModel);
+                        MergeTraversals(forwardBuffer, traversal);
+                    }
                 backBuffer.Clear();
 
                 // Based on nodes that have just been checked go forwards through nodes for uncatalogued nodes
-                foreach (Dictionary<int, Queue<NodeViewModel>> dict in forwardBuffer)
-                    foreach (KeyValuePair<int, Queue<NodeViewModel>> pair in dict)
-                        foreach (NodeViewModel searchModel in pair.Value)
-                            backBuffer.Add(BreadthForwardTraversal(pair.Key + 1, searchModel));
+                foreach (KeyValuePair<int, Queue<NodeViewModel>> pair in forwardBuffer)
+                    foreach (NodeViewModel searchModel in pair.Value)
+                    {
+                        Dictionary<int, Queue<NodeViewModel>> traversal = BreadthForwardTraversal(pair.Key + 1, searchModel);
+                        MergeTraversals(backBuffer, traversal);
+                    }
                 forwardBuffer.Clear();
+            }
+
+            //recenter nodes
+            int finalCenterOffset = m_nodeLevelLookup[search];
+            if (finalCenterOffset != 0)
+            {
+                foreach (NodeViewModel node in m_nodeLevelLookup.Keys.ToArray())
+                {
+                    m_nodeLevelLookup[node] -= finalCenterOffset;
+                }
             }
         }
 
@@ -524,8 +533,25 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             {
                 next = backQueue.Dequeue();
                 currentLevelRemaining--;
-                if (m_nodeLevelLookup.ContainsKey(next)) continue;
-                m_nodeLevelLookup[next] = level;
+
+                int minLevel = level;
+                if (m_nodeLevelLookup.ContainsKey(next))
+                {
+                    foreach (NodeOutputViewModel pin in next.Outputs.Items)
+                        foreach (ConnectionViewModel connection in pin.Connections.Items)
+                        {
+                            NodeViewModel node = m_inputLookup[connection.Input];
+                            if (m_nodeLevelLookup.ContainsKey(node))
+                            {
+                                int child = m_nodeLevelLookup[node];
+                                minLevel = Math.Min(minLevel, child - 1);
+                            }
+                        }
+                    m_nodeLevelLookup[next] = minLevel;
+                    continue;
+                }
+                m_nodeLevelLookup[next] = minLevel;
+                level = minLevel;
 
                 // mark nodes going backward through the network for future traversal
                 foreach (NodeInputViewModel pin in next.Inputs.Items)
@@ -541,7 +567,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                     foreach (ConnectionViewModel connection in pin.Connections.Items)
                     {
                         NodeViewModel node = m_inputLookup[connection.Input];
-                        //if (m_nodeLevelLookup.ContainsKey(node)) continue;
+                        if (m_nodeLevelLookup.ContainsKey(node)) continue;
                         if (!forwardBuffer.ContainsKey(level))
                             forwardBuffer.Add(level, new Queue<NodeViewModel>());
                         forwardBuffer[level].Enqueue(node);
@@ -556,6 +582,23 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             }
 
             return forwardBuffer;
+        }
+
+        private void MergeTraversals(Dictionary<int, Queue<NodeViewModel>> main, Dictionary<int, Queue<NodeViewModel>> merge)
+        {
+            foreach (KeyValuePair<int, Queue<NodeViewModel>> set in merge)
+            {
+                if (!main.ContainsKey(set.Key))
+                {
+                    main.Add(set.Key, new Queue<NodeViewModel>());
+                }
+
+                Queue<NodeViewModel> mainQueue = main[set.Key];
+                foreach (NodeViewModel add in set.Value)
+                {
+                    mainQueue.Enqueue(add);
+                }
+            }
         }
 
         #endregion

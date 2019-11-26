@@ -555,7 +555,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
 
-            Assert.AreEqual(4, layout.NodeLevels.Count);
+            Assert.AreEqual(5, layout.NodeLevels.Count);
             TestLevel(layout, 1, branch1);
             TestLevel(layout, 0, start, branch2);
             TestLevel(layout, -1, branch3);
@@ -595,12 +595,13 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
 
-            Assert.AreEqual(4, layout.NodeLevels.Count);
+            Assert.AreEqual(5, layout.NodeLevels.Count);
             TestLevel(layout, 1, branch1);
             TestLevel(layout, 0, start, branch2);
             TestLevel(layout, -1, branch3);
             TestLevel(layout, -2, branch4);
             TestLevel(layout, -3, branch5);
+
             TestSpacing(layout, tree);
         }
 
@@ -653,7 +654,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             for (int i = 0; i < layout.NodeLevels[level].Count; i++)
             {
                 DialogTreeBranchIdentifier foundBranch = ((BranchNode)layout.NodeLevels[level][i]).Branch;
-                Assert.IsTrue(expectedBranches.Contains(foundBranch), $"Level {level} contains unexpected branch");
+                Assert.IsTrue(expectedBranches.Contains(foundBranch), $"Level {level} contains unexpected");
                 remainingBranches.Remove(foundBranch);
             }
 
@@ -671,7 +672,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
                 }
 
             List<DialogTreeBranchIdentifier> containedNodes = nodes.Distinct().Select(n => n.Branch).ToList();
-            Assert.AreEqual(tree.Branches.Count, containedNodes.Count, "Unexpected amount of nodes");
+            Assert.AreEqual(tree.Branches.Count, containedNodes.Count, "Unexpected amount of nodes in final layout");
             foreach (DialogTreeBranchIdentifier id in tree.Branches)
                 Assert.IsTrue(containedNodes.Contains(id));
         }
