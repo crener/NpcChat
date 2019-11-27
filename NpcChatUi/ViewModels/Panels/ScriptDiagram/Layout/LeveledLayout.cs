@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using DynamicData.Annotations;
 using NodeNetwork.ViewModels;
 using NpcChatSystem.Utilities;
@@ -396,7 +398,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                     m_outputLookup.Add(output, node);
             }
 
-            BreadthNodeLookup(search);
+            NodeLookup(network, search);
 
             //build the node level
             foreach (KeyValuePair<NodeViewModel, int> level in m_nodeLevelLookup)
@@ -411,193 +413,32 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         /// <summary>
         /// Primary look for finding all of the nodes and sorting into levels
         /// </summary>
+        /// <param name="network">network to start with</param>
         /// <param name="search">node to start with</param>
-        private void BreadthNodeLookup(NodeViewModel search)
+        private void NodeLookup(NetworkViewModel network, NodeViewModel search)
         {
-            Dictionary<int, Queue<NodeViewModel>> forwardBuffer = new Dictionary<int, Queue<NodeViewModel>>();
-            Dictionary<int, Queue<NodeViewModel>> backBuffer = new Dictionary<int, Queue<NodeViewModel>>();
+            //create a quick lookup
+            Dictionary<NodeViewModel, NodeLevelReference> levelReference = new Dictionary<NodeViewModel, NodeLevelReference>();
+            foreach (NodeViewModel node in network.Nodes.Items)
+                levelReference.Add(node, new NodeLevelReference(0, node));
 
-            Dictionary<int, Queue<NodeViewModel>> initialTraversal = BreadthForwardTraversal(0, search);
-            MergeTraversals(backBuffer, initialTraversal);
-
-            while (backBuffer.Count != 0)
+            //build relationships
+            foreach (NodeViewModel node in network.Nodes.Items)
             {
-                // Go backwards through network to find uncatalogued nodes
-                foreach (KeyValuePair<int, Queue<NodeViewModel>> pair in backBuffer)
-                    foreach (NodeViewModel searchModel in pair.Value)
-                    {
-                        Dictionary<int, Queue<NodeViewModel>> traversal = BreadthBackwardTraversal(pair.Key - 1, searchModel);
-                        MergeTraversals(forwardBuffer, traversal);
-                    }
-                backBuffer.Clear();
-
-                // Based on nodes that have just been checked go forwards through nodes for uncatalogued nodes
-                foreach (KeyValuePair<int, Queue<NodeViewModel>> pair in forwardBuffer)
-                    foreach (NodeViewModel searchModel in pair.Value)
-                    {
-                        Dictionary<int, Queue<NodeViewModel>> traversal = BreadthForwardTraversal(pair.Key + 1, searchModel);
-                        MergeTraversals(backBuffer, traversal);
-                    }
-                forwardBuffer.Clear();
-            }
-
-            //recenter nodes
-            int finalCenterOffset = m_nodeLevelLookup[search];
-            if (finalCenterOffset != 0)
-            {
-                foreach (NodeViewModel node in m_nodeLevelLookup.Keys.ToArray())
-                {
-                    m_nodeLevelLookup[node] -= finalCenterOffset;
-                }
-            }
-        }
-
-        /// <summary>
-        /// traverses the node structure forwards (output to input) marking all possible paths back for future exploration.
-        ///
-        /// The return type is broken down into:
-        ///  - level node was found at
-        ///  - queue of nodes to explore next
-        /// </summary>
-        /// <param name="initialLevel">level search is at</param>
-        /// <param name="search">node to begin exploration</param>
-        /// <returns>collection of nodes to explore going the other direction</returns>
-        private Dictionary<int, Queue<NodeViewModel>> BreadthForwardTraversal(int initialLevel, NodeViewModel search)
-        {
-            int level = initialLevel;
-            Queue<NodeViewModel> forwardQueue = new Queue<NodeViewModel>();
-            Dictionary<int, Queue<NodeViewModel>> backBuffer = new Dictionary<int, Queue<NodeViewModel>>();
-            forwardQueue.Enqueue(search);
-
-            NodeViewModel next;
-            int currentLevelRemaining = 1, nextLevelCount = 0;
-            while (forwardQueue.Count > 0)
-            {
-                next = forwardQueue.Dequeue();
-                currentLevelRemaining--;
-                //if (m_nodeLevelLookup.ContainsKey(next)) continue;
-                m_nodeLevelLookup[next] = level;
-
-                // mark nodes going forward through the network for future traversal
-                foreach (NodeOutputViewModel pin in next.Outputs.Items)
+                foreach (NodeInputViewModel pin in node.Inputs.Items)
                     foreach (ConnectionViewModel connection in pin.Connections.Items)
-                    {
-                        NodeViewModel node = m_inputLookup[connection.Input];
-                        forwardQueue.Enqueue(node);
-                        nextLevelCount++;
-                    }
-
-                // make sure to mark nodes going backward encase they are not already traversed
-                foreach (NodeInputViewModel input in next.Inputs.Items)
-                    foreach (ConnectionViewModel connection in input.Connections.Items)
-                    {
-                        NodeViewModel node = m_outputLookup[connection.Output];
-                        //if (m_nodeLevelLookup.ContainsKey(node)) continue;
-                        if (!backBuffer.ContainsKey(level))
-                            backBuffer.Add(level, new Queue<NodeViewModel>());
-                        backBuffer[level].Enqueue(node);
-                    }
-
-                if (currentLevelRemaining <= 0)
-                {
-                    level++;
-                    currentLevelRemaining = nextLevelCount;
-                    nextLevelCount = 0;
-                }
+                        levelReference[m_outputLookup[connection.Output]].RegisterChild(levelReference[node]);
+                foreach (NodeOutputViewModel pin in node.Outputs.Items)
+                    foreach (ConnectionViewModel connection in pin.Connections.Items)
+                        levelReference[m_inputLookup[connection.Input]].RegisterParent(levelReference[node]);
             }
 
-            return backBuffer;
-        }
+            levelReference[search].LevelReference = 0;
 
-
-        /// <summary>
-        /// traverses the node structure backwards (input to output) marking all possible paths forward for future exploration.
-        ///
-        /// The return type is broken down into:
-        ///  - level node was found at
-        ///  - queue of nodes to explore next
-        /// </summary>
-        /// <param name="initialLevel">level search is at</param>
-        /// <param name="search">node to begin exploration</param>
-        /// <returns>collection of nodes to explore going the other direction</returns>
-        private Dictionary<int, Queue<NodeViewModel>> BreadthBackwardTraversal(int initialLevel, NodeViewModel search)
-        {
-            int level = initialLevel;
-            Queue<NodeViewModel> backQueue = new Queue<NodeViewModel>();
-            Dictionary<int, Queue<NodeViewModel>> forwardBuffer = new Dictionary<int, Queue<NodeViewModel>>();
-            backQueue.Enqueue(search);
-
-            NodeViewModel next;
-            int currentLevelRemaining = 1, nextLevelCount = 0;
-            while (backQueue.Count > 0)
+            // convert the level references to the actual level
+            foreach (KeyValuePair<NodeViewModel, NodeLevelReference> reference in levelReference)
             {
-                next = backQueue.Dequeue();
-                currentLevelRemaining--;
-
-                int minLevel = level;
-                if (m_nodeLevelLookup.ContainsKey(next))
-                {
-                    foreach (NodeOutputViewModel pin in next.Outputs.Items)
-                        foreach (ConnectionViewModel connection in pin.Connections.Items)
-                        {
-                            NodeViewModel node = m_inputLookup[connection.Input];
-                            if (m_nodeLevelLookup.ContainsKey(node))
-                            {
-                                int child = m_nodeLevelLookup[node];
-                                minLevel = Math.Min(minLevel, child - 1);
-                            }
-                        }
-                    m_nodeLevelLookup[next] = minLevel;
-                    continue;
-                }
-                m_nodeLevelLookup[next] = minLevel;
-                level = minLevel;
-
-                // mark nodes going backward through the network for future traversal
-                foreach (NodeInputViewModel pin in next.Inputs.Items)
-                    foreach (ConnectionViewModel connection in pin.Connections.Items)
-                    {
-                        NodeViewModel node = m_outputLookup[connection.Output];
-                        backQueue.Enqueue(node);
-                        nextLevelCount++;
-                    }
-
-                // make sure to mark nodes going forward encase they are not already traversed
-                foreach (NodeOutputViewModel pin in next.Outputs.Items)
-                    foreach (ConnectionViewModel connection in pin.Connections.Items)
-                    {
-                        NodeViewModel node = m_inputLookup[connection.Input];
-                        if (m_nodeLevelLookup.ContainsKey(node)) continue;
-                        if (!forwardBuffer.ContainsKey(level))
-                            forwardBuffer.Add(level, new Queue<NodeViewModel>());
-                        forwardBuffer[level].Enqueue(node);
-                    }
-
-                if (currentLevelRemaining <= 0)
-                {
-                    level--;
-                    currentLevelRemaining = nextLevelCount;
-                    nextLevelCount = 0;
-                }
-            }
-
-            return forwardBuffer;
-        }
-
-        private void MergeTraversals(Dictionary<int, Queue<NodeViewModel>> main, Dictionary<int, Queue<NodeViewModel>> merge)
-        {
-            foreach (KeyValuePair<int, Queue<NodeViewModel>> set in merge)
-            {
-                if (!main.ContainsKey(set.Key))
-                {
-                    main.Add(set.Key, new Queue<NodeViewModel>());
-                }
-
-                Queue<NodeViewModel> mainQueue = main[set.Key];
-                foreach (NodeViewModel add in set.Value)
-                {
-                    mainQueue.Enqueue(add);
-                }
+                m_nodeLevelLookup[reference.Key] = reference.Value.LevelReference;
             }
         }
 
@@ -689,6 +530,73 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 X = x;
                 Y = y;
             }
+        }
+
+        [DebuggerDisplay("'{Node}' => {LevelReference}. P: {m_parents.Count}, C: {m_children.Count}")]
+        private class NodeLevelReference
+        {
+            public Action<NodeLevelReference> OnLevelChanged;
+            public NodeViewModel Node { get; set; }
+            public int LevelReference
+            {
+                get => m_levelReference;
+                set
+                {
+                    if(m_levelReference == value)
+                    {
+                        if(!m_levelReferenceChanged)
+                        {
+                            m_levelReferenceChanged = true;
+                            OnLevelChanged?.Invoke(this);
+                        }
+                        return;
+                    }
+
+                    m_levelReference = value;
+                    m_levelReferenceChanged = true;
+
+                    OnLevelChanged?.Invoke(this);
+                }
+            }
+
+            public NodeLevelReference(int levelReference, NodeViewModel node)
+            {
+                m_levelReference = levelReference;
+                Node = node;
+            }
+
+            public void RegisterParent(NodeLevelReference parent)
+            {
+                if (parent == this) throw new InvalidOperationException("Can't reference yourself otherwise you get a stack overflow later on");
+                if (m_parents.Contains(parent)) return;
+
+                m_parents.Add(parent);
+                parent.OnLevelChanged += (parentChanged) =>
+                {
+                    if(parentChanged == this) throw new InvalidOperationException("Can't reference yourself otherwise you get a stack overflow later on");
+
+                    int checkLevel = m_parents.Select(r => r.LevelReference).Max() + 1;
+                    LevelReference = checkLevel;
+                };
+            }
+
+            public void RegisterChild(NodeLevelReference children)
+            {
+                if (m_children.Contains(children)) return;
+                if (children == this) throw new InvalidOperationException("Can't reference yourself otherwise you get a stack overflow later on");
+
+                m_children.Add(children);
+                children.OnLevelChanged += (parentChanged) =>
+                {
+                    int checkLevel = m_children.Select(r => r.LevelReference).Max() - 1;
+                    LevelReference = checkLevel;
+                };
+            }
+
+            private int m_levelReference;
+            private bool m_levelReferenceChanged;
+            private HashSet<NodeLevelReference> m_parents = new HashSet<NodeLevelReference>();
+            private HashSet<NodeLevelReference> m_children = new HashSet<NodeLevelReference>();
         }
     }
 }
