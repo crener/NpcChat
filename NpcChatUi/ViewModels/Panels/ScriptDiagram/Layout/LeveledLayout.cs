@@ -419,8 +419,15 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         {
             //create a quick lookup
             Dictionary<NodeViewModel, NodeLevelReference> levelReference = new Dictionary<NodeViewModel, NodeLevelReference>();
-            foreach (NodeViewModel node in network.Nodes.Items)
-                levelReference.Add(node, new NodeLevelReference(0, node));
+            foreach(NodeViewModel node in network.Nodes.Items)
+            {
+                NodeLevelReference reference = new NodeLevelReference(0, node);
+
+                int? distance = DistanceToNode(search, node);
+                if(distance != null) reference.StartDistance = distance.Value;
+
+                levelReference.Add(node, reference);
+            }
 
             //build relationships
             foreach (NodeViewModel node in network.Nodes.Items)
@@ -440,6 +447,40 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             {
                 m_nodeLevelLookup[reference.Key] = reference.Value.LevelReference;
             }
+        }
+
+        private int? DistanceToNode(NodeViewModel start, NodeViewModel destination, int currentDistance = 0, HashSet<NodeViewModel> seen = null)
+        {
+            if(start == destination) return 0;
+            if(seen == null) seen = new HashSet<NodeViewModel>();
+
+            foreach (NodeOutputViewModel output in start.Outputs.Items)
+                foreach (ConnectionViewModel connection in output.Connections.Items)
+                {
+                    NodeViewModel connectedNode = m_outputLookup[connection.Output];
+                    if (connectedNode == destination) return currentDistance + 1;
+
+                    if (seen.Contains(connectedNode)) continue;
+                    seen.Add(connectedNode);
+
+                    int? distance = DistanceToNode(connectedNode, destination, currentDistance + 1);
+                    if (distance != null) return distance;
+                }
+
+            foreach (NodeInputViewModel input in start.Inputs.Items)
+                foreach (ConnectionViewModel connection in input.Connections.Items)
+                {
+                    NodeViewModel connectedNode = m_inputLookup[connection.Input];
+                    if (connectedNode == destination) return currentDistance - 1;
+
+                    if (seen.Contains(connectedNode)) continue;
+                    seen.Add(connectedNode);
+
+                    int? distance = DistanceToNode(connectedNode, destination, currentDistance - 1);
+                    if (distance != null) return distance;
+                }
+
+            return null;
         }
 
         #endregion
@@ -537,14 +578,15 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         {
             public Action<NodeLevelReference> OnLevelChanged;
             public NodeViewModel Node { get; set; }
+            public int StartDistance { get; set; }
             public int LevelReference
             {
                 get => m_levelReference;
                 set
                 {
-                    if(m_levelReference == value)
+                    if (m_levelReference == value)
                     {
-                        if(!m_levelReferenceChanged)
+                        if (!m_levelReferenceChanged)
                         {
                             m_levelReferenceChanged = true;
                             OnLevelChanged?.Invoke(this);
@@ -573,7 +615,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 m_parents.Add(parent);
                 parent.OnLevelChanged += (parentChanged) =>
                 {
-                    if(parentChanged == this) throw new InvalidOperationException("Can't reference yourself otherwise you get a stack overflow later on");
+                    if (parentChanged == this) throw new InvalidOperationException("Can't reference yourself otherwise you get a stack overflow later on");
 
                     int checkLevel = m_parents.Select(r => r.LevelReference).Max() + 1;
                     LevelReference = checkLevel;
