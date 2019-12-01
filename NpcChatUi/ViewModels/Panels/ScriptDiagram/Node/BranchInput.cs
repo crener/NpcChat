@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using ReactiveUI;
 
 namespace NpcChat.ViewModels.Panels.ScriptDiagram.Node
 {
+    [DebuggerDisplay("{(Node?.Name ?? nameof(BranchInput))}")]
     public class BranchInput : NodeInputViewModel
     {
         static BranchInput()

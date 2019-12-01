@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using NLog.LayoutRenderers;
 using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.Util;
 using NpcChatSystem.Identifiers;
@@ -66,10 +67,17 @@ namespace NpcChatSystem.Data.Dialog
             return branch;
         }
 
-        public DialogTreeBranch CreateNewBranch(DialogTreeBranchIdentifier parent)
+        public DialogTreeBranch CreateNewBranch(DialogTreeBranchIdentifier parent, string name = null)
+        {
+            DialogTreeBranch newBranch = CreateNewBranch(name);
+            newBranch.AddParent(parent);
+            return newBranch;
+        }
+
+        public DialogTreeBranch CreateNewBranch(string name)
         {
             DialogTreeBranch newBranch = CreateNewBranch();
-            newBranch.AddParent(parent);
+            if (name != null) newBranch.Name = name;
             return newBranch;
         }
 

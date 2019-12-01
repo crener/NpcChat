@@ -196,7 +196,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             int originLevel = m_nodeLevelLookup[origin];
             int destinationLevel = m_nodeLevelLookup[destination];
 
-            if(originLevel > destinationLevel)
+            if (originLevel > destinationLevel)
             {
                 return FindClosest(spaceUsage, pos, pos.X - 1);
             }
@@ -395,7 +395,8 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                     m_outputLookup.Add(output, node);
             }
 
-            BreadthNodeLookup(search);
+            FindSegments(network);
+            RecenterStart(search);
 
             //build the node level
             foreach (KeyValuePair<NodeViewModel, int> level in m_nodeLevelLookup)
@@ -407,124 +408,133 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             }
         }
 
+        private void FindSegments(NetworkViewModel network)
+        {
+            //find the start nodes
+            List<NodeViewModel> startNodes = new List<NodeViewModel>();
+            foreach (NodeViewModel node in network.Nodes.Items)
+                if (!HasParent(node)) startNodes.Add(node);
+
+            if (startNodes.Count == 0) return;
+
+            // find all possible link paths
+            List<NodeViewModel[]> paths = new List<NodeViewModel[]>();
+            foreach (NodeViewModel start in startNodes)
+                paths.AddRange(BuildFullPath(start));
+
+
+            // find the levels inside the paths
+            foreach (NodeViewModel[] branchTraversal in paths)
+            {
+                if (m_nodeLevelLookup.Count == 0)
+                {
+                    // add first path straight away
+                    foreach (NodeViewModel node in branchTraversal)
+                        m_nodeLevelLookup[node] = m_nodeLevelLookup.Count;
+                    continue;
+                }
+
+                int depth = 0;
+                bool preExisting = false;
+                for (int i = 0; i < branchTraversal.Length; i++)
+                {
+                    if (m_nodeLevelLookup.ContainsKey(branchTraversal[i]))
+                    {
+                        depth = m_nodeLevelLookup[branchTraversal[i]];
+                        preExisting = true;
+                        continue;
+                    }
+
+                    if (preExisting)
+                    {
+                        //it's an insert if the next node merges back into the existing level
+                        ICollection<NodeViewModel> children = ExtractChildNodes(branchTraversal[i]);
+                        HashSet<NodeViewModel> valid = m_nodeLevelLookup.Where(l => l.Value == depth + 1)
+                            .Select(l => l.Key).ToHashSet();
+                        bool insert = children.Any(c => valid.Contains(c));
+
+                        if (insert)
+                        {
+                            foreach (NodeViewModel node in m_nodeLevelLookup
+                                .Where(b => b.Value > depth)
+                                .Select(b => b.Key).ToArray())
+                            {
+                                m_nodeLevelLookup[node] = m_nodeLevelLookup[node] + 1;
+                            }
+                        }
+                        
+                        m_nodeLevelLookup[branchTraversal[i]] = depth + 1;
+                    }
+                    else m_nodeLevelLookup[branchTraversal[i]] = depth;
+
+                    depth++;
+                }
+            }
+        }
+
         /// <summary>
-        /// Primary look for finding all of the nodes and sorting into levels
+        /// Recenter the <see cref="m_nodeLevelLookup"/> nodes so that <paramref name="start"/> is at 0
         /// </summary>
-        /// <param name="search">node to start with</param>
-        private void BreadthNodeLookup(NodeViewModel search)
+        /// <param name="start">node to recenter</param>
+        private void RecenterStart(NodeViewModel start)
         {
-            List<Dictionary<int, Queue<NodeViewModel>>> forwardBuffer = new List<Dictionary<int, Queue<NodeViewModel>>>(1);
-            List<Dictionary<int, Queue<NodeViewModel>>> backBuffer = new List<Dictionary<int, Queue<NodeViewModel>>>();
-            backBuffer.Add(BreadthForwardTraversal(0, search));
+            // recenter onto the start node
+            int offset = m_nodeLevelLookup[start];
+            if (offset == 0) return;
 
-            while (backBuffer.Count != 0)
+            foreach (NodeViewModel node in m_nodeLevelLookup.Keys.ToArray())
             {
-                // Go backwards through network to find uncatalogued nodes
-                foreach (Dictionary<int, Queue<NodeViewModel>> dict in backBuffer)
-                    foreach (KeyValuePair<int, Queue<NodeViewModel>> pair in dict)
-                        foreach (NodeViewModel searchModel in pair.Value)
-                            forwardBuffer.Add(BreadthBackwardTraversal(pair.Key - 1, searchModel));
-                backBuffer.Clear();
-
-                // Based on nodes that have just been checked go forwards through nodes for uncatalogued nodes
-                foreach (Dictionary<int, Queue<NodeViewModel>> dict in forwardBuffer)
-                    foreach (KeyValuePair<int, Queue<NodeViewModel>> pair in dict)
-                        foreach (NodeViewModel searchModel in pair.Value)
-                            backBuffer.Add(BreadthForwardTraversal(pair.Key + 1, searchModel));
-                forwardBuffer.Clear();
+                m_nodeLevelLookup[node] -= offset;
             }
         }
 
-        private Dictionary<int, Queue<NodeViewModel>> BreadthForwardTraversal(int initialLevel, NodeViewModel search)
+        private List<NodeViewModel[]> BuildFullPath(NodeViewModel start, NodeViewModel[] traversed = null)
         {
-            int level = initialLevel;
-            Queue<NodeViewModel> forwardQueue = new Queue<NodeViewModel>();
-            Dictionary<int, Queue<NodeViewModel>> backBuffer = new Dictionary<int, Queue<NodeViewModel>>();
-            forwardQueue.Enqueue(search);
+            List<NodeViewModel> traversedNodes = new List<NodeViewModel>(traversed?.Length ?? 3);
+            if (traversed != null) traversedNodes.AddRange(traversed);
+            traversedNodes.Add(start);
 
-            NodeViewModel next;
-            int currentLevelRemaining = 1, nextLevelCount = 0;
-            while (forwardQueue.Count > 0)
+            if (!HasChildren(start))
+                return new List<NodeViewModel[]>(new[] { traversedNodes.ToArray() });
+
+            List<NodeViewModel[]> buildPaths = new List<NodeViewModel[]>();
+            foreach (NodeViewModel child in ExtractChildNodes(start))
             {
-                next = forwardQueue.Dequeue();
-                currentLevelRemaining--;
-                m_nodeLevelLookup[next] = level;
+                buildPaths.AddRange(BuildFullPath(child, traversedNodes.ToArray()));
+            }
 
-                //mark nodes going forward through the network for future traversal
-                foreach (NodeOutputViewModel output in next.Outputs.Items)
-                    foreach (ConnectionViewModel connection in output.Connections.Items)
-                    {
-                        NodeViewModel node = m_inputLookup[connection.Input];
-                        forwardQueue.Enqueue(node);
-                        nextLevelCount++;
-                    }
+            return buildPaths;
+        }
 
-                // make sure to mark nodes going back encase they are not already traversed
-                foreach (NodeInputViewModel input in next.Inputs.Items)
-                    foreach (ConnectionViewModel connection in input.Connections.Items)
-                    {
-                        NodeViewModel node = m_outputLookup[connection.Output];
-                        //if (m_nodeLevelLookup.ContainsKey(node)) continue;
-                        if (!backBuffer.ContainsKey(level))
-                            backBuffer.Add(level, new Queue<NodeViewModel>());
-                        backBuffer[level].Enqueue(node);
-                    }
+        private ICollection<NodeViewModel> ExtractChildNodes(NodeViewModel node)
+        {
+            HashSet<NodeViewModel> linkedNodes = new HashSet<NodeViewModel>();
 
-                if (currentLevelRemaining <= 0)
+            foreach (NodeOutputViewModel output in node.Outputs.Items)
+                foreach (ConnectionViewModel connection in output.Connections.Items)
                 {
-                    level++;
-                    currentLevelRemaining = nextLevelCount;
-                    nextLevelCount = 0;
+                    NodeViewModel linkNode = m_inputLookup[connection.Input];
+                    if (!linkedNodes.Contains(linkNode)) linkedNodes.Add(linkNode);
                 }
-            }
 
-            return backBuffer;
+            return linkedNodes;
         }
 
-        private Dictionary<int, Queue<NodeViewModel>> BreadthBackwardTraversal(int initialLevel, NodeViewModel search)
-        {
-            int level = initialLevel;
-            Queue<NodeViewModel> backQueue = new Queue<NodeViewModel>();
-            Dictionary<int, Queue<NodeViewModel>> forwardBuffer = new Dictionary<int, Queue<NodeViewModel>>();
-            backQueue.Enqueue(search);
+        /// <summary>
+        /// Checks if <paramref cref="node"/> has any parents
+        /// </summary>
+        /// <param name="node">node to check</param>
+        /// <returns>true if <paramref name="node"/> has any parents</returns>
+        private static bool HasParent(NodeViewModel node) =>
+            node.Inputs.Items.Any(i => i.Connections.Items.Any());
 
-            NodeViewModel next;
-            int currentLevelRemaining = 1, nextLevelCount = 0;
-            while (backQueue.Count > 0)
-            {
-                next = backQueue.Dequeue();
-                currentLevelRemaining--;
-                if (m_nodeLevelLookup.ContainsKey(next)) continue;
-                m_nodeLevelLookup[next] = level;
-
-                foreach (NodeInputViewModel pin in next.Inputs.Items)
-                    foreach (ConnectionViewModel connection in pin.Connections.Items)
-                    {
-                        NodeViewModel node = m_outputLookup[connection.Output];
-                        backQueue.Enqueue(node);
-                        nextLevelCount++;
-                    }
-
-                foreach (NodeOutputViewModel pin in next.Outputs.Items)
-                    foreach (ConnectionViewModel connection in pin.Connections.Items)
-                    {
-                        NodeViewModel node = m_inputLookup[connection.Input];
-                        //if (m_nodeLevelLookup.ContainsKey(node)) continue;
-                        if (!forwardBuffer.ContainsKey(level))
-                            forwardBuffer.Add(level, new Queue<NodeViewModel>());
-                        forwardBuffer[level].Enqueue(node);
-                    }
-
-                if (currentLevelRemaining <= 0)
-                {
-                    level--;
-                    currentLevelRemaining = nextLevelCount;
-                    nextLevelCount = 0;
-                }
-            }
-
-            return forwardBuffer;
-        }
+        /// <summary>
+        /// Checks if <paramref cref="node"/> has any children
+        /// </summary>
+        /// <param name="node">node to check</param>
+        /// <returns>true if <paramref name="node"/> has any parents</returns>
+        private static bool HasChildren(NodeViewModel node) =>
+            node.Outputs.Items.Any(i => i.Connections.Items.Any());
 
         #endregion
 
