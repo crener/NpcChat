@@ -422,6 +422,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             foreach (NodeViewModel start in startNodes)
                 paths.AddRange(BuildFullPath(start));
 
+            TraversalReduction(paths);
 
             // find the levels inside the paths
             foreach (NodeViewModel[] branchTraversal in paths)
@@ -434,7 +435,25 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                     continue;
                 }
 
-                int depth = 0;
+                // determine depth by finding earliest node
+                int? depth = null;
+                int foundDepth = 0;
+                for(int i = 0; i < branchTraversal.Length; i++)
+                {
+                    NodeViewModel node = branchTraversal[i];
+                    if(m_nodeLevelLookup.ContainsKey(node))
+                    {
+                        int nodeDepth = m_nodeLevelLookup[node];
+                        if(depth == null || nodeDepth < depth)
+                        {
+                            depth = nodeDepth;
+                            foundDepth = i;
+                        }
+                    }
+                }
+                if(depth == null) depth = 0;
+                else depth -= foundDepth;
+
                 bool preExisting = false;
                 for (int i = 0; i < branchTraversal.Length; i++)
                 {
@@ -463,13 +482,18 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                             }
                         }
                         
-                        m_nodeLevelLookup[branchTraversal[i]] = depth + 1;
+                        m_nodeLevelLookup[branchTraversal[i]] = (depth.Value) + 1;
                     }
-                    else m_nodeLevelLookup[branchTraversal[i]] = depth;
+                    else m_nodeLevelLookup[branchTraversal[i]] = depth.Value;
 
                     depth++;
                 }
             }
+        }
+
+        private void TraversalReduction(List<NodeViewModel[]> paths)
+        {
+
         }
 
         /// <summary>

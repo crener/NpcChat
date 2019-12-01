@@ -51,6 +51,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(2, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
@@ -68,7 +69,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         ///    2
         /// </summary>
         [Test]
-        public void Basic2Layout()
+        public void BasicLayout2()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -80,6 +81,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(2, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
@@ -94,7 +96,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         ///        s -> 5
         /// </summary>
         [Test]
-        public void Complex2Layout()
+        public void ComplexLayout2()
         {
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
@@ -111,6 +113,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(5, layout.NodeLevels.Count);
             TestLevel(layout, -2, branch1);
@@ -134,6 +137,13 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         [Test]
         public void ConvergencePreStartLayout()
         {
+            Console.WriteLine("Expected:");
+            Console.WriteLine("1 -> 3");
+            Console.WriteLine("      \\");
+            Console.WriteLine("       s -> 5 -> 6");
+            Console.WriteLine("      /");
+            Console.WriteLine("2 -> 4\n");
+
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
 
@@ -151,6 +161,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(5, layout.NodeLevels.Count);
             TestLevel(layout, -2, branch1, branch2);
@@ -187,6 +198,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(length, layout.NodeLevels.Count);
             for (int i = 0; i < length; i++)
@@ -220,6 +232,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(3, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
@@ -254,6 +267,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(3, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
@@ -290,11 +304,12 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(3, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, -1, branch2);
             TestLevel(layout, -2, branch1);
+            TestLevel(layout, -1, branch2);
+            TestLevel(layout, 0, start);
 
             TestSpacing(layout, tree);
         }
@@ -309,23 +324,78 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         [Test]
         public void SkipComplexLayout()
         {
+            Console.WriteLine("Expected:\n" +
+                              "   1 -> 3 -> 4 -> 5\n" +
+                              "  /            \\ \n" +
+                              "s -> 2 -------> 6 -> 7\n");
+
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
 
             DialogTreeBranch start = tree.GetStart();
-            DialogTreeBranch branch1 = tree.CreateNewBranch(start);
-            DialogTreeBranch branch2 = tree.CreateNewBranch(start);
-            DialogTreeBranch branch3 = tree.CreateNewBranch(branch1);
-            DialogTreeBranch branch4 = tree.CreateNewBranch(branch3);
-            DialogTreeBranch branch5 = tree.CreateNewBranch(branch4);
-            DialogTreeBranch branch6 = tree.CreateNewBranch(branch4);
+            start.Name = "S";
+            DialogTreeBranch branch1 = tree.CreateNewBranch(start, "1");
+            DialogTreeBranch branch2 = tree.CreateNewBranch(start, "2");
+            DialogTreeBranch branch3 = tree.CreateNewBranch(branch1, "3");
+            DialogTreeBranch branch4 = tree.CreateNewBranch(branch3, "4");
+            DialogTreeBranch branch5 = tree.CreateNewBranch(branch4, "5");
+            DialogTreeBranch branch6 = tree.CreateNewBranch(branch4, "6");
+            branch6.AddParent(branch2);
             branch6.AddParent(branch4);
-            DialogTreeBranch branch7 = tree.CreateNewBranch(branch6);
+            DialogTreeBranch branch7 = tree.CreateNewBranch(branch6, "7");
 
             // build network and layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
+
+            Assert.AreEqual(6, layout.NodeLevels.Count);
+            TestLevel(layout, 0, start);
+            TestLevel(layout, 1, branch1, branch2);
+            TestLevel(layout, 2, branch3);
+            TestLevel(layout, 3, branch4);
+            TestLevel(layout, 4, branch5, branch6);
+            TestLevel(layout, 5, branch7);
+
+            TestSpacing(layout, tree);
+        }
+
+        /// <summary>
+        /// tree with one branch going to two but where one branch references the other
+        ///
+        /// s -> 1 -> 3 -> 4 -> 5
+        ///  \              \
+        ///   2 ------------ 6 -> 7
+        /// </summary>
+        [Test]
+        public void SkipComplexLayout2()
+        {
+            Console.WriteLine("Expected:");
+            Console.WriteLine("s -> 1 -> 3 -> 4 -> 5");
+            Console.WriteLine(" \\              \\");
+            Console.WriteLine("  2 ------------ 6 -> 7\n");
+
+            NpcChatProject project = new NpcChatProject();
+            DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
+
+            DialogTreeBranch start = tree.GetStart();
+            start.Name = "S";
+            DialogTreeBranch branch2 = tree.CreateNewBranch(start, "2");
+            DialogTreeBranch branch1 = tree.CreateNewBranch(start, "1");
+            DialogTreeBranch branch3 = tree.CreateNewBranch(branch1, "3");
+            DialogTreeBranch branch4 = tree.CreateNewBranch(branch3, "4");
+            DialogTreeBranch branch5 = tree.CreateNewBranch(branch4, "5");
+            DialogTreeBranch branch6 = tree.CreateNewBranch(branch4, "6");
+            branch6.AddParent(branch2);
+            branch6.AddParent(branch4);
+            DialogTreeBranch branch7 = tree.CreateNewBranch(branch6, "7");
+
+            // build network and layout
+            NetworkViewModel network = CreateNetworkForTree(project, tree);
+            LeveledLayout layout = new LeveledLayout();
+            layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(6, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
@@ -355,6 +425,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(2, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
@@ -365,7 +436,8 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
         /// <summary>
         /// link that goes behind the start node
-        /// 4 -> 3 \
+        ///  4 -> 3
+        ///        \
         ///    s -> 1 -> 2
         /// </summary>
         [Test]
@@ -381,6 +453,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(2, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
@@ -402,16 +475,17 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
 
             DialogTreeBranch start = tree.GetStart();
-            DialogTreeBranch branch1 = tree.CreateNewBranch(start);
-            DialogTreeBranch branch2 = tree.CreateNewBranch(branch1);
-            DialogTreeBranch branch3 = tree.CreateNewBranch(branch2);
-            DialogTreeBranch back1 = tree.CreateNewBranch();
-            DialogTreeBranch back2 = tree.CreateNewBranch(back1);
+            DialogTreeBranch branch1 = tree.CreateNewBranch(start, "1");
+            DialogTreeBranch branch2 = tree.CreateNewBranch(branch1, "2");
+            DialogTreeBranch branch3 = tree.CreateNewBranch(branch2, "3");
+            DialogTreeBranch back1 = tree.CreateNewBranch("b1");
+            DialogTreeBranch back2 = tree.CreateNewBranch(back1, "b2");
             back2.AddChild(branch3);
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(4, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
@@ -477,6 +551,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(2, layout.NodeLevels.Count);
             TestLevel(layout, 0, starts.ToArray());
@@ -509,6 +584,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(3, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
@@ -528,19 +604,25 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         [Test]
         public void DelayedConvergenceLayout()
         {
+            Console.WriteLine("  1 --> 3\n" +
+                              " /       \\\n" +
+                              "s -> 2 -> 4\n\n");
+
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
 
             DialogTreeBranch start = tree.GetStart();
-            DialogTreeBranch branch1 = tree.CreateNewBranch(start);
-            DialogTreeBranch branch2 = tree.CreateNewBranch(start);
-            DialogTreeBranch branch3 = tree.CreateNewBranch(branch1);
-            DialogTreeBranch branch4 = tree.CreateNewBranch(branch3);
+            start.Name = "s";
+            DialogTreeBranch branch1 = tree.CreateNewBranch(start, "1");
+            DialogTreeBranch branch2 = tree.CreateNewBranch(start, "2");
+            DialogTreeBranch branch3 = tree.CreateNewBranch(branch1, "3");
+            DialogTreeBranch branch4 = tree.CreateNewBranch(branch3, "4");
             branch4.AddParent(branch2);
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(4, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
@@ -578,6 +660,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(4, layout.NodeLevels.Count);
             TestLevel(layout, 1, branch1);
@@ -618,6 +701,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(4, layout.NodeLevels.Count);
             TestLevel(layout, 1, branch1);
@@ -655,6 +739,7 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
             layout.Layout(network);
+            PrintLayoutResult(layout);
 
             Assert.AreEqual(6, layout.NodeLevels.Count);
             TestLevel(layout, 0, start);
@@ -698,6 +783,67 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             Assert.AreEqual(tree.Branches.Count, containedNodes.Count, "Unexpected amount of nodes");
             foreach (DialogTreeBranchIdentifier id in tree.Branches)
                 Assert.IsTrue(containedNodes.Contains(id));
+        }
+
+        private void PrintLayoutResult(LeveledLayout layout)
+        {
+            try
+            {
+                int[] headerWidths = new int[layout.NodeLevels.Count];
+                int[] levelKeys = layout.NodeLevels.Keys.ToArray();
+                for (int index = 0; index < layout.NodeLevels.Count; index++)
+                    headerWidths[index] = layout.NodeLevels[levelKeys[index]].Select(n => n.Name.Length).Max();
+
+                // Header
+                Console.WriteLine("Result:");
+                List<int> lineWidth = new List<int>();
+                StringBuilder header = new StringBuilder(layout.NodeLevels.Count);
+                for (int i = 0; i < layout.NodeLevels.Count; i++)
+                {
+                    header.Append(' ', (int)Math.Ceiling(headerWidths[i] / 2f))
+                        .Append(i)
+                        .Append(' ', (int)Math.Ceiling(headerWidths[i] / 2f));
+                    lineWidth.Add(header.Length);
+                    if (i < layout.NodeLevels.Count - 1) header.Append("|");
+                }
+
+                Console.WriteLine(header);
+
+                // Separator
+                StringBuilder separator = new StringBuilder(header.Length);
+                for (int i = 0; i < lineWidth.Count; i++)
+                {
+                    separator.Append('-', lineWidth[i] - separator.Length);
+                    if (i < layout.NodeLevels.Count - 1) separator.Append("+");
+                }
+
+                Console.WriteLine(separator);
+
+                // Main body
+                StringBuilder[] lines = new StringBuilder[layout.NodeLayout.GetLength(1)];
+                for (int i = 0; i < lines.Length; i++) lines[i] = new StringBuilder(header.Length);
+
+                for (int x = 0; x < layout.NodeLayout.GetLength(0); x++)
+                {
+                    int expectedWidth = lineWidth[x];
+
+                    for (int y = 0; y < layout.NodeLayout.GetLength(1); y++)
+                    {
+                        NodeViewModel node = layout.NodeLayout[x, y];
+                        if (node != null) lines[y].Append(" ").Append(node.Name);
+
+                        lines[y].Append(' ', expectedWidth - lines[y].Length);
+                        if (x < layout.NodeLevels.Count - 1) lines[y].Append("|");
+                    }
+                }
+
+                foreach (StringBuilder builder in lines)
+                    Console.WriteLine(builder);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to print layout results");
+            }
         }
 
         private NetworkViewModel CreateNetworkForTree(NpcChatProject project, DialogTree tree)
