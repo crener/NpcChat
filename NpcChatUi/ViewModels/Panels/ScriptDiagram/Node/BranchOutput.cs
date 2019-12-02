@@ -11,7 +11,7 @@ using ReactiveUI;
 
 namespace NpcChat.ViewModels.Panels.ScriptDiagram.Node
 {
-    [DebuggerDisplay("{(Node?.Name ?? nameof(BranchOutput))}")]
+    [DebuggerDisplay("{Output: (Node?.Name ?? nameof(BranchOutput))}")]
     public class BranchOutput : NodeOutputViewModel
     {
         static BranchOutput()

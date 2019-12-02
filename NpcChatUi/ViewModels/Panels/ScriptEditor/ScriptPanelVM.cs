@@ -32,7 +32,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
 
         public event Action<IReadOnlyList<TreeBranchVM>> OnVisibleBranchChange;
 
-        private NpcChatProject m_project { get;}
+        private NpcChatProject m_project { get; }
         private DialogTree m_tree;
 
         public ScriptPanelVM(NpcChatProject project, DialogTreeIdentifier dialog = null)
@@ -170,7 +170,9 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             }
 
             Branches.Add(new TreeBranchVM(m_project, this, child));
-            TriggerOnVisibleBranchChange();
+            if (m_project[child].Children.Count == 1)
+                RebaseBranchList(child, m_project[child].Children[0]);
+            else TriggerOnVisibleBranchChange();
         }
 
         /// <summary>

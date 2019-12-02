@@ -130,14 +130,13 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             }
         }
 
-        private DialogTree m_tree => Project[(DialogTreeIdentifier)DialogBranch];
-
         // commands
         public ICommand AddNewDialogCommand { get; }
         public ICommand InsertBranchCommand { get; }
         public ICommand LinkBranchCommand { get; }
         public ICommand DeleteBranchCommand { get; }
 
+        private DialogTree m_tree => Project[(DialogTreeIdentifier)DialogBranch];
         private IScriptPanelVM m_script;
         private int? m_newDialogCharacterId = null;
         private string m_evaluationCacheName = null;
@@ -199,8 +198,8 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
                     BranchLinksChanged(id, false);
                     CheckPotentialBranchLink(id);
                 };
-                DialogBranch.OnBranchParentAdded += id => { CheckBranchCompatibility(); };
-                DialogBranch.OnBranchParentRemoved += id => { CheckBranchCompatibility(); };
+                DialogBranch.OnBranchParentAdded += id => CheckBranchCompatibility();
+                DialogBranch.OnBranchParentRemoved += id => CheckBranchCompatibility();
             }
 
             script.OnVisibleBranchChange += ScriptVisibleBranchesChanged;

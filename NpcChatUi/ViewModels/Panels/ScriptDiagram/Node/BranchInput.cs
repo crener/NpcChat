@@ -15,7 +15,7 @@ using ReactiveUI;
 
 namespace NpcChat.ViewModels.Panels.ScriptDiagram.Node
 {
-    [DebuggerDisplay("{(Node?.Name ?? nameof(BranchInput))}")]
+    [DebuggerDisplay("{Input: (Node?.Name ?? nameof(BranchInput))}")]
     public class BranchInput : NodeInputViewModel
     {
         static BranchInput()
