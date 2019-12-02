@@ -170,7 +170,10 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             }
 
             Branches.Add(new TreeBranchVM(m_project, this, child));
-            TriggerOnVisibleBranchChange();
+            
+            if (m_project[child].Children.Count == 1)
+                RebaseBranchList(child, m_project[child].Children[0]);
+            else TriggerOnVisibleBranchChange();
         }
 
         /// <summary>
