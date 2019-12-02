@@ -318,7 +318,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 if (checkNodes.Count > 0)
                 {
                     NodeViewModel nextNode = NextNodeInMainPath(checkNodes);
-                    if (nextNode == null) throw new NullReferenceException($"Node returned by {nameof(NextNodeInMainPath)} was Null... this should never happen");
+                    if (nextNode == null) throw new NullReferenceException($"Node was Null... this should never happen");
 
                     checkNode = nextNode;
                     nodes.Add(nextNode);
@@ -438,20 +438,20 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 // determine depth by finding earliest node
                 int? depth = null;
                 int foundDepth = 0;
-                for(int i = 0; i < branchTraversal.Length; i++)
+                for (int i = 0; i < branchTraversal.Length; i++)
                 {
                     NodeViewModel node = branchTraversal[i];
-                    if(m_nodeLevelLookup.ContainsKey(node))
+                    if (m_nodeLevelLookup.ContainsKey(node))
                     {
                         int nodeDepth = m_nodeLevelLookup[node];
-                        if(depth == null || nodeDepth < depth)
+                        if (depth == null || nodeDepth < depth)
                         {
                             depth = nodeDepth;
                             foundDepth = i;
                         }
                     }
                 }
-                if(depth == null) depth = 0;
+                if (depth == null) depth = 0;
                 else depth -= foundDepth;
 
                 bool preExisting = false;
@@ -481,7 +481,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                                 m_nodeLevelLookup[node] = m_nodeLevelLookup[node] + 1;
                             }
                         }
-                        
+
                         m_nodeLevelLookup[branchTraversal[i]] = (depth.Value) + 1;
                     }
                     else m_nodeLevelLookup[branchTraversal[i]] = depth.Value;

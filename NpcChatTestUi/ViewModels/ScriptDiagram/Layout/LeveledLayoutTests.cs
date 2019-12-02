@@ -286,19 +286,21 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         [Test]
         public void BackPropagationSkipBasicLayout()
         {
+            Console.WriteLine("Expected:");
+            Console.WriteLine(" 1 -> s");
+            Console.WriteLine("  \\  / ");
+            Console.WriteLine("   2\n");
+
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
 
             DialogTreeBranch start = tree.GetStart();
-            DialogTreeBranch branch1 = tree.CreateNewBranch();
-            DialogTreeBranch branch2 = tree.CreateNewBranch();
+            start.Name = "S";
+            DialogTreeBranch branch1 = tree.CreateNewBranch("1");
+            DialogTreeBranch branch2 = tree.CreateNewBranch("2");
             branch1.AddChild(branch2);
             branch1.AddChild(start);
             branch2.AddChild(start);
-
-            start.Name = "Start";
-            branch1.Name = "Branch 1";
-            branch2.Name = "Branch 2";
 
             // build network and layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
@@ -635,25 +637,31 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
         /// <summary>
         /// start with a few nodes which then link backwards in a new set of branches
-        ///           4   s -> 1
-        ///         /  \      /
-        ///        5 -> 3 -> 2  
+        ///     4   s -> 1
+        ///   /  \      /
+        ///  5 -> 3 -> 2  
         /// </summary>
         [Test]
         public void BackPropagationSkipLayout()
         {
+            Console.WriteLine("Expected:");
+            Console.WriteLine("    4   s -> 1");
+            Console.WriteLine("  /  \\      /");
+            Console.WriteLine(" 5 -> 3 -> 2\n");
+
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
 
             DialogTreeBranch start = tree.GetStart();
-            DialogTreeBranch branch1 = tree.CreateNewBranch(start);
-            DialogTreeBranch branch2 = tree.CreateNewBranch();
+            start.Name = "S";
+            DialogTreeBranch branch1 = tree.CreateNewBranch(start, "1");
+            DialogTreeBranch branch2 = tree.CreateNewBranch("2");
             branch2.AddChild(branch1);
-            DialogTreeBranch branch3 = tree.CreateNewBranch();
+            DialogTreeBranch branch3 = tree.CreateNewBranch("3");
             branch3.AddChild(branch2);
-            DialogTreeBranch branch4 = tree.CreateNewBranch();
+            DialogTreeBranch branch4 = tree.CreateNewBranch("4");
             branch4.AddChild(branch3);
-            DialogTreeBranch branch5 = tree.CreateNewBranch();
+            DialogTreeBranch branch5 = tree.CreateNewBranch("5");
             branch5.AddChild(branch4);
             branch5.AddChild(branch3);
 
@@ -674,27 +682,35 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
         /// <summary>
         /// start with a few nodes which then link backwards in a new set of branches
-        ///               s -> 1
-        ///                   /
-        ///        5 -> 3 -> 2
-        ///         \  /
-        ///          4
+        ///         s -> 1
+        ///             /
+        ///  5 -> 3 -> 2
+        ///   \  /
+        ///    4
         /// </summary>
         [Test]
         public void BackPropagationSkipLayout2()
         {
+            Console.WriteLine("Expected:");
+            Console.WriteLine("        s -> 1");
+            Console.WriteLine("            /");
+            Console.WriteLine(" 5 -> 3 -> 2");
+            Console.WriteLine("  \\  /");
+            Console.WriteLine("   4\n");
+
             NpcChatProject project = new NpcChatProject();
             DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
 
             DialogTreeBranch start = tree.GetStart();
-            DialogTreeBranch branch1 = tree.CreateNewBranch(start);
-            DialogTreeBranch branch2 = tree.CreateNewBranch();
+            start.Name = "S";
+            DialogTreeBranch branch1 = tree.CreateNewBranch(start, "1");
+            DialogTreeBranch branch2 = tree.CreateNewBranch("2");
             branch2.AddChild(branch1);
-            DialogTreeBranch branch3 = tree.CreateNewBranch();
+            DialogTreeBranch branch3 = tree.CreateNewBranch("3");
             branch3.AddChild(branch2);
-            DialogTreeBranch branch5 = tree.CreateNewBranch();
+            DialogTreeBranch branch5 = tree.CreateNewBranch("4");
             branch5.AddChild(branch3);
-            DialogTreeBranch branch4 = tree.CreateNewBranch();
+            DialogTreeBranch branch4 = tree.CreateNewBranch("5");
             branch4.AddChild(branch3);
             branch5.AddChild(branch4);
 
