@@ -8,6 +8,7 @@
              xmlns:data="clr-namespace:NpcChatSystem.Data.Dialog.DialogParts;assembly=NpcChatSystem"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviour="clr-namespace:NpcChat.Views.Utility.Behaviour"
+             xmlns:scriptEditor="clr-namespace:NpcChat.Views.Panels.ScriptEditor"
              mc:Ignorable="d" d:DesignWidth="200" >
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="EditModeBoolVis" TrueVisibility="Visible" FalseVisibility="Collapsed" />
@@ -63,10 +64,15 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" /> 
                             </Grid.ColumnDefinitions>
 
                             <Label Content="Text" Grid.Column="0"/>
                             <TextBox Text="{Binding Text}" MinWidth="60" TextWrapping="Wrap" Grid.Column="1" Margin="5,0,0,0" />
+
+                            <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=scriptEditor:CharacterDialog}, Path=DataContext.RemoveDialogElementCommand}" 
+                                    CommandParameter="{Binding Path=.}"
+                                    Grid.Column="2" Margin="3,0,0,0" Padding="9,2,8,2">-</Button>
                         </Grid>
                     </DataTemplate>
 
@@ -78,6 +84,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
                             <Label Content="Character Target: " Grid.Column="0"/>
@@ -86,6 +93,9 @@
                             <!--<TextBox Text="{Binding CharacterTrait}" MinWidth="60" Margin="5,0,0,0" Grid.Column="3"/>-->
                             <ComboBox ItemsSource="{Binding CharacterProperties}" SelectedValue="{Binding CharacterTrait}" Margin="5,0,0,0" Grid.Column="3"
                                       IsReadOnly="False" IsEditable="True"/>
+                            <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=scriptEditor:CharacterDialog}, Path=DataContext.RemoveDialogElementCommand}" 
+                                    CommandParameter="{Binding Path=.}"
+                                    Grid.Column="4" Margin="3,0,0,0" Padding="9,2,8,2">-</Button>
                         </Grid>
                     </DataTemplate>
                 </ListView.Resources>

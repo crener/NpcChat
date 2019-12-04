@@ -47,10 +47,10 @@
                                             <Button Command="{Binding UpdateStats}" Margin="3,0">Refresh</Button>
                                         </StackPanel>
                                         <TextBlock FontSize="{StaticResource SubTitleFontSize}" Foreground="{DynamicResource WindowText}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
-                                        <Run Text="{Binding DialogCount, Mode=OneWay}"/>
-                                        piece(s) of dialog across
-                                        <Run Text="{Binding TreeCount, Mode=OneWay}"/> 
-                                        dialog tree(s)
+                                            <Run Text="{Binding DialogCount, Mode=OneWay}"/>
+                                            piece(s) of dialog across
+                                            <Run Text="{Binding TreeCount, Mode=OneWay}"/> 
+                                            dialog tree(s)
                                         </TextBlock>
                                     </Grid>
                                 </Border>

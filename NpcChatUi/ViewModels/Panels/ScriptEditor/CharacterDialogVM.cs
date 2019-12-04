@@ -54,7 +54,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
 
         private DialogSegment m_dialogSegment = null;
         private DelegateCommand<string> m_addDialogElement;
-        private DelegateCommand<string> m_removeDialogElement;
+        private DelegateCommand<IDialogElement> m_removeDialogElement;
         private ICommand m_destroyDialogElement;
 
         public CharacterDialogVM(NpcChatProject project, [NotNull] DialogSegment dialog)
@@ -63,7 +63,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             DialogSegment = dialog;
 
             m_addDialogElement = new DelegateCommand<string>(AddDialogElement);
-            m_removeDialogElement = new DelegateCommand<string>(RemoveDialogElement);
+            m_removeDialogElement = new DelegateCommand<IDialogElement>(RemoveDialogElement);
             m_destroyDialogElement = new DelegateCommand(DestroyCharacterDialog);
         }
 
@@ -74,9 +74,10 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             if (element != null) DialogSegment.AddDialogElement(element);
         }
 
-        private void RemoveDialogElement(string dialogElementName)
+        private void RemoveDialogElement(IDialogElement element)
         {
-            throw new NotImplementedException();
+            if(element == null) return;
+            DialogSegment.RemoveDialogElement(element);
         }
 
         private void RetrieveDialog(DialogSegmentIdentifier dialogId)
