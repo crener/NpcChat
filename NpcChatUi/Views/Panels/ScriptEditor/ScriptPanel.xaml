@@ -27,15 +27,17 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <TextBox Text="{Binding Tree.TreeName}" TextAlignment="Center" FontWeight="Bold" Grid.Row="0" />
-            <Button Command="{Binding ShowScriptDiagram}" Margin="3,0" Padding="6,0" Grid.Column="1">Diagram</Button>
+            <ComboBox Text="Edit Mode" ItemsSource="{Binding AvailableOptions, Mode=OneWay}" SelectedItem="{Binding EditMode}" Margin="3,0" Grid.Column="1"/>
+            <Button Command="{Binding ShowScriptDiagram}" Padding="6,0" Grid.Column="2">Diagram</Button>
         </Grid>
 
         <Separator Grid.Row="1"/>
         <ScrollViewer Margin="0,5,0,0" Grid.Row="2">
-            <StackPanel >
+            <StackPanel>
                 <ListView ItemsSource="{Binding Branches}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="false"
                           ItemContainerStyle="{DynamicResource BranchItemStyle}">
                     <i:Interaction.Behaviors>

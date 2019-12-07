@@ -167,7 +167,6 @@
     <Compile Include="ViewModels\Panels\ScriptEditor\ScriptPanelVM.cs" />
     <Compile Include="ViewModels\Panels\ScriptEditor\TreeBranchVM.cs" />
     <Compile Include="ViewModels\Panels\ScriptEditor\Util\TreeBranchLinkInfoVM.cs" />
-    <Compile Include="ViewModels\Panels\Tree\Nodes\BaseNodeModel.cs" />
     <Compile Include="ViewModels\WindowViewModel.cs" />
     <Compile Include="Views\About\AboutDialog.xaml.cs">
       <DependentUpon>AboutDialog.xaml</DependentUpon>
@@ -192,9 +191,6 @@
     </Compile>
     <Compile Include="Views\Panels\ScriptEditor\ScriptPanel.xaml.cs">
       <DependentUpon>ScriptPanel.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Panels\Tree\Nodes\BaseNode.xaml.cs">
-      <DependentUpon>BaseNode.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\UtilityPanels\LogPanel.xaml.cs">
       <DependentUpon>LogPanel.xaml</DependentUpon>
@@ -272,7 +268,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Panels\Tree\Nodes\BaseNode.xaml" />
     <Page Include="Views\Panels\UtilityPanels\LogPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
+using NpcChat.Backend.Interfaces;
 using NpcChat.Util;
 using NpcChatSystem;
 using NpcChatSystem.Annotations;
@@ -47,15 +48,32 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             set => RetrieveDialog(value);
         }
 
+        public EditMode EditMode
+        {
+            get => m_editMode;
+            set
+            {
+                if (m_editMode == value) return;
+
+                m_editMode = value;
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(ElementEditMode));
+                RaisePropertyChanged(nameof(TextEditMode));
+            }
+        }
+
+        public bool ElementEditMode => EditMode == EditMode.Elements;
+        public bool TextEditMode => EditMode == EditMode.TextBlock;
+
         public IReadOnlyList<string> DialogElementTypes => DialogTypeStore.Dialogs;
         public ICommand AddDialogElementCommand => m_addDialogElement;
         public ICommand RemoveDialogElementCommand => m_removeDialogElement;
-        public ICommand DestroyCommand => m_destroyDialogElement;
+        public ICommand DestroyCommand { get; }
 
         private DialogSegment m_dialogSegment = null;
         private DelegateCommand<string> m_addDialogElement;
         private DelegateCommand<IDialogElement> m_removeDialogElement;
-        private ICommand m_destroyDialogElement;
+        private EditMode m_editMode;
 
         public CharacterDialogVM(NpcChatProject project, [NotNull] DialogSegment dialog)
         {
@@ -64,7 +82,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
 
             m_addDialogElement = new DelegateCommand<string>(AddDialogElement);
             m_removeDialogElement = new DelegateCommand<IDialogElement>(RemoveDialogElement);
-            m_destroyDialogElement = new DelegateCommand(DestroyCharacterDialog);
+            DestroyCommand = new DelegateCommand(DestroyCharacterDialog);
         }
 
         private void AddDialogElement(string dialogElementName)
@@ -76,7 +94,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
 
         private void RemoveDialogElement(IDialogElement element)
         {
-            if(element == null) return;
+            if (element == null) return;
             DialogSegment.RemoveDialogElement(element);
         }
 

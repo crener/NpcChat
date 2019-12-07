@@ -15,6 +15,7 @@ namespace NpcChat.Backend.Interfaces
     {
         ObservableCollection<TreeBranchVM> Branches { get; }
         ICommand NewBranchCommand { get; }
+        EditMode EditMode { get; set; }
 
         /// <summary>
         /// sets the dialog tree to display
@@ -47,5 +48,14 @@ namespace NpcChat.Backend.Interfaces
         /// Triggered when the visible branches in <see cref="Branches"/> change
         /// </summary>
         event Action<IReadOnlyList<TreeBranchVM>> OnVisibleBranchChange;
+    }
+
+    /// <summary>
+    /// Edit mode options for character dialog
+    /// </summary>
+    public enum EditMode
+    {
+        TextBlock,
+        Elements
     }
 }

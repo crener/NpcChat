@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using NpcChat.Backend.Interfaces;
 using NpcChatSystem;
@@ -27,13 +28,31 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             set => SetDialogTree(value);
         }
 
+        public EditMode[] AvailableOptions { get; } = { EditMode.Elements, EditMode.TextBlock, };
+
+        public EditMode EditMode
+        {
+            get => m_editMode;
+            set
+            {
+                if(m_editMode == value) return;
+
+                m_editMode = value;
+
+                foreach(TreeBranchVM branch in Branches)
+                    branch.EditMode = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand NewBranchCommand { get; }
         public ICommand ShowScriptDiagram { get; }
 
         public event Action<IReadOnlyList<TreeBranchVM>> OnVisibleBranchChange;
 
-        private NpcChatProject m_project { get;}
+        private NpcChatProject m_project { get; }
         private DialogTree m_tree;
+        private EditMode m_editMode = EditMode.Elements;
 
         public ScriptPanelVM(NpcChatProject project, DialogTreeIdentifier dialog = null)
         {
@@ -61,7 +80,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             Branches.Clear();
 
             DialogTreeBranch start = m_tree.GetStart();
-            if (start != null) Branches.Add(new TreeBranchVM(m_project, this, start));
+            if (start != null) Branches.Add(CreateTreeBranchVM(start));
 
             TriggerOnVisibleBranchChange();
             RaisePropertyChanged(nameof(Tree));
@@ -114,7 +133,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
                 if (Branches.Count == 0 ||
                     parentId != null && Branches.LastOrDefault()?.DialogBranch?.Id == parentId)
                 {
-                    Branches.Add(new TreeBranchVM(m_project, this, identifier));
+                    Branches.Add(CreateTreeBranchVM(identifier));
                     TriggerOnVisibleBranchChange();
                 }
                 else RebaseBranchList(parentId, identifier);
@@ -169,11 +188,18 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
                 Branches.RemoveAt(i);
             }
 
-            Branches.Add(new TreeBranchVM(m_project, this, child));
-            
+            Branches.Add(CreateTreeBranchVM(child));
+
             if (m_project[child].Children.Count == 1)
                 RebaseBranchList(child, m_project[child].Children[0]);
             else TriggerOnVisibleBranchChange();
+        }
+
+        private TreeBranchVM CreateTreeBranchVM(DialogTreeBranchIdentifier child)
+        {
+            TreeBranchVM vm = new TreeBranchVM(m_project, this, child);
+            vm.EditMode = EditMode;
+            return vm;
         }
 
         /// <summary>
@@ -210,7 +236,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             OnVisibleBranchChange?.Invoke(Branches);
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public new event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

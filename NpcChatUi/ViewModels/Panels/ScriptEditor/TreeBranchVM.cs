@@ -55,6 +55,21 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             }
         }
 
+        public EditMode EditMode
+        {
+            get { return m_editMode; }
+            set
+            {
+                if (m_editMode == value) return;
+                
+                m_editMode = value;
+
+                foreach(CharacterDialogVM vm in Speech)
+                    vm.EditMode = value;
+                RaisePropertyChanged();
+            }
+        }
+
         /// <summary>
         /// Name of the used evaluation container
         /// </summary>
@@ -142,6 +157,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
         private string m_evaluationCacheName = null;
         private int m_visibleBranchLinkIndex = -1;
         private int m_selectedBranchLinkIndex;
+        private EditMode m_editMode;
 
         public TreeBranchVM(NpcChatProject project, IScriptPanelVM script, [NotNull] DialogTreeBranchIdentifier dialogTreeId)
             : this(project, script, project[dialogTreeId]) { }

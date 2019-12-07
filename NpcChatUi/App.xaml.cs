@@ -19,14 +19,11 @@ namespace NpcChat
     {
         public App()
         {
-            if (!Debugger.IsAttached)
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
-                AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
-                {
-                    UnhandledExceptionDialog dialog = new UnhandledExceptionDialog(args);
-                    dialog.ShowDialog();
-                };
-            }
+                UnhandledExceptionDialog dialog = new UnhandledExceptionDialog(args);
+                dialog.ShowDialog();
+            };
 
             List<AssemblyTitleAttribute> title = Assembly.GetAssembly(typeof(App)).GetCustomAttributes<AssemblyTitleAttribute>().ToList();
             string path = Path.Combine(Path.GetTempPath(), title[0].Title);

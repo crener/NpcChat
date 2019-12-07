@@ -20,7 +20,9 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock VerticalAlignment="Center" Grid.Column="0">Characters (<Run Text="{Binding CharacterCount, Mode=OneWay}"/>)</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource ButtonText}" Grid.Column="0">
+                            Characters (<Run Text="{Binding CharacterCount, Mode=OneWay}"/>)
+                        </TextBlock>
                         <Button Margin="10,0,0,0" Grid.Column="1">Character Editor</Button>
                     </Grid>
                 </Expander.Header>
@@ -29,7 +31,7 @@
                     <ItemsControl ItemsSource="{Binding CharacterStats}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="local:CharacterOverview">
-                                <Border Name="Bd" Style="{StaticResource HighlightBorderStyle}">
+                                <Border Name="Bd" Style="{DynamicResource HighlightBorderStyle}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="5"/>
@@ -62,7 +64,9 @@
 
             <Expander Margin="0,5">
                 <Expander.Header>
-                    <TextBlock VerticalAlignment="Center" Grid.Column="0">Dialogs (<Run Text="{Binding DialogTreeCount, Mode=OneWay}"/>)</TextBlock>
+                    <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource ButtonText}" Grid.Column="0">
+                        Dialogs (<Run Text="{Binding DialogTreeCount, Mode=OneWay}"/>)
+                    </TextBlock>
                 </Expander.Header>
 
                 <StackPanel>
@@ -70,7 +74,7 @@
                     <ItemsControl ItemsSource="{Binding DialogStats}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="local:DialogOverview">
-                                <Border Style="{StaticResource HighlightBorderStyle}">
+                                <Border Style="{DynamicResource HighlightBorderStyle}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="5"/>
@@ -103,7 +107,13 @@
                 </StackPanel>
             </Expander>
 
-            <Expander Header="World " Margin="0,5">
+            <Expander Margin="0,5">
+                <Expander.Header>
+                    <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource ButtonText}" Grid.Column="0">
+                        World
+                    </TextBlock>
+                </Expander.Header>
+
                 <Label>Todo ;)</Label>
             </Expander>
         </StackPanel>

@@ -44,21 +44,7 @@ namespace NpcChat.Views.Dialogs
 
         private void Continue()
         {
-            MessageBoxResult result = MessageBox.Show("This may result in unexpected behaviour or an immediate crash.\nAre you sure you wish to continue.");
-            switch (result)
-            {
-                case MessageBoxResult.Yes:
-                case MessageBoxResult.OK:
-                    m_dialogWindow.Close();
-                    break;
-                case MessageBoxResult.None:
-                case MessageBoxResult.No:
-                case MessageBoxResult.Cancel:
-                    return;
-                default:
-                    Logging.Logger.Warn($"Unexpected '{nameof(UnhandledExceptionDialogVM)}' messageBox result: {result}");
-                    return;
-            }
+            m_dialogWindow.Close();
         }
 
         private void Quit()

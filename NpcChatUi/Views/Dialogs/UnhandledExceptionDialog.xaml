@@ -38,12 +38,9 @@
                 <ColumnDefinition Width="50*"/>
                 <ColumnDefinition Width="15*"/>
                 <ColumnDefinition Width="50*"/>
-                <ColumnDefinition Width="15*"/>
-                <ColumnDefinition Width="50*"/>
             </Grid.ColumnDefinitions>
-            <Button Command="{Binding ContinueCommand}" Grid.Column="0">Continue</Button>
-            <Button Command="{Binding QuitCommand}" Grid.Column="2">Quit</Button>
-            <Button Command="{Binding ReportCommand}" Grid.Column="4">Report Issue</Button>
+            <Button Command="{Binding QuitCommand}" Grid.Column="0">Quit</Button>
+            <Button Command="{Binding ReportCommand}" Grid.Column="2">Report Issue</Button>
         </Grid>
     </Grid>
 </Window>
