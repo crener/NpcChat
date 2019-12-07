@@ -31,7 +31,7 @@
             </Grid.ColumnDefinitions>
 
             <TextBox Text="{Binding Tree.TreeName}" TextAlignment="Center" FontWeight="Bold" Grid.Row="0" />
-            <ComboBox Text="Edit Mode" ItemsSource="{Binding AvailableOptions, Mode=OneWay}" SelectedItem="{Binding EditMode}" Margin="3,0" Grid.Column="1"/>
+            <ComboBox Text="Edit Mode" ItemsSource="{Binding AvailableEditModeOptions, Mode=OneWay}" SelectedItem="{Binding EditMode}" Margin="3,0" Grid.Column="1"/>
             <Button Command="{Binding ShowScriptDiagram}" Padding="6,0" Grid.Column="2">Diagram</Button>
         </Grid>
 

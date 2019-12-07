@@ -28,7 +28,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             set => SetDialogTree(value);
         }
 
-        public EditMode[] AvailableOptions { get; } = { EditMode.Elements, EditMode.TextBlock, };
+        public EditMode[] AvailableEditModeOptions { get; } = { EditMode.Elements, EditMode.TextBlock, };
 
         public EditMode EditMode
         {
