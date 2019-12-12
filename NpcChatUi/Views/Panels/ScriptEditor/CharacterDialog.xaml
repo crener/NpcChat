@@ -82,9 +82,8 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-
             <!-- Element Edit Mode -->
-            <Grid Visibility="{Binding ElementEditMode, Converter={StaticResource EditModeBoolVis}}" Background="{DynamicResource ItemBackgroundHover}"
+            <Grid Visibility="{Binding ElementEditMode, Converter={StaticResource EditModeBoolVis}}" Background="Transparent"
                   Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -107,7 +106,7 @@
             </Grid>
 
             <!-- Text Edit Mode -->
-            <Grid Visibility="{Binding TextEditMode, Converter={StaticResource EditModeBoolVis}}" Background="{DynamicResource ItemBackgroundHover}"
+            <Grid Visibility="{Binding TextEditMode, Converter={StaticResource EditModeBoolVis}}" Background="Transparent"
                   Grid.Row="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -115,7 +114,8 @@
                 </Grid.RowDefinitions>
 
                 <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId}" Grid.Row="0" Margin="3,0,3,0" />
-                <TextBlock Text="{Binding DialogSegment.Text}" TextWrapping="Wrap" Margin="4,3,4,1" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="1"/>
+                <!--<ListBox ItemsSource="{Binding DialogParts}" Grid.Row="1"></ListBox>-->
+                <reusable:BindableRichTextBox Document="{Binding DialogDocument}" Margin="4,3,4,1" VerticalAlignment="Center" Grid.Row="1"/>
             </Grid>
 
 

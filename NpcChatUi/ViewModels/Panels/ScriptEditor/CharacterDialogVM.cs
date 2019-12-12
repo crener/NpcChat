@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using NpcChat.Backend.Interfaces;
 using NpcChat.Util;
@@ -29,6 +31,9 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
 
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(DialogSegmentId));
+
+                if (m_editMode == EditMode.TextBlock)
+                    PrepairTextBlockEdit();
             }
         }
 
@@ -48,6 +53,19 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             set => RetrieveDialog(value);
         }
 
+        /// <summary>
+        /// Parts of text shown when using <see cref="EditMode.TextBlock"/> to edit text
+        /// </summary>
+        public FlowDocument DialogDocument
+        {
+            get => m_dialogDocument;
+            set
+            {
+                m_dialogDocument = value;
+                RaisePropertyChanged(nameof(DialogDocument));
+            }
+        }
+
         public EditMode EditMode
         {
             get => m_editMode;
@@ -59,6 +77,9 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(ElementEditMode));
                 RaisePropertyChanged(nameof(TextEditMode));
+
+                if (m_editMode == EditMode.TextBlock)
+                    PrepairTextBlockEdit();
             }
         }
 
@@ -74,6 +95,8 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
         private DelegateCommand<string> m_addDialogElement;
         private DelegateCommand<IDialogElement> m_removeDialogElement;
         private EditMode m_editMode;
+        private string[] m_textBlockElements = new string[0];
+        private FlowDocument m_dialogDocument;
 
         public CharacterDialogVM(NpcChatProject project, [NotNull] DialogSegment dialog)
         {
@@ -106,6 +129,40 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             DialogSegment = tree;
         }
 
+        private void PrepairTextBlockEdit()
+        {
+            FlowDocument dialogs = new FlowDocument();
+            Paragraph paragraph = new Paragraph();
+
+            string lastText = "";
+            foreach (IDialogElement part in DialogSegment.SegmentParts)
+            {
+                // try to combine adjoining text segments
+                if (part is DialogText)
+                {
+                    lastText += part.Text;
+                    continue;
+                }
+                else if (lastText.Length > 0)
+                {
+                    paragraph.Inlines.Add(new Run(lastText));
+                    lastText = "";
+                }
+
+                paragraph.Inlines.Add(new Bold(new Run(part.Text)));
+            }
+
+            //don't forget remaining text elements
+            if (lastText.Length > 0)
+            {
+                paragraph.Inlines.Add(new Run(lastText));
+            }
+
+
+            dialogs.Blocks.Add(paragraph);
+            DialogDocument = dialogs;
+        }
+
         private void DestroyCharacterDialog()
         {
             DialogTreeBranch branch = Project[(DialogTreeBranchIdentifier)DialogSegmentId];
@@ -126,6 +183,9 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
         {
             RaisePropertyChanged(nameof(DialogSegment));
             RaisePropertyChanged(nameof(DialogSegmentId));
+
+            if (m_editMode == EditMode.TextBlock)
+                PrepairTextBlockEdit();
         }
     }
 }

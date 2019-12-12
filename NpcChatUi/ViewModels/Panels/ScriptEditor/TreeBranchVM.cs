@@ -196,13 +196,19 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
                 DialogBranch.OnDialogCreated += added =>
                 {
                     if (!Project.ProjectDialogs.HasDialog(added)) return;
-                    Speech.Add(new CharacterDialogVM(Project, Project.ProjectDialogs[added]));
+                    CharacterDialogVM characterDialog = new CharacterDialogVM(Project, Project.ProjectDialogs[added]);
+                    characterDialog.EditMode = EditMode;
+                    Speech.Add(characterDialog);
                 };
                 DialogBranch.OnDialogDestroyed += removed =>
                 {
                     Speech.Clear();
-                    foreach (DialogSegment segment in dialogBranch.Dialog)
-                        Speech.Add(new CharacterDialogVM(Project, segment));
+                    foreach(DialogSegment segment in dialogBranch.Dialog)
+                    {
+                        CharacterDialogVM characterDialog = new CharacterDialogVM(Project, segment);
+                        characterDialog.EditMode = EditMode;
+                        Speech.Add(characterDialog);
+                    }
                 };
                 DialogBranch.OnBranchChildAdded += (id) =>
                 {

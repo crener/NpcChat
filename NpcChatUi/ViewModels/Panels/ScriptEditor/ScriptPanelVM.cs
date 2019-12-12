@@ -88,7 +88,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
 
         private void OnBranchCreated(DialogTreeBranch obj)
         {
-
+            //todo add logic to add branches that should be visible but were not made by the script panel
         }
 
         private void OnBranchRemoved(DialogTreeBranch removed)

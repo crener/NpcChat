@@ -195,6 +195,7 @@
     <Compile Include="Views\Panels\UtilityPanels\LogPanel.xaml.cs">
       <DependentUpon>LogPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Reusable\BindableRichTextBox.cs" />
     <Compile Include="Views\Reusable\CharacterLabel.xaml.cs">
       <DependentUpon>CharacterLabel.xaml</DependentUpon>
     </Compile>
