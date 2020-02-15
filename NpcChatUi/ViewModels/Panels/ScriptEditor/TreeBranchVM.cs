@@ -17,9 +17,13 @@ using NpcChatSystem.Identifiers;
 using NpcChatSystem.System.TypeStore.Stores;
 using NpcChatSystem.Utilities;
 using Prism.Commands;
+using NotificationObject = NpcChat.Util.NotificationObject;
 
 namespace NpcChat.ViewModels.Panels.ScriptEditor
 {
+    /// <summary>
+    /// View model for a branch of dialog containing multiple pieces of dialog from characters
+    /// </summary>
     [DebuggerDisplay("BranchVM: {DialogBranch.Name}")]
     public class TreeBranchVM : NotificationObject
     {

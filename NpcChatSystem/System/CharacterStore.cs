@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +36,7 @@ namespace NpcChatSystem.System
         /// </summary>
         /// <param name="id">id of the character</param>
         /// <returns>character if found, null if not found</returns>
-        public Character? GetCharacter(int id)
+        public Character GetCharacter(int id)
         {
             if (HasCharacter(id))
             {
@@ -44,35 +46,35 @@ namespace NpcChatSystem.System
             return null;
         }
 
-        public Character? GetCharacter(CharacterId id)
+        public Character GetCharacter(CharacterId id)
         {
             return GetCharacter(id.Id);
         }
 
         public bool HasCharacter(int id)
         {
-            if (id <= 0) return false;
+            if (id <= Character.PreRegisteredId) return false;
             return m_characters.ContainsKey(id);
         }
 
         private Dictionary<int, Character> m_characters = new Dictionary<int, Character>();
 
-        public bool RegisterNewCharacter(out int generatedId, Character character)
+        public bool RegisterNewCharacter(out int generatedId, string name)
         {
-            generatedId = -1;
-            if (HasCharacter(character.Id)) return false;
-
-            if (m_characters.Values.Any(c => c.Name == character.Name))
-            {
-                return false;
-            }
+            Character character = new Character(this, name);
 
             generatedId = character.Id = GenerateUniqueId();
             m_characters.Add(generatedId, character);
 
+            character.PropertyChanged += CharacterPropChanged;
             CharacterAdded?.Invoke(generatedId);
 
             return true;
+        }
+
+        public bool RemoveCharacter(Character character)
+        {
+            return RemoveCharacter(character.Id);
         }
 
         public bool RemoveCharacter(int characterId)
@@ -96,18 +98,35 @@ namespace NpcChatSystem.System
             return characters;
         }
 
+        private void CharacterPropChanged(object e, PropertyChangedEventArgs args)
+        {
+            int id = (e as Character)?.Id ?? Character.PreRegisteredId;
+            if (args.PropertyName == nameof(Character.Name))
+            {
+                CharacterChanged?.Invoke(id, UpdatedField.Name);
+            }
+            else if (args.PropertyName == nameof(Character.TraitNames))
+            {
+                CharacterChanged?.Invoke(id, UpdatedField.Trait);
+            }
+            else
+            {
+                CharacterChanged?.Invoke(id, UpdatedField.Unspecified);
+            }
+        }
+
         private int GenerateUniqueId()
         {
             while (true)
             {
-                int i = s_random.Next(1, int.MaxValue);
+                int i = s_random.Next(Character.PreRegisteredId + 1, int.MaxValue);
                 if (!HasCharacter(i)) //char Id should always be 0 before being reassigned
                     return i;
             }
         }
 
-        public Character? this[int key] => GetCharacter(key);
-        public Character? this[CharacterId key] => GetCharacter(key);
+        public Character this[int key] => GetCharacter(key);
+        public Character this[CharacterId key] => GetCharacter(key);
 
         /// <summary>
         /// Event used to notify of a change in a characters information

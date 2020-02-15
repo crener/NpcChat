@@ -113,9 +113,15 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId}" Grid.Row="0" Margin="3,0,3,0" />
-                <!--<ListBox ItemsSource="{Binding DialogParts}" Grid.Row="1"></ListBox>-->
-                <reusable:BindableRichTextBox Document="{Binding DialogDocument}" Margin="4,3,4,1" VerticalAlignment="Center" Grid.Row="1"/>
+                <StackPanel Orientation="Horizontal" Grid.Row="0">
+                    <Label VerticalAlignment="Center" Margin="3,0">Character: </Label>
+                    <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId}" Margin="3,0" />
+                </StackPanel>
+                <reusable:BindableRichTextBox Document="{Binding DialogDocument}" Margin="4,3,4,1" VerticalAlignment="Center" Grid.Row="1">
+                    <reusable:BindableRichTextBox.Resources>
+
+                    </reusable:BindableRichTextBox.Resources>
+                </reusable:BindableRichTextBox>
             </Grid>
 
 

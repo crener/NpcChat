@@ -112,14 +112,13 @@ namespace NpcChat.ViewModels.Panels.Project
 
             foreach (CharacterId id in project.ProjectCharacters.AvailableCharacters())
             {
-                Character? possibleCharacter = project[id];
-                if (possibleCharacter == null)
+                Character character = project[id];
+                if (character == null)
                 {
                     Logging.Logger.Error($"Unable to find expected character '{id}' but this retrieved from {nameof(CharacterStore)}.{nameof(CharacterStore.AvailableCharacters)} so should be availible");
                     continue;
                 }
 
-                Character character = possibleCharacter.Value;
                 CharacterOverview overview = new CharacterOverview(project, character);
                 lookup.Add(overview);
             }

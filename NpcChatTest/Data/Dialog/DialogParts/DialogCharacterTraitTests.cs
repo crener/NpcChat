@@ -75,8 +75,7 @@ namespace NpcChatTest.Data.Dialog.DialogParts
         public void NameTrait()
         {
             NpcChatProject project = new NpcChatProject();
-            if (project.ProjectCharacters.RegisterNewCharacter(out int id,
-                new NpcChatSystem.Data.CharacterData.Character("Tim")))
+            if (project.ProjectCharacters.RegisterNewCharacter(out int id, "Tim"))
             {
                 DialogCharacterTrait element = DialogTypeStore.Instance.CreateEntity<DialogCharacterTrait>(project);
                 element.CharacterTrait = "Name";

@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              Height="23" d:DesignWidth="130">
     <Grid Name="SelectorGrid">
-        <ComboBox IsEditable="False" IsReadOnly="True" ItemsSource="{Binding Names, Mode=OneWay}" 
+        <ComboBox IsEditable="False" ItemsSource="{Binding Names, Mode=OneWay}" 
                   SelectedValuePath="Id" DisplayMemberPath="Name" SelectedValue="{Binding SelectedCharacter, Mode=TwoWay}">
         </ComboBox>
     </Grid>

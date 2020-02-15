@@ -62,6 +62,7 @@
     <Compile Include="Branching\EvaluationContainers\IEvaluationContainer.cs" />
     <Compile Include="Branching\EvaluationContainers\SimpleEvaluationContainer.cs" />
     <Compile Include="Data\Util\DialogUtilities.cs" />
+    <Compile Include="Data\Util\NotificationObject.cs" />
     <Compile Include="Identifiers\DialogIdentifiers.cs" />
     <Compile Include="Data\Dialog\DialogTreeBranch.cs" />
     <Compile Include="Data\StoryElement.cs" />

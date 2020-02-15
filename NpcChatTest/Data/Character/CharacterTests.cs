@@ -1,26 +1,27 @@
-﻿using NUnit.Framework;
+﻿using System.CodeDom.Compiler;
+using System.Linq;
+using NpcChatSystem;
+using NUnit.Framework;
+using NpcChatSystem.Data.CharacterData;
 
 namespace NpcChatTest.Data.Character
 {
     [TestFixture]
     public class CharacterTests
     {
-        #region Default id tests
-        // The character Id should always be 0 when first making a character as otherwise registration checks will fail to make a correct id
-
-        [Test]
-        public void NewCharIdTestPlain()
+        [TestCase("")]
+        [TestCase(null)]
+        [TestCase("Duke")]
+        public void NewCharIdTestPlain(string name)
         {
-            NpcChatSystem.Data.CharacterData.Character character = new NpcChatSystem.Data.CharacterData.Character();
-            Assert.AreEqual(NpcChatSystem.Data.CharacterData.Character.PreRegisteredId, character.Id);
+            NpcChatProject project = new NpcChatProject();
+            bool result = project.ProjectCharacters.RegisterNewCharacter(out int gen, name);
+
+            Assert.IsTrue(result);
+            Assert.AreNotEqual(NpcChatSystem.Data.CharacterData.Character.PreRegisteredId, gen);
+            Assert.AreEqual(project.ProjectCharacters.GetCharacter(gen).Id, gen);
         }
 
-        [Test]
-        public void NewCharIdTestName()
-        {
-            NpcChatSystem.Data.CharacterData.Character character = new NpcChatSystem.Data.CharacterData.Character("Daisy");
-            Assert.AreEqual(NpcChatSystem.Data.CharacterData.Character.PreRegisteredId, character.Id);
-        }
-        #endregion
+        
     }
 }

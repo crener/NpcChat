@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using NpcChat.Backend.Interfaces;
 using NpcChat.Util;
+using NpcChat.ViewModels.Panels.ScriptEditor.TextBlockElements;
 using NpcChatSystem;
 using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.Dialog;
@@ -17,6 +18,9 @@ using Prism.Commands;
 
 namespace NpcChat.ViewModels.Panels.ScriptEditor
 {
+    /// <summary>
+    /// View model for a line of character dialog from a single person
+    /// </summary>
     public class CharacterDialogVM : NotificationObject
     {
         public NpcChatProject Project { get; }
@@ -129,6 +133,12 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             DialogSegment = tree;
         }
 
+        /// <summary>
+        /// Combine all text elements into a single piece of text for showing multiple text elements as a single block of text
+        /// </summary>
+        /// <remarks>
+        /// This add context aware highlighting to text
+        /// </remarks>
         private void PrepairTextBlockEdit()
         {
             FlowDocument dialogs = new FlowDocument();
@@ -149,7 +159,8 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
                     lastText = "";
                 }
 
-                paragraph.Inlines.Add(new Bold(new Run(part.Text)));
+                paragraph.Inlines.Add(new Bold(new SpellingOptions(part.Text, part,
+                    new []{"Option 1", "The Other Option", "More Corrections"})));
             }
 
             //don't forget remaining text elements
@@ -157,7 +168,6 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             {
                 paragraph.Inlines.Add(new Run(lastText));
             }
-
 
             dialogs.Blocks.Add(paragraph);
             DialogDocument = dialogs;

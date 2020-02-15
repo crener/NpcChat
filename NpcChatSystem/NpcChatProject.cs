@@ -43,13 +43,13 @@ namespace NpcChatSystem
         /// <param name="path">path to project source</param>
         public NpcChatProject(string path) : this()
         {
-            ProjectCharacters.RegisterNewCharacter(out int _, new Character("Fiona"));
+            ProjectCharacters.RegisterNewCharacter(out int _, "Fiona");
         }
 
         // convenient lookups
         public DialogTree this[DialogTreeIdentifier id] => ProjectDialogs[id];
         public DialogTreeBranch this[DialogTreeBranchIdentifier id] => ProjectDialogs[id];
         public DialogSegment this[DialogSegmentIdentifier id] => ProjectDialogs[id];
-        public Character? this[CharacterId id] => ProjectCharacters[id];
+        public Character this[CharacterId id] => ProjectCharacters[id];
     }
 }

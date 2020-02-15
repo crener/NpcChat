@@ -7,7 +7,22 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
     /// </summary>
     public interface IDialogElement : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Text representation of this element
+        /// </summary>
         string Text { get; }
+
+        /// <summary>
+        /// Name of the IDialogElement implementation type
+        /// </summary>
         string ElementName { get; }
+
+        /// <summary>
+        /// Change <see cref="Text"/> as described by <paramref name="source"/> to <paramref name="edit"/>
+        /// </summary>
+        /// <param name="source">Original section of text that should be changed</param>
+        /// <param name="edit">Text that <paramref name="source"/> should become</param>
+        /// <returns>true if operation was successful</returns>
+        bool IntegrateCorrection(string source, string edit);
     }
 }

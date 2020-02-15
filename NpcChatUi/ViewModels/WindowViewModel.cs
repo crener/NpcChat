@@ -59,10 +59,10 @@ namespace NpcChat.ViewModels
             CurrentProject.Project = m_project = new NpcChatProject();
             DialogTree tree = m_project.ProjectDialogs.CreateNewDialogTree();
 
-            if (m_project.ProjectCharacters.RegisterNewCharacter(out int diane, new Character("diane")) &&
-               m_project.ProjectCharacters.RegisterNewCharacter(out int jerry, new Character("jerry")) &&
-               m_project.ProjectCharacters.RegisterNewCharacter(out int gran, new Character("Granny")) &&
-               m_project.ProjectCharacters.RegisterNewCharacter(out int banana, new Character("Banana")))
+            if (m_project.ProjectCharacters.RegisterNewCharacter(out int diane, "diane") &&
+               m_project.ProjectCharacters.RegisterNewCharacter(out int jerry, "jerry") &&
+               m_project.ProjectCharacters.RegisterNewCharacter(out int gran, "Granny") &&
+               m_project.ProjectCharacters.RegisterNewCharacter(out int banana, "Banana"))
             {
                 //SetDialogTree(m_tree.Id);
                 /*DialogTreeBranch branch = m_tree.GetStart();

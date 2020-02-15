@@ -24,7 +24,7 @@ namespace NpcChatSystem.Data.Dialog
             set
             {
                 m_treeName = value;
-                RaiseChanged();
+                RaisePropertyChanged();
             }
         }
 

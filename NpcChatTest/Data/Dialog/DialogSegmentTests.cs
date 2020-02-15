@@ -17,7 +17,7 @@ namespace NpcChatTest.Data.Dialog
             NpcChatProject project = new NpcChatProject();
 
             int id;
-            if(project.ProjectCharacters.RegisterNewCharacter(out id, new NpcChatSystem.Data.CharacterData.Character("bill")))
+            if(project.ProjectCharacters.RegisterNewCharacter(out id, "bill"))
             {
                 DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
                 DialogTreeBranch branch = tree.CreateNewBranch();
@@ -38,7 +38,7 @@ namespace NpcChatTest.Data.Dialog
         {
             NpcChatProject project = new NpcChatProject();
 
-            if (project.ProjectCharacters.RegisterNewCharacter(out int id, new NpcChatSystem.Data.CharacterData.Character("bill")))
+            if (project.ProjectCharacters.RegisterNewCharacter(out int id, "bill"))
             {
                 DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
                 DialogTreeBranch branch = tree.CreateNewBranch();
@@ -67,7 +67,7 @@ namespace NpcChatTest.Data.Dialog
         {
             NpcChatProject project = new NpcChatProject();
 
-            if (project.ProjectCharacters.RegisterNewCharacter(out int id, new NpcChatSystem.Data.CharacterData.Character("bill")))
+            if (project.ProjectCharacters.RegisterNewCharacter(out int id, "bill"))
             {
                 DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
                 DialogTreeBranch branch = tree.CreateNewBranch();
@@ -100,7 +100,7 @@ namespace NpcChatTest.Data.Dialog
         {
             NpcChatProject project = new NpcChatProject();
 
-            if (project.ProjectCharacters.RegisterNewCharacter(out int id, new NpcChatSystem.Data.CharacterData.Character("bill")))
+            if (project.ProjectCharacters.RegisterNewCharacter(out int id, "bill"))
             {
                 DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
                 DialogTreeBranch branch = tree.CreateNewBranch();
@@ -142,8 +142,8 @@ namespace NpcChatTest.Data.Dialog
         {
             NpcChatProject project = new NpcChatProject();
 
-            if (project.ProjectCharacters.RegisterNewCharacter(out int bill, new NpcChatSystem.Data.CharacterData.Character("bill")) && 
-                project.ProjectCharacters.RegisterNewCharacter(out int tommy, new NpcChatSystem.Data.CharacterData.Character("tommy")))
+            if (project.ProjectCharacters.RegisterNewCharacter(out int bill, "bill") && 
+                project.ProjectCharacters.RegisterNewCharacter(out int tommy, "tommy"))
             {
                 DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
                 DialogTreeBranch branch = tree.CreateNewBranch();
@@ -177,7 +177,7 @@ namespace NpcChatTest.Data.Dialog
         {
             NpcChatProject project = new NpcChatProject();
 
-            if (project.ProjectCharacters.RegisterNewCharacter(out int bill, new NpcChatSystem.Data.CharacterData.Character("bill")))
+            if (project.ProjectCharacters.RegisterNewCharacter(out int bill, "bill"))
             {
                 DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
                 DialogTreeBranch branch = tree.CreateNewBranch();
@@ -206,7 +206,7 @@ namespace NpcChatTest.Data.Dialog
         {
             NpcChatProject project = new NpcChatProject();
 
-            if (project.ProjectCharacters.RegisterNewCharacter(out int bill, new NpcChatSystem.Data.CharacterData.Character("bill")))
+            if (project.ProjectCharacters.RegisterNewCharacter(out int bill, "bill"))
             {
                 DialogTree tree = project.ProjectDialogs.CreateNewDialogTree();
                 DialogTreeBranch branch = tree.CreateNewBranch();

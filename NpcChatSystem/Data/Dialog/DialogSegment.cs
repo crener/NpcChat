@@ -30,7 +30,7 @@ namespace NpcChatSystem.Data.Dialog
             set
             {
                 m_characterId = value;
-                RaiseChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -101,13 +101,13 @@ namespace NpcChatSystem.Data.Dialog
                 }
             }
 
-            RaiseChanged(nameof(SegmentParts));
+            RaisePropertyChanged(nameof(SegmentParts));
         }
 
         private void PartChanged(object sender, PropertyChangedEventArgs e)
         {
-            RaiseChanged(nameof(SegmentParts));
-            RaiseChanged(nameof(Text));
+            RaisePropertyChanged(nameof(SegmentParts));
+            RaisePropertyChanged(nameof(Text));
         }
 
         public void ChangeCharacter(int newChar)

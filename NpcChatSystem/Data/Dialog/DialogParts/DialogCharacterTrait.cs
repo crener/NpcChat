@@ -3,7 +3,9 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Util;
+using NpcChatSystem.System;
 using NpcChatSystem.System.TypeStore;
+using NotImplementedException = System.NotImplementedException;
 
 namespace NpcChatSystem.Data.Dialog.DialogParts
 {
@@ -15,6 +17,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
     public class DialogCharacterTrait : ProjectNotificationObject, IDialogElement
     {
         private const string c_elementName = "Character Trait";
+        private const string c_traitName = nameof(Character.Name);
         private const string c_traitFallback = "<???>";
         public string ElementName => c_elementName;
 
@@ -25,11 +28,11 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
         {
             get
             {
-                Character? character = m_project?.ProjectCharacters.GetCharacter(CharacterId);
-                if (!character.HasValue) return c_traitFallback;
+                Character character = m_project?.ProjectCharacters.GetCharacter(CharacterId);
+                if (character == null) return c_traitFallback;
 
-                if (CharacterTrait == "Name") return character.Value.Name;
-                return character.Value.GetTrait(CharacterTrait, c_traitFallback);
+                if (CharacterTrait == c_traitName) return character.Name;
+                return character.GetTrait(CharacterTrait, c_traitFallback);
             }
         }
 
@@ -43,13 +46,13 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
             {
                 m_characterId = value;
 
-                Character? character = m_project?.ProjectCharacters[CharacterId];
-                if(character.HasValue)
+                Character character = m_project?.ProjectCharacters[CharacterId];
+                if (character != null)
                 {
-                    CharacterProperties = character.Value.TraitNames;
+                    CharacterProperties = character.TraitNames;
                 }
 
-                RaiseChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -59,7 +62,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
             set
             {
                 m_characterProperties = value;
-                RaiseChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -72,7 +75,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
             set
             {
                 m_characterTrait = value;
-                RaiseChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -84,6 +87,36 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
             : base(project)
         {
             CharacterId = characterId;
+
+            project.ProjectCharacters.CharacterChanged += (id, changed) => 
+            {
+                if(CharacterId == id) RaisePropertyChanged(nameof(Text));
+            };
+        }
+
+        public bool IntegrateCorrection(string source, string edit)
+        {
+            if (source == edit) return true;
+
+            Character character = m_project?.ProjectCharacters.GetCharacter(CharacterId);
+            if (character == null) return false;
+
+            if (CharacterTrait == c_traitName)
+            {
+                if(source != character.Name)
+                {
+                    // source is outdated! the suggestion may be wrong
+                    return false;
+                }
+
+                //todo add "are you sure?" message box
+                
+                character.Name = edit;
+                return true;
+            }
+
+            // any none name trait value will depend on where the value came from. I.e. if it's dynamically generated or not.
+            throw new NotImplementedException("This needs to be implemented once the character system is in place");
         }
     }
 }

@@ -33,7 +33,7 @@ namespace NpcChatSystem.Data.Dialog
             set
             {
                 m_name = value;
-                RaiseChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -54,7 +54,7 @@ namespace NpcChatSystem.Data.Dialog
             set
             {
                 m_branchCondition = value;
-                RaiseChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -84,7 +84,7 @@ namespace NpcChatSystem.Data.Dialog
             DialogSegment dialog = new DialogSegment(m_project, Id, GenerateId(), characterId);
             m_dialog.Add(dialog);
 
-            RaiseChanged(nameof(Dialog));
+            RaisePropertyChanged(nameof(Dialog));
             OnDialogCreated?.Invoke(dialog);
             return dialog;
         }

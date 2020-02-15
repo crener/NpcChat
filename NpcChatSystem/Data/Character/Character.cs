@@ -1,24 +1,42 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using NpcChatSystem.Data.Util;
+using NpcChatSystem.System;
 
 namespace NpcChatSystem.Data.CharacterData
 {
     [DebuggerDisplay("{Name}")]
-    public struct Character
+    public class Character : NotificationObject
     {
         public const int PreRegisteredId = 0;
 
         public int Id { get; internal set; }
-        public string Name { get; set; }
+
+        public string Name
+        {
+            get => m_name;
+            set
+            {
+                if (m_name != value)
+                {
+                    m_name = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
 
         public IReadOnlyList<string> TraitNames => m_traitNames;
 
+        private readonly CharacterStore m_store;
         private readonly List<CharacterTrait> m_traits;
         private readonly List<string> m_traitNames;
+        private string m_name;
 
-        public Character(string name) : this()
+        internal Character(CharacterStore store, string name)
         {
+            m_store = store;
             Id = PreRegisteredId;
             Name = name;
 
@@ -30,9 +48,9 @@ namespace NpcChatSystem.Data.CharacterData
 
         public string GetTrait(string key, string defaultValue = null)
         {
-            foreach(CharacterTrait trait in m_traits)
+            foreach (CharacterTrait trait in m_traits)
             {
-                if(trait.Name == key) return trait.Value;
+                if (trait.Name == key) return trait.Value;
             }
             return defaultValue;
         }

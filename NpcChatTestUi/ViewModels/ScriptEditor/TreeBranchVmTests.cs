@@ -270,6 +270,7 @@ namespace NpcChatTestUi.ViewModels.Editors.Script
         {
             public ObservableCollection<TreeBranchVM> Branches { get; } = new ObservableCollection<TreeBranchVM>();
             public ICommand NewBranchCommand { get; } = null;
+            public EditMode EditMode { get; set; }
 
             public void SetDialogTree(DialogTreeIdentifier dialogTreeId)
             {

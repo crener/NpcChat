@@ -4,13 +4,14 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using NpcChatSystem.Annotations;
 using NpcChatSystem.System.TypeStore;
+using NotImplementedException = System.NotImplementedException;
 
 namespace NpcChatSystem.Data.Dialog.DialogParts
 {
     /// <summary>
     /// Piece of text
     /// </summary>
-    [DebuggerDisplay("{Text}"), Export(typeof(IDialogElement)), NiceTypeName(c_elementName)]
+    [DebuggerDisplay("{" + nameof(Text) + "}"), Export(typeof(IDialogElement)), NiceTypeName(c_elementName)]
     public class DialogText : IDialogElement, INotifyPropertyChanged
     {
         private const string c_elementName = "Plain Text";
@@ -28,6 +29,11 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
 
         private string m_text = "";
 
+        public bool IntegrateCorrection(string source, string edit)
+        {
+            Text = Text.Replace(source, edit);
+            return true;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         [NotifyPropertyChangedInvocator]
