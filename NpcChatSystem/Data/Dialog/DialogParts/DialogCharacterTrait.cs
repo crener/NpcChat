@@ -116,7 +116,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
             }
 
             // any none name trait value will depend on where the value came from. I.e. if it's dynamically generated or not.
-            throw new NotImplementedException("This needs to be implemented once the character system is in place");
+            throw new NotImplementedException("This needs to be implemented once the character trait system is in place");
         }
     }
 }

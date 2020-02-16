@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using NpcChat.Backend;
+using NpcChat.Util;
 using NpcChat.Views.Utility;
 using NpcChatSystem;
 using NpcChatSystem.Annotations;
@@ -16,7 +17,7 @@ namespace NpcChat.Views.Reusable
     /// <summary>
     /// Interaction logic for CharacterSelector.xaml
     /// </summary>
-    public partial class CharacterSelector : UserControl, INotifyPropertyChanged
+    public partial class CharacterSelector : UserControl
     {
         public int SelectedCharacter
         {
@@ -30,19 +31,92 @@ namespace NpcChat.Views.Reusable
             set => SetValue(ProjectProperty, value);
         }
 
-        public DeferrableObservableCollection<CharacterId> Names { get; } = new DeferrableObservableCollection<CharacterId>();
-
+        private CharacterSelectorVM m_viewModel => SelectorGrid.DataContext as CharacterSelectorVM;
 
         public CharacterSelector()
         {
             InitializeComponent();
-            SelectorGrid.DataContext = this;
+            DataContextChanged += (sender, args) =>
+            {
+                if (args.OldValue is INotifyPropertyChanged oldContext)
+                    oldContext.PropertyChanged -= OnDataContextChanged;
+                if (args.NewValue is INotifyPropertyChanged newContext)
+                    newContext.PropertyChanged += OnDataContextChanged;
+            };
+            SelectorGrid.DataContext = new CharacterSelectorVM(Project);
+        }
 
-            Project.ProjectCharacters.CharacterAdded += UpdateCharacters;
-            Project.ProjectCharacters.CharacterRemoved += UpdateCharacters;
-            Project.ProjectCharacters.CharacterChanged += UpdateCharacters;
+        private void OnDataContextChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(CharacterSelectorVM.SelectedCharacter) &&
+               SelectedCharacter != m_viewModel.SelectedCharacter)
+            {
+                SelectedCharacter = m_viewModel.SelectedCharacter;
+            }
+        }
 
-            UpdateCharacters();
+        private static void SelectedCharacterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            CharacterSelector selector = d as CharacterSelector;
+            if (selector == null) return;
+
+            selector.m_viewModel.SelectedCharacter = (int)e.NewValue;
+        }
+
+
+        private static void ProjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            CharacterSelector selector = d as CharacterSelector;
+            if (selector == null) return;
+
+            selector.m_viewModel.Project = e.NewValue as NpcChatProject;
+        }
+
+
+        public static readonly DependencyProperty SelectedCharacterProperty = DependencyProperty.Register(nameof(SelectedCharacter), typeof(int), typeof(CharacterSelector),
+            new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SelectedCharacterChanged));
+        public static readonly DependencyProperty ProjectProperty = DependencyProperty.Register(nameof(Project), typeof(NpcChatProject), typeof(CharacterSelector),
+            new PropertyMetadata(CurrentProject.Project, ProjectChanged));
+    }
+
+
+    internal class CharacterSelectorVM : NotificationObject
+    {
+        public int SelectedCharacter
+        {
+            get => m_selectedCharacter;
+            set
+            {
+                if (m_selectedCharacter == value) return;
+
+                m_selectedCharacter = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public NpcChatProject Project
+        {
+            get => m_project;
+            set
+            {
+                if (m_project == value) return;
+
+                ProjectChanged(m_project, value);
+                m_project = value;
+                UpdateCharacters();
+
+                RaisePropertyChanged();
+            }
+        }
+
+        public DeferrableObservableCollection<CharacterId> Names { get; } = new DeferrableObservableCollection<CharacterId>();
+
+        private int m_selectedCharacter;
+        private NpcChatProject m_project;
+
+        public CharacterSelectorVM([NotNull]NpcChatProject project)
+        {
+            Project = project;
         }
 
         /// <summary>
@@ -51,20 +125,16 @@ namespace NpcChat.Views.Reusable
         private void UpdateCharacters(int charId, CharacterStore.UpdatedField field)
         {
             if (field == CharacterStore.UpdatedField.Name ||
-               field == CharacterStore.UpdatedField.Unspecified)
+                field == CharacterStore.UpdatedField.Unspecified)
             {
                 UpdateCharacters(charId);
-
-                {
-                    // really stupid hack to stop combo box from being blank
-                    // todo there has to be a better way of doing this?
-                    int original = SelectedCharacter;
-                    SelectedCharacter = original + 1;
-                    SelectedCharacter = original;
-                }
+                RaisePropertyChanged(nameof(SelectedCharacter));
             }
         }
 
+        /// <summary>
+        /// Refreshes the name information in response to a likely rename ever from the <see cref="CharacterStore"/>
+        /// </summary>
         private void UpdateCharacters(int charId = 0)
         {
             IList<CharacterId> nameIds = Project?.ProjectCharacters.AvailableCharacters();
@@ -77,39 +147,26 @@ namespace NpcChat.Views.Reusable
             }
         }
 
-        public static readonly DependencyProperty SelectedCharacterProperty = DependencyProperty.Register(nameof(SelectedCharacter), typeof(int), typeof(CharacterSelector),
-            new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-        public static readonly DependencyProperty ProjectProperty =
-            DependencyProperty.Register(nameof(Project), typeof(NpcChatProject), typeof(CharacterSelector), new PropertyMetadata(CurrentProject.Project, ProjectChanged));
-
-        private static void ProjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        /// <summary>
+        /// Makes sure that the correct events are registered too for character updates
+        /// </summary>
+        /// <param name="oldProject">existing project, to unregister</param>
+        /// <param name="newProject">existing project, to register</param>
+        private void ProjectChanged(NpcChatProject oldProject, NpcChatProject newProject)
         {
-            CharacterSelector selector = d as CharacterSelector;
-            if (selector == null) return;
-
-            if (e.OldValue is NpcChatProject oldProject)
+            if (oldProject != null)
             {
-                oldProject.ProjectCharacters.CharacterAdded -= selector.UpdateCharacters;
-                oldProject.ProjectCharacters.CharacterRemoved -= selector.UpdateCharacters;
-                oldProject.ProjectCharacters.CharacterChanged -= selector.UpdateCharacters;
+                oldProject.ProjectCharacters.CharacterAdded -= UpdateCharacters;
+                oldProject.ProjectCharacters.CharacterRemoved -= UpdateCharacters;
+                oldProject.ProjectCharacters.CharacterChanged -= UpdateCharacters;
             }
 
-            if (e.OldValue is NpcChatProject newProject)
+            if (newProject != null)
             {
-                newProject.ProjectCharacters.CharacterAdded += selector.UpdateCharacters;
-                newProject.ProjectCharacters.CharacterRemoved += selector.UpdateCharacters;
-                newProject.ProjectCharacters.CharacterChanged += selector.UpdateCharacters;
-
-                selector.UpdateCharacters();
+                newProject.ProjectCharacters.CharacterAdded += UpdateCharacters;
+                newProject.ProjectCharacters.CharacterRemoved += UpdateCharacters;
+                newProject.ProjectCharacters.CharacterChanged += UpdateCharacters;
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
