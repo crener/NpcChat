@@ -19,6 +19,8 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
         private const string c_elementName = "Character Trait";
         private const string c_traitName = nameof(Character.Name);
         private const string c_traitFallback = "<???>";
+
+        public bool AllowsInspection => true;
         public string ElementName => c_elementName;
 
         /// <summary>

@@ -18,6 +18,11 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
         string ElementName { get; }
 
         /// <summary>
+        /// Does this element allow for validation (such as spell check)
+        /// </summary>
+        bool AllowsInspection { get; }
+
+        /// <summary>
         /// Change <see cref="Text"/> as described by <paramref name="source"/> to <paramref name="edit"/>
         /// </summary>
         /// <param name="source">Original section of text that should be changed</param>

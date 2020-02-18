@@ -15,5 +15,15 @@ namespace NpcChat.Views.Panels.ScriptEditor
         {
             InitializeComponent();
         }
+
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if(e.Property.Name == "IsSelectionActive")
+            {
+                DialogVm.InspectionActive = e.NewValue as bool? ?? false;
+            }
+        }
     }
 }

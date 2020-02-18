@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using NpcChatSystem.Annotations;
 using NpcChatSystem.System.TypeStore;
-using NotImplementedException = System.NotImplementedException;
 
 namespace NpcChatSystem.Data.Dialog.DialogParts
 {
@@ -15,6 +14,8 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
     public class DialogText : IDialogElement, INotifyPropertyChanged
     {
         private const string c_elementName = "Plain Text";
+
+        public bool AllowsInspection => true;
         public string ElementName => c_elementName;
 
         public string Text

@@ -1,0 +1,185 @@
+# Greek aff started from scratch but benefited from previous work
+# See the README file for references
+#
+# Take a slightly different approach from previous work in defining
+# the SFX part following more or less the Greek grammar groups
+#
+# Take a rather conservative approach in defining MAP/REP's which 
+# reduces effor at run-time
+## 
+# All PFX/SFX rules are identified with lower case letters to allow
+# a somewhat easy eay with combining with the en_US aff file that uses
+# upper case id's
+##
+#
+SET UTF-8
+TRY άόίϊΐέήύϋΰώιηυωοεατνρσκμπλςγδθφβζξψχΆΈΉΊΌΎΏ
+
+KEY ;ςερτυθιοπ|ασδφγηξκλ|ζχψωβνμ
+
+# MAP sets some priorities of very common mistakes - accents
+# and typing wrong ι/η/υ, ο/ω
+MAP 7
+MAP αά
+MAP εέ
+MAP οόωώ
+MAP ηήιίυύίΐ
+MAP σς
+MAP ε(αι)
+MAP (οι)ι
+
+# REPlacement options and priority settings
+#
+REP 55
+REP α ά
+REP ά α
+REP ε έ
+REP έ ε
+REP η ή
+REP ή η
+REP η ει
+REP η εί
+REP ή ει
+REP ή εί
+REP ι ί
+REP ί ι
+REP ι ει
+REP ι εί
+REP ί ει
+REP ί εί
+REP ο ό
+REP ό ο
+REP υ ύ
+REP ύ υ
+REP ω ώ
+REP ώ ω
+REP αι αί
+REP αί αι
+REP άι αί
+REP αι ε
+REP αί έ
+REP αί ε
+REP αι έ
+REP έ αι
+REP ε αι
+REP ε αί
+REP έ αί
+REP έ αι
+REP ει εί
+REP έι εί
+REP εί ει
+REP ει η
+REP ει ή
+REP οι οί
+REP όι οί
+REP οί οι
+REP οι ι
+REP οι ί
+REP οί ι
+REP οί ί
+REP ω ο
+REP ω ό
+REP ώ ο
+REP ώ ό
+REP ού ου 
+REP όυ ού
+REP νν ν
+REP λλ λ
+REP κκ κ
+
+# prefix rules
+## j,k,l reserved for future use
+
+PFX a Y 1
+PFX a   0     α         .       # βάσιμος > αβάσιμος
+
+PFX b Y 1
+PFX b   0     ξανα      .       # ζητώ > ξαναζητώ
+
+PFX c Y 1
+PFX c   0     απο       .       # σύνθεση > αποσύνθεση
+
+PFX d Y 1
+PFX d   0     κατα      .       # στροφή > καταστροφή
+
+PFX e Y 1
+PFX e   0     παρα      .       # βλέπω > παραβλέπω
+
+PFX f Y 1
+PFX f   0     αλληλο    .       # λειτουργία > αλληλολειτουργία
+
+PFX g Y 1
+PFX g   0     προ	.       # υπάρχω > προυπάρχω
+
+PFX h Y 1
+PFX h   0     συν	.       # υπάρχω > συνυπάρχω, αθλητής > συναθλητής
+
+PFX i Y 1
+PFX i   0     ενδο	.       # υπηρεσιακός > ενδουπηρεσιακός, χώρα > ενδοχώρα
+
+# suffix rules
+## start with m
+
+SFX m Y 3
+SFX m ας    α		.
+SFX m ας    ες		.
+SFX m ας    ων		.
+
+SFX n Y 6
+SFX n ώ     άς         .    # αγαπώ > αγαπάς
+SFX n ώ     ά          .    # αγαπώ > αγαπά
+SFX n ώ     άμε        .    # αγαπώ > αγαπάμε
+SFX n ώ     ούμε       .    # αγαπώ > αγαπούμε
+SFX n ώ     άτε        .    # αγαπώ > αγαπάτε
+SFX n ώ     ούν        .    # αγαπώ > αγαπούν
+
+# Α. Ουσιαστικά
+## Αρσενικά ισοσύλλαβα σε -ας (κατά το αγώνας)
+SFX o Y 3  
+SFX o ας    α	.
+SFX o ας    ες	.
+SFX o ας    ων	.
+
+## Αρσενικά ισοσύλλαβα σε -ίας (κατά το λοχίας)
+SFX p Υ 3
+SFX p ίας	ία	.
+SFX p ίας	ίες	.
+SFX p ίας	ιών	.
+
+## Αρσενικά ισοσύλλαβα σε -ης (κατά το πολίτης)
+SFX q Υ 3
+SFX q  ης  η		.
+SFX q  ης  ες		.
+SFX q  ίτης ιτών	.
+
+## Αρσενικά ισοσύλλαβα σε -ής (κατά το νικητής)
+SFX r Y 3
+SFX r ής  η		.
+SFX r ής  ές		.
+SFX r ής  ών		.
+
+## Αρσενικά σε -ός (κατά το λειτουργός, νεκρός)(οξύτονα)
+SFX s Υ 6
+SFX s ός  	ού		.   #
+SFX s ός  	ό		.   #
+SFX s ός  	έ		.   #
+SFX s ός  	οί		.   #
+SFX s ός  	ών		.	#
+SFX s ός	ούς		.	#
+
+## Αρσενικά σε -ος (κατά το δρόμος)(παραξύτονα)
+SFX t Υ 6
+SFX t ος  	ου		.   #
+SFX t ος  	ο		.   #
+SFX t ος  	ε		.   #
+SFX t ος  	οι		.   #
+SFX t ος  	ων		.	#
+SFX t ος	ους		.	#
+
+## Θυλικά παροξύτονα σε ία (κατά αηδία, λειτουργία)
+SFX u Υ 3
+SFX u ία  	ίας		.   #
+SFX u ία 	ίες		.   #
+SFX u ία  	ιών		.   #
+
+

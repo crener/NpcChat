@@ -1,0 +1,2 @@
+"The dictionaries listed on this page are in Hunspell format, an open-source spell checker that is included in FreeOffice 2018. These dictionaries are licensed under different open-source licenses (usually GPL, LGPL and/or MPL)"
+ - From https://www.freeoffice.com/en/download/dictionaries, 16/02/2020

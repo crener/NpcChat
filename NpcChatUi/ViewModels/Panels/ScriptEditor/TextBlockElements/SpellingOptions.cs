@@ -24,7 +24,8 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor.TextBlockElements
         private readonly string m_text;
         private readonly IDialogElement m_element;
 
-        public SpellingOptions(string text, IDialogElement element, string[] corrections = null) : base(text)
+        public SpellingOptions(string text, IDialogElement element, IEnumerable<string> corrections = null) 
+            : base(text)
         {
             m_text = text;
             m_element = element;

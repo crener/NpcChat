@@ -6,4 +6,6 @@
   <License Name="NLogViewer" Link="https://github.com/erizet/NlogViewer" licenseFile="NlogViewer.txt"/>
   <License Name="Prism" Link="https://github.com/PrismLibrary/Prism" licenseFile="Prism.txt"/>
   <License Name="NodeNetwork" Link="https://github.com/Wouterdek/NodeNetwork" licenseFile="NodeNetwork.txt"/>
+  <License Name="WeCantSpell.Hunspell" Link="https://github.com/aarondandy/WeCantSpell.Hunspell" licenseFile="WeCantSpell.Hunspell.txt"/>
+  <License Name="Spell Check Directories" Link="https://www.freeoffice.com/en/download/dictionaries" licenseFile="WeCantSpell.Hunspell.txt"/>
 </Licenses>

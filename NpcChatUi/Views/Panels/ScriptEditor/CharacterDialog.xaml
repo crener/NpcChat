@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:converters="clr-namespace:NpcChat.Converters"
-             xmlns:reusable="clr-namespace:NpcChat.Views.Reusable"
+             xmlns:r="clr-namespace:NpcChat.Views.Reusable"
              xmlns:data="clr-namespace:NpcChatSystem.Data.Dialog.DialogParts;assembly=NpcChatSystem"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviour="clr-namespace:NpcChat.Views.Utility.Behaviour"
@@ -46,7 +46,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Content="Character Target: " Grid.Column="0"/>
-                <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId, Mode=TwoWay}"  Margin="5,0,5,0" Grid.Column="1"/>
+                <r:CharacterSelector SelectedCharacter="{Binding CharacterId, Mode=TwoWay}"  Margin="5,0,5,0" Grid.Column="1"/>
                 <Label Content="Trait:" Grid.Column="2"/>
                 <!--<TextBox Text="{Binding CharacterTrait}" MinWidth="60" Margin="5,0,0,0" Grid.Column="3"/>-->
                 <ComboBox ItemsSource="{Binding CharacterProperties}" SelectedValue="{Binding CharacterTrait}" Margin="5,0,0,0" Grid.Column="3"
@@ -70,7 +70,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <reusable:CharacterLabel SelectedCharacter="{Binding CharacterId, Mode=TwoWay}" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,5,0" />
+            <r:CharacterLabel SelectedCharacter="{Binding CharacterId, Mode=TwoWay}" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,5,0" />
             <TextBlock Text="{Binding DialogSegment.Text}" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="1" />
         </Grid>
 
@@ -94,7 +94,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId}" Grid.Column="0" Grid.Row="1" Margin="3,0,3,0" />
+                <r:CharacterSelector SelectedCharacter="{Binding CharacterId}" Grid.Column="0" Grid.Row="1" Margin="3,0,3,0" />
                 <TextBlock Text="{Binding DialogSegment.Text}" TextWrapping="Wrap" Margin="4,3,4,1" FontWeight="Bold"
                        VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"/>
                 <ListView ItemsSource="{Binding DialogSegment.SegmentParts}" Grid.Column="1" Grid.Row="1" ItemContainerStyle="{StaticResource DialogNoHoverListBoxItem}"
@@ -115,13 +115,13 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
                     <Label VerticalAlignment="Center" Margin="3,0">Character: </Label>
-                    <reusable:CharacterSelector SelectedCharacter="{Binding CharacterId}" Margin="3,0" />
+                    <r:CharacterSelector SelectedCharacter="{Binding CharacterId}" Margin="3,0" />
                 </StackPanel>
-                <reusable:BindableRichTextBox Document="{Binding DialogDocument}" Margin="4,3,4,1" VerticalAlignment="Center" Grid.Row="1">
-                    <reusable:BindableRichTextBox.Resources>
+                <r:BindableRichTextBox Document="{Binding DialogDocument}" Margin="4,3,4,1" VerticalAlignment="Center" Grid.Row="1">
+                    <r:BindableRichTextBox.Resources>
 
-                    </reusable:BindableRichTextBox.Resources>
-                </reusable:BindableRichTextBox>
+                    </r:BindableRichTextBox.Resources>
+                </r:BindableRichTextBox>
             </Grid>
 
 
