@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using NpcChat.ViewModels.Panels.ScriptEditor;
 using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
 using NUnit.Framework;
 
-namespace NpcChatTestUi.ViewModels.Editors.Script
+namespace NpcChatTestUi.ViewModels.ScriptEditor
 {
     public class ScriptPanelVmTests
     {

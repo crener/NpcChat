@@ -32,7 +32,7 @@ using System.Diagnostics.CodeAnalysis;
 // ReSharper disable IntroduceOptionalParameters.Global
 // ReSharper disable MemberCanBeProtected.Global
 // ReSharper disable InconsistentNaming
-namespace NpcChatSystem.Annotations
+namespace NpcChatSystem.Properties
 {
     /// <summary>
     /// Indicates that the value of the marked element could be <c>null</c> sometimes,

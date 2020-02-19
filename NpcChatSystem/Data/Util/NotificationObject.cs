@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using NpcChatSystem.Annotations;
+using NpcChatSystem.Properties;
 
 namespace NpcChatSystem.Data.Util
 {

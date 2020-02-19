@@ -2,7 +2,6 @@
 using System.Linq;
 using NpcChatSystem;
 using NUnit.Framework;
-using NpcChatSystem.Data.CharacterData;
 
 namespace NpcChatTest.Data.Character
 {
@@ -18,7 +17,7 @@ namespace NpcChatTest.Data.Character
             bool result = project.ProjectCharacters.RegisterNewCharacter(out int gen, name);
 
             Assert.IsTrue(result);
-            Assert.AreNotEqual(NpcChatSystem.Data.CharacterData.Character.PreRegisteredId, gen);
+            Assert.AreNotEqual(NpcChatSystem.Data.Character.Character.PreRegisteredId, gen);
             Assert.AreEqual(project.ProjectCharacters.GetCharacter(gen).Id, gen);
         }
 

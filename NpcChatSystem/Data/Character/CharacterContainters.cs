@@ -1,7 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-namespace NpcChatSystem.Data.CharacterData
+namespace NpcChatSystem.Data.Character
 {
     [DebuggerDisplay("{Name}, ID: {Id}")]
     public struct CharacterId

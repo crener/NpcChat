@@ -3,7 +3,7 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using NpcChatSystem.Data;
-using NpcChatSystem.Data.CharacterData;
+using NpcChatSystem.Data.Character;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
 using NpcChatSystem.System;

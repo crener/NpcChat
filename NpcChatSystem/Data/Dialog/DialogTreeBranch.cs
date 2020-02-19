@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using NpcChatSystem.Branching.EvaluationContainers;
-using NpcChatSystem.Data.CharacterData;
+using NpcChatSystem.Data.Character;
 using NpcChatSystem.Data.Util;
 using NpcChatSystem.Identifiers;
 

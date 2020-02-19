@@ -127,7 +127,8 @@ namespace NpcChatSystem.System.TypeStore.Stores
 
                         if (defaultTypes && containsProject)
                         {
-                            return constructor.Invoke(constructorParameters.ToArray()) as IDialogElement;
+                            object[] parameterValues = constructorParameters.ToArray();
+                            return constructor.Invoke(parameterValues) as IDialogElement;
                         }
                     }
                 }

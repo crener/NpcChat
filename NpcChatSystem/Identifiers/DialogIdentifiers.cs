@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.Dialog;
 
 namespace NpcChatSystem.Identifiers

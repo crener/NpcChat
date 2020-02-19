@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Runtime.CompilerServices;
-using NpcChatSystem.Annotations;
 using NpcChatSystem.Branching.Conditions;
 using NpcChatSystem.Data.Util;
 using NpcChatSystem.System.TypeStore;

@@ -4,7 +4,7 @@ using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
 using NUnit.Framework;
 
-namespace NpcChatTest.Data.Dialog.DialogTreeItems
+namespace NpcChatTest.Data.Dialog
 {
     class DialogTreeBranchTests
     {

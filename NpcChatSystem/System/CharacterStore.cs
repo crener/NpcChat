@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using NpcChatSystem.Data;
-using NpcChatSystem.Data.CharacterData;
+using NpcChatSystem.Data.Character;
 
 namespace NpcChatSystem.System
 {

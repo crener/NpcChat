@@ -8,8 +8,8 @@ using NpcChat.Backend;
 using NpcChat.Util;
 using NpcChat.Views.Utility;
 using NpcChatSystem;
-using NpcChatSystem.Annotations;
-using NpcChatSystem.Data.CharacterData;
+using NpcChatSystem.Data.Character;
+using NpcChatSystem.Properties;
 using NpcChatSystem.System;
 
 namespace NpcChat.Views.Reusable

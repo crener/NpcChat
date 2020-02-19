@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using NpcChatSystem.Data.Util;
 using NpcChatSystem.System;
 
-namespace NpcChatSystem.Data.CharacterData
+namespace NpcChatSystem.Data.Character
 {
     [DebuggerDisplay("{Name}")]
     public class Character : NotificationObject

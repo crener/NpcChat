@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Util;
 using NpcChatSystem.System;
 using NpcChatSystem.System.TypeStore;
@@ -17,7 +16,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
     public class DialogCharacterTrait : ProjectNotificationObject, IDialogElement
     {
         private const string c_elementName = "Character Trait";
-        private const string c_traitName = nameof(Character.Name);
+        private const string c_traitName = nameof(Character.Character.Name);
         private const string c_traitFallback = "<???>";
 
         public bool AllowsInspection => true;
@@ -30,7 +29,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
         {
             get
             {
-                Character character = m_project?.ProjectCharacters.GetCharacter(CharacterId);
+                Character.Character character = m_project?.ProjectCharacters.GetCharacter(CharacterId);
                 if (character == null) return c_traitFallback;
 
                 if (CharacterTrait == c_traitName) return character.Name;
@@ -48,7 +47,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
             {
                 m_characterId = value;
 
-                Character character = m_project?.ProjectCharacters[CharacterId];
+                Character.Character character = m_project?.ProjectCharacters[CharacterId];
                 if (character != null)
                 {
                     CharacterProperties = character.TraitNames;
@@ -90,17 +89,20 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
         {
             CharacterId = characterId;
 
-            project.ProjectCharacters.CharacterChanged += (id, changed) => 
+            if(project != null)
             {
-                if(CharacterId == id) RaisePropertyChanged(nameof(Text));
-            };
+                project.ProjectCharacters.CharacterChanged += (id, changed) =>
+                {
+                    if(CharacterId == id) RaisePropertyChanged(nameof(Text));
+                };
+            }
         }
 
         public bool IntegrateCorrection(string source, string edit)
         {
             if (source == edit) return true;
 
-            Character character = m_project?.ProjectCharacters.GetCharacter(CharacterId);
+            Character.Character character = m_project?.ProjectCharacters.GetCharacter(CharacterId);
             if (character == null) return false;
 
             if (CharacterTrait == c_traitName)

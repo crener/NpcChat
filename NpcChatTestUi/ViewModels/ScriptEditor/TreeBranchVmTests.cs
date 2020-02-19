@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using NpcChat.Backend.Interfaces;
 using NpcChat.ViewModels.Panels.ScriptEditor;
@@ -14,7 +12,7 @@ using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
 using NUnit.Framework;
 
-namespace NpcChatTestUi.ViewModels.Editors.Script
+namespace NpcChatTestUi.ViewModels.ScriptEditor
 {
     public abstract class TreeBranchVmTests
     {

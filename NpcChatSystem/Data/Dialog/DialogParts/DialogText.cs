@@ -2,7 +2,7 @@
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using NpcChatSystem.Annotations;
+using NpcChatSystem.Properties;
 using NpcChatSystem.System.TypeStore;
 
 namespace NpcChatSystem.Data.Dialog.DialogParts

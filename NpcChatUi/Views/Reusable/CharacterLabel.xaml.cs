@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using NpcChat.Backend;
 using NpcChatSystem;
-using NpcChatSystem.Data.CharacterData;
+using NpcChatSystem.Data.Character;
 
 namespace NpcChat.Views.Reusable
 {

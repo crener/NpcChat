@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
-using NpcChatSystem.Annotations;
 using NpcChatSystem.Data.Util;
 using NpcChatSystem.Identifiers;
 using NpcChatSystem.Utilities;

@@ -5,8 +5,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using NpcChatSystem.Annotations;
 using NpcChatSystem.Branching.Conditions;
+using NpcChatSystem.Properties;
 
 namespace NpcChatSystem.Branching.EvaluationContainers
 {

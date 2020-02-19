@@ -16,7 +16,6 @@ using NpcChat.ViewModels.Panels.UtilityPanels;
 using NpcChat.Views.About;
 using NpcChat.Views.Dialogs;
 using NpcChatSystem;
-using NpcChatSystem.Data.CharacterData;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
 using NpcChatSystem.Utilities;

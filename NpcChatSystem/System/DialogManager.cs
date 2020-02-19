@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NpcChatSystem.Data.CharacterData;
+using NpcChatSystem.Data.Character;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Util;
 using NpcChatSystem.Identifiers;

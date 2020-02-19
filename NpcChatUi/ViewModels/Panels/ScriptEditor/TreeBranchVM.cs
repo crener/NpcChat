@@ -10,7 +10,7 @@ using NpcChat.Util;
 using NpcChat.ViewModels.Panels.ScriptEditor.Util;
 using NpcChatSystem;
 using NpcChatSystem.Branching.EvaluationContainers;
-using NpcChatSystem.Data.CharacterData;
+using NpcChatSystem.Data.Character;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Data.Util;
 using NpcChatSystem.Identifiers;
