@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,18 +17,16 @@ using Prism.Commands;
 
 namespace NpcChat.ViewModels.Panels.ScriptEditor.TextBlockElements
 {
-    public class SpellingOptions : Run
+    public class SpellingOptions : EditBlock
     {
         private static Pen s_underline = new Pen(Brushes.Red, 2);
 
         private readonly ContextMenu m_menu;
-        private readonly string m_text;
         private readonly IDialogElement m_element;
 
-        public SpellingOptions(string text, IDialogElement element, IEnumerable<string> corrections = null) 
-            : base(text)
+        public SpellingOptions(string text, IDialogElement element, IEnumerable<string> corrections = null, Action<object, PropertyChangedEventArgs> changedCallback = null)
+            : base(text, element, changedCallback)
         {
-            m_text = text;
             m_element = element;
 
             TextDecoration decoration = new TextDecoration(TextDecorationLocation.Underline, s_underline, 0, TextDecorationUnit.FontRecommended, TextDecorationUnit.FontRecommended);
@@ -71,7 +70,7 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor.TextBlockElements
         {
             Logging.Logger.Log(LogLevel.Info, $"SpellCheck: Replacing '{m_text}' with '{replacement}'");
 
-            if (!m_element.IntegrateCorrection(m_text, replacement))
+            if (!m_element.SuggestedEdit(m_text, replacement))
             {
                 Logging.Logger.Log(LogLevel.Info, $"SpellCheck: Replacement operation ('{m_text}' -> '{replacement}') failed");
             }

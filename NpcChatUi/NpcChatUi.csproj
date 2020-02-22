@@ -173,6 +173,7 @@
     <Compile Include="ViewModels\Panels\ScriptDiagram\Node\BranchInput.cs" />
     <Compile Include="ViewModels\Panels\ScriptDiagram\Node\BranchNode.cs" />
     <Compile Include="ViewModels\Panels\ScriptDiagram\ScriptDiagramVM.cs" />
+    <Compile Include="ViewModels\Panels\ScriptEditor\TextBlockElements\EditBlock.cs" />
     <Compile Include="ViewModels\Panels\ScriptEditor\TextBlockElements\SpellingOptions.cs" />
     <Compile Include="ViewModels\Panels\UtilityPanels\LogPanelVM.cs" />
     <Compile Include="Views\Panels\Project\ProjectOverview.xaml.cs">

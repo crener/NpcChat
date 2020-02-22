@@ -17,7 +17,7 @@
         <PathGeometry x:Key="AddPath" Figures="M26 14h-4v8h-8v4h8v8h4v-8h8v-4h-8v-8zM24 4C12.97 4 4 12.97 4 24s8.97 20 20 20 20-8.97 20-20S35.03 4 24 4zm0 36c-8.82 0-16-7.18-16-16S15.18 8 24 8s16 7.18 16 16-7.18 16-16 16z"/>
         <PathGeometry x:Key="RemovePath" Figures="M29.17 16L24 21.17 18.83 16 16 18.83 21.17 24 16 29.17 18.83 32 24 26.83 29.17 32 32 29.17 26.83 24 32 18.83 29.17 16zM24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm0 36c-8.82 0-16-7.18-16-16S15.18 8 24 8s16 7.18 16 16-7.18 16-16 16z"/>
 
-        <!--  Dialog Tex -->
+        <!--  Dialog Text -->
         <DataTemplate DataType="{x:Type data:DialogText}" >
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -63,7 +63,7 @@
         </Grid.ColumnDefinitions>
 
         <!--View mode components-->
-        <Grid Visibility="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource ViewModeBoolVis}}"
+        <Grid Visibility="{Binding InspectionActive, Converter={StaticResource ViewModeBoolVis}}"
               Margin="5,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -75,7 +75,7 @@
         </Grid>
 
         <!-- Edit mode components -->
-        <Grid Visibility="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource EditModeBoolVis}}">
+        <Grid Visibility="{Binding InspectionActive, Converter={StaticResource EditModeBoolVis}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -117,17 +117,13 @@
                     <Label VerticalAlignment="Center" Margin="3,0">Character: </Label>
                     <r:CharacterSelector SelectedCharacter="{Binding CharacterId}" Margin="3,0" />
                 </StackPanel>
-                <r:BindableRichTextBox Document="{Binding DialogDocument}" Margin="4,3,4,1" VerticalAlignment="Center" Grid.Row="1">
-                    <r:BindableRichTextBox.Resources>
-
-                    </r:BindableRichTextBox.Resources>
-                </r:BindableRichTextBox>
+                <r:BindableRichTextBox Document="{Binding DialogDocument}" Margin="4,3,4,1" VerticalAlignment="Center" Grid.Row="1"/>
             </Grid>
 
 
             <Separator Grid.Row="1" Grid.Column="0"/>
             <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="10,0,0,2">
-                <ComboBox Name="DialogElementTypeSelector" ItemsSource="{Binding DialogElementTypes}" IsSynchronizedWithCurrentItem="True"></ComboBox>
+                <ComboBox Name="DialogElementTypeSelector" ItemsSource="{Binding DialogElementTypes}" IsSynchronizedWithCurrentItem="True"/>
                 <Button ToolTip="Add new dialog part" Command="{Binding AddDialogElementCommand}" CommandParameter="{Binding ElementName=DialogElementTypeSelector, Path=SelectedValue}" Margin="5,0,0,0">
                     <!--<Path Data="{StaticResource AddPath}" Fill="{DynamicResource ButtonText}" Height="18" Width="18" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
                     <!--<Path Data="{StaticResource AddPath}" Fill="Red" Height="15" Width="15" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="UniformToFill"/>-->

@@ -98,7 +98,7 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
             }
         }
 
-        public bool IntegrateCorrection(string source, string edit)
+        public bool Edit(string source, string edit)
         {
             if (source == edit) return true;
 
@@ -107,20 +107,25 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
 
             if (CharacterTrait == c_traitName)
             {
-                if(source != character.Name)
+                if (source != character.Name)
                 {
                     // source is outdated! the suggestion may be wrong
                     return false;
                 }
 
                 //todo add "are you sure?" message box
-                
+
                 character.Name = edit;
                 return true;
             }
 
             // any none name trait value will depend on where the value came from. I.e. if it's dynamically generated or not.
             throw new NotImplementedException("This needs to be implemented once the character trait system is in place");
+        }
+
+        public bool SuggestedEdit(string source, string edit)
+        {
+            return Edit(source, edit);
         }
     }
 }

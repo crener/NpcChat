@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Annotations;
 using System.Windows.Documents;
 using NpcChat.ViewModels.Panels.ScriptEditor.TextBlockElements;
@@ -17,7 +20,7 @@ namespace NpcChat.Backend.Validation
 {
     public class SpellCheck
     {
-        private static Dictionary<string, WordList> m_dictionary;
+        private static IReadOnlyDictionary<string, WordList> m_dictionary;
         private static readonly string[] s_acceptedFormats = new[] { ".dic", ".aff" };
 
         static SpellCheck()
@@ -25,45 +28,57 @@ namespace NpcChat.Backend.Validation
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
-            string dictionaryDir = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "SpellCheck");
-            m_dictionary = new Dictionary<string, WordList>();
-
-            // parse file paths to get
-            Dictionary<string, string[]> filePair = new Dictionary<string, string[]>();
-            foreach (string path in Directory.EnumerateFiles(dictionaryDir))
+            try
             {
-                string type = Path.GetFileNameWithoutExtension(path)?.ToLower();
-                string end = Path.GetExtension(path)?.ToLower();
+                string dictionaryDir = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "SpellCheck");
+                if (!Directory.Exists(dictionaryDir))
+                {
+                    m_dictionary = new Dictionary<string, WordList>();
+                    return;
+                }
 
-                if (string.IsNullOrEmpty(type) || string.IsNullOrEmpty(end)) continue;
-                if (!s_acceptedFormats.Contains(end)) continue;
-                if (!filePair.ContainsKey(type)) filePair[type] = new string[2];
+                // parse file paths to get
+                Dictionary<string, string[]> filePair = new Dictionary<string, string[]>();
+                foreach (string path in Directory.EnumerateFiles(dictionaryDir))
+                {
+                    string type = Path.GetFileNameWithoutExtension(path)?.ToLower();
+                    string end = Path.GetExtension(path)?.ToLower();
 
-                if (end == ".dic") filePair[type][0] = path;
-                if (end == ".aff") filePair[type][1] = path;
+                    if (string.IsNullOrEmpty(type) || string.IsNullOrEmpty(end)) continue;
+                    if (!s_acceptedFormats.Contains(end)) continue;
+                    if (!filePair.ContainsKey(type)) filePair[type] = new string[2];
+
+                    if (end == ".dic") filePair[type][0] = path;
+                    if (end == ".aff") filePair[type][1] = path;
+                }
+
+                Logging.Logger.Log(LogLevel.Info, $"Found {filePair.Count} dictionaries, starting import");
+                ConcurrentDictionary<string, WordList> saveDictionary = new ConcurrentDictionary<string, WordList>();
+
+                Parallel.ForEach(filePair, (pair, state) =>
+                {
+                    if (pair.Value[0] == null) return;
+
+                    try
+                    {
+                        WordList dictionary = WordList.CreateFromFiles(pair.Value[0], pair.Value[1]);
+                        saveDictionary.TryAdd(pair.Key, dictionary);
+
+                        Logging.Logger.Log(LogLevel.Info, $"Imported '{pair.Key}' language dictionary");
+                    }
+                    catch (Exception ex)
+                    {
+                        Logging.Logger.Log(LogLevel.Error, ex,
+                            $"Unable to initialize spell check directory ('{pair.Key}')");
+                    }
+                });
+                m_dictionary = new Dictionary<string, WordList>(saveDictionary);
             }
-
-            Logging.Logger.Log(LogLevel.Info, $"Found {filePair.Count} dictionaries, starting import");
-
-            foreach (KeyValuePair<string, string[]> pair in filePair)
+            finally
             {
-                if (pair.Value[0] == null) continue;
-
-                try
-                {
-                    WordList dictionary = WordList.CreateFromFiles(pair.Value[0], pair.Value[1]);
-                    m_dictionary.Add(pair.Key, dictionary);
-
-                    Logging.Logger.Log(LogLevel.Info, $"Imported '{pair.Key}' language dictionary");
-                }
-                catch (Exception ex)
-                {
-                    Logging.Logger.Log(LogLevel.Error, ex, $"Unable to initialize spell check directory ('{pair.Key}')");
-                }
+                timer.Stop();
+                Logging.Logger.Log(LogLevel.Info, $"{m_dictionary.Count} Spelling dictionaries imported, took {timer.Elapsed.TotalSeconds} seconds");
             }
-
-            timer.Stop();
-            Logging.Logger.Log(LogLevel.Info, $"{m_dictionary.Count} Spelling dictionaries imported, took {timer.Elapsed.TotalSeconds} seconds");
         }
 
         /// <summary>
@@ -71,7 +86,8 @@ namespace NpcChat.Backend.Validation
         /// </summary>
         /// <param name="element">element to check</param>
         /// <param name="currentLanguage">language code to use spell check for</param>
-        public static IEnumerable<Inline> CheckElement(IDialogElement element, string currentLanguage = "en_gb")
+        /// <param name="changedCallback">optional callback for text changes from dialog Elements</param>
+        public static IEnumerable<Inline> CheckElement(IDialogElement element, string currentLanguage = "en_gb", Action<object, PropertyChangedEventArgs> changedCallback = null)
         {
             List<Inline> paragraphRuns = new List<Inline>();
 
@@ -93,7 +109,7 @@ namespace NpcChat.Backend.Validation
                         paragraphRuns.Add(new Run(sentence));
                         sentence = "";
 
-                        paragraphRuns.Add(new Bold(new SpellingOptions(word, element, suggestions.Except(new[] { word }))));
+                        paragraphRuns.Add(new Bold(new SpellingOptions(word, element, suggestions.Except(new[] { word }), changedCallback)));
                     }
                     else
                     {
@@ -106,12 +122,12 @@ namespace NpcChat.Backend.Validation
                 if (fullText.EndsWith(" ")) sentence += " ";
                 if (sentence.Length > 0)
                 {
-                    paragraphRuns.Add(new Run(sentence));
+                    paragraphRuns.Add(new EditBlock(sentence, element, changedCallback));
                 }
             }
             else
             {
-                paragraphRuns.Add(new Run(element.Text));
+                paragraphRuns.Add(new EditBlock(element.Text, element, changedCallback));
             }
 
             return paragraphRuns;

@@ -37,9 +37,6 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
 
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(DialogSegmentId));
-
-                if (m_editMode == EditMode.TextBlock)
-                    PrepairTextBlockEdit();
             }
         }
 
@@ -88,13 +85,10 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
                 m_inspectionActive = value;
                 RaisePropertyChanged();
 
-                if(InspectionActive && TextEditMode)
+                if (InspectionActive && m_editMode == EditMode.TextBlock)
                 {
-                    if(SpellCheck.ContainsSpellingSuggestion(DialogSegment.SegmentParts))
-                    {
-                        // update any existing suggestions
-                        PrepairTextBlockEdit();
-                    }
+                    // make sure text document is up to date
+                    PrepairTextBlockEdit();
                 }
             }
         }
@@ -114,8 +108,11 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
                 RaisePropertyChanged(nameof(ElementEditMode));
                 RaisePropertyChanged(nameof(TextEditMode));
 
-                if (m_editMode == EditMode.TextBlock)
+                if (InspectionActive && m_editMode == EditMode.TextBlock)
+                {
+                    // make sure text document is up to date
                     PrepairTextBlockEdit();
+                }
             }
         }
 
@@ -176,26 +173,31 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
         /// <summary>
         /// Combine all text elements into a single piece of text for showing multiple text elements as a single block of text
         /// </summary>
-        /// <remarks>
-        /// This add context aware highlighting to text
-        /// </remarks>
+        /// <remarks> This add context aware highlighting to text </remarks>
         private void PrepairTextBlockEdit()
         {
             FlowDocument dialogs = new FlowDocument();
             Paragraph paragraph = new Paragraph();
 
+            void InlineChange(object o, PropertyChangedEventArgs args)
+            {
+                // rebuild the text block to force apply changes
+                RaisePropertyChanged(nameof(DialogDocument));
+                //PrepairTextBlockEdit();
+            }
+
             foreach (IDialogElement part in DialogSegment.SegmentParts)
             {
                 if (part.AllowsInspection)
                 {
-                    foreach (Inline inline in SpellCheck.CheckElement(part))
+                    foreach (Inline inline in SpellCheck.CheckElement(part, changedCallback: InlineChange))
                     {
                         paragraph.Inlines.Add(inline);
                     }
                 }
                 else
                 {
-                    paragraph.Inlines.Add(new Run(part.Text));
+                    paragraph.Inlines.Add(new EditBlock(part.Text, part, InlineChange));
                 }
             }
 
@@ -203,6 +205,9 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
             DialogDocument = dialogs;
         }
 
+        /// <summary>
+        /// Delete the character dialog from the branch
+        /// </summary>
         private void DestroyCharacterDialog()
         {
             DialogTreeBranch branch = Project[(DialogTreeBranchIdentifier)DialogSegmentId];
@@ -223,9 +228,6 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor
         {
             RaisePropertyChanged(nameof(DialogSegment));
             RaisePropertyChanged(nameof(DialogSegmentId));
-
-            if (m_editMode == EditMode.TextBlock)
-                PrepairTextBlockEdit();
         }
     }
 }

@@ -85,8 +85,8 @@
                                         </i:Interaction.Behaviors>
 
                                         <ListView.Resources>
-                                            <DataTemplate DataType="{x:Type script:CharacterDialogVM}">
-                                                <scriptEditor:CharacterDialog/>
+                                            <DataTemplate  DataType="{x:Type script:CharacterDialogVM}">
+                                                <scriptEditor:CharacterDialog InspectionActive="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}}"/>
                                             </DataTemplate>
                                         </ListView.Resources>
                                     </ListView>

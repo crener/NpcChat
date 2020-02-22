@@ -11,6 +11,9 @@ using Prism.Commands;
 
 namespace NpcChat.ViewModels.Panels.ScriptEditor.Util
 {
+    /// <summary>
+    /// Link between a parent and child branch
+    /// </summary>
     public class TreeBranchLinkInfoVM : INotifyPropertyChanged
     {
         public DialogTreeBranchIdentifier Parent { get; }

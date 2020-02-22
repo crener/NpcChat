@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using NpcChatSystem.Utilities;
 
 namespace NpcChat.Views.Utility
@@ -22,6 +23,27 @@ namespace NpcChat.Views.Utility
             {
                 Logging.Logger.Warn($"link not valid Uri, not opening! ('{link}')");
             }
+        }
+
+        public static string Text(this FlowDocument doc)
+        {
+            if(doc == null) throw new NullReferenceException("FlowDocument shouldn't be null!");
+
+            StringBuilder strings = new StringBuilder();
+
+            foreach(Block block in doc.Blocks)
+            {
+                if(block is Paragraph content)
+                {
+                    foreach(Run inline in content.Inlines)
+                    {
+                        if(inline == null) continue;
+                        strings.Append(inline.Text);
+                    }
+                }
+            }
+
+            return strings.ToString();
         }
     }
 }

@@ -25,11 +25,13 @@ namespace NpcChat
     {
         public App()
         {
+#if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 UnhandledExceptionDialog dialog = new UnhandledExceptionDialog(args);
                 dialog.ShowDialog();
             };
+#endif
 
             SetupJitCache();
             StartBackgroundInitialization();

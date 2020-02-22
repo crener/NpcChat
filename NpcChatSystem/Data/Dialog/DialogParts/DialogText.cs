@@ -30,13 +30,21 @@ namespace NpcChatSystem.Data.Dialog.DialogParts
 
         private string m_text = "";
 
-        public bool IntegrateCorrection(string source, string edit)
+        public bool Edit(string source, string edit)
         {
+            if(source == edit) return false;
+
             Text = Text.Replace(source, edit);
             return true;
         }
 
+        public bool SuggestedEdit(string source, string edit)
+        {
+            return Edit(source, edit);
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
+
         [NotifyPropertyChangedInvocator]
         protected virtual void RaiseChanged([CallerMemberName] string propertyName = null)
         {
