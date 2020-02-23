@@ -11,6 +11,7 @@ using NodeNetwork.ViewModels;
 using NpcChat.ViewModels.Panels.ScriptDiagram.Layout;
 using NpcChat.ViewModels.Panels.ScriptDiagram.Node;
 using NpcChat.ViewModels.Panels.ScriptEditor;
+using NpcChat.Views.Utility;
 using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
@@ -26,6 +27,21 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
         public NetworkViewModel Network { get; }
         public NodeListViewModel NodeList { get; }
 
+        /// <summary>
+        /// Automatically perform a layout recalculation when related data is changed
+        /// </summary>
+        public bool AutoLayout
+        {
+            get => m_autoLayout;
+            set
+            {
+                if (m_autoLayout == value) return;
+
+                m_autoLayout = value;
+                RaisePropertyChanged(nameof(AutoLayout));
+            }
+        }
+
         public ICommand ForceLayoutCommand { get; }
 
         private NpcChatProject m_project { get; }
@@ -33,6 +49,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
         private LeveledLayout m_layouter = new LeveledLayout();
         private readonly Dictionary<DialogTreeBranchIdentifier, BranchNode> m_branchNodes = new Dictionary<DialogTreeBranchIdentifier, BranchNode>();
         private bool m_ignoreBranchEvents = false;
+        private bool m_autoLayout = false;
 
         public ScriptDiagramVM(NpcChatProject project, DialogTreeIdentifier dialog = null)
         {
@@ -79,6 +96,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
 
                 return node;
             });
+
             nodeListInitialized = true;
         }
 
@@ -97,11 +115,13 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
                     if (input == null || output == null) continue;
 
                     DialogTreeBranch parent = m_project[output.Branch];
+                    if (parent == null) continue;
+
                     switch (changeCollection.Reason)
                     {
                         case ListChangeReason.Add:
                         case ListChangeReason.AddRange:
-                            if (!parent.Children.Any(b => b == input.Branch))
+                            if (parent.Children.All(b => b != input.Branch))
                             {   // new link needs to be added in project
                                 parent.AddChild(input.Branch);
                             }
@@ -121,6 +141,18 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
+                }
+            }
+
+            if (AutoLayout)
+            {
+                if(ForceLayoutCommand.CanExecute(null))
+                {
+                    DeferredDelegate.Call(10, () => ForceLayoutCommand.Execute(null), this);
+                }
+                else
+                {
+                    DeferredDelegate.CancelCall(this);
                 }
             }
         }

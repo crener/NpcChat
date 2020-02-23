@@ -29,8 +29,8 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         private Dictionary<NodeInputViewModel, NodeViewModel> m_inputLookup = new Dictionary<NodeInputViewModel, NodeViewModel>();
         private Dictionary<NodeOutputViewModel, NodeViewModel> m_outputLookup = new Dictionary<NodeOutputViewModel, NodeViewModel>();
 
-        private const double c_nodeSpacerX = 8d;
-        private const double c_nodeSpacerY = 4d;
+        private const double c_nodeSpacerX = 16d;
+        private const double c_nodeSpacerY = 5d;
         private Dictionary<int, double> m_levelWidth = new Dictionary<int, double>();
 
 

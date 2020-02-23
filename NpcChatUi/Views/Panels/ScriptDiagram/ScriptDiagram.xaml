@@ -17,6 +17,7 @@
 
         <StackPanel Grid.Column="0">
             <Button Command="{Binding ForceLayoutCommand}">Layout</Button>
+            <CheckBox IsChecked="{Binding AutoLayout}" Content="Auto Re-Layout" ToolTip="Automatically re-layout the diagram as connections are changed"/>
 
             <Separator/>
             <Label>Drag to create new branch</Label>

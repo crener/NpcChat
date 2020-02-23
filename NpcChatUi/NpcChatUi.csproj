@@ -220,6 +220,7 @@
     </Compile>
     <Compile Include="Views\Utility\Behaviour\IgnoreMouseWheelBehaviour.cs" />
     <Compile Include="Views\Utility\Behaviour\ScrollParentWhenAtMax.cs" />
+    <Compile Include="Views\Utility\DeferredDelegate.cs" />
     <Compile Include="Views\Utility\DeferrableObservableCollection.cs" />
     <Compile Include="Views\Utility\SimpleHelpers.cs" />
     <Page Include="Style\BasicStyle.xaml">

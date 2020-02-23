@@ -50,8 +50,6 @@ namespace NpcChat.ViewModels.Panels.ScriptEditor.TextBlockElements
                 if (m_element.Edit(m_text, Text))
                 {
                     m_text = Text;
-
-                    //m_changedEvent?.Invoke(this, null);
                 }
             }
         }
