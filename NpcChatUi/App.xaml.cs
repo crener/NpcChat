@@ -42,6 +42,7 @@ namespace NpcChat
             List<AssemblyTitleAttribute> title = Assembly.GetAssembly(typeof(App)).GetCustomAttributes<AssemblyTitleAttribute>().ToList();
             string path = Path.Combine(Path.GetTempPath(), title[0].Title);
 
+            Directory.CreateDirectory(path);
             ProfileOptimization.SetProfileRoot(path);
             ProfileOptimization.StartProfile("jit-profile.cache");
         }
