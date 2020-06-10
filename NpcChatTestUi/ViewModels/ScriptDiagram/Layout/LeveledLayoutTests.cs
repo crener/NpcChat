@@ -21,9 +21,9 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         public void NoNetwork()
         {
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(null);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(null);
 
-            Assert.IsEmpty(layout.NodeLevels);
+            Assert.IsEmpty(nodes);
         }
 
         [Test]
@@ -31,9 +31,9 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
         {
             NetworkViewModel network = new NetworkViewModel();
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.IsEmpty(layout.NodeLevels);
+            Assert.IsEmpty(nodes);
         }
 
         /// <summary>
@@ -53,13 +53,13 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(2, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, 1, branch1, branch2);
+            Assert.AreEqual(2, nodes.Select(n => n.X).Distinct().Count());
+            TestLevel(nodes, 0, start);
+            TestLevel(nodes, 1, branch1, branch2);
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -80,17 +80,19 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(length, layout.NodeLevels.Count);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(length, numLevels);
             for (int i = 0; i < length; i++)
             {
-                Assert.IsTrue(layout.NodeLevels.ContainsKey(i), $"Missing level for {i}");
-                Assert.AreEqual(1, layout.NodeLevels[i].Count);
-                Assert.AreSame(branches[i], ((BranchNode)layout.NodeLevels[i][0]).Branch);
+                var nodesInLevel = nodes.Where(n => n.X == i).ToArray();
+                Assert.IsNotEmpty(nodesInLevel, $"Missing level for {i}");
+                Assert.AreEqual(1, nodesInLevel.Length);
+                Assert.AreSame(branches[i], ((BranchNode)nodesInLevel[0].ViewModel).Branch);
             }
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -113,14 +115,15 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             // build network and layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(3, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, 1, branch1);
-            TestLevel(layout, 2, branch2);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(3, numLevels);
+            TestLevel(nodes, 0, start);
+            TestLevel(nodes, 1, branch1);
+            TestLevel(nodes, 2, branch2);
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -147,14 +150,15 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             // build network and layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(3, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, 1, branch2);
-            TestLevel(layout, 2, branch1);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(3, numLevels);
+            TestLevel(nodes, 0, start);
+            TestLevel(nodes, 1, branch2);
+            TestLevel(nodes, 2, branch1);
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -183,14 +187,15 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             // build network and layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(3, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, -1, branch2);
-            TestLevel(layout, -2, branch1);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(3, numLevels);
+            TestLevel(nodes, 2, start);
+            TestLevel(nodes, 1, branch2);
+            TestLevel(nodes, 0, branch1);
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -219,14 +224,15 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             // build network and layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(3, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, -1, branch1);
-            TestLevel(layout, -2, branch2);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(3, numLevels);
+            TestLevel(nodes, 2, start);
+            TestLevel(nodes, 1, branch1);
+            TestLevel(nodes, 0, branch2);
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -263,16 +269,17 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             // build network and layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(5, layout.NodeLevels.Count);
-            TestLevel(layout, 2, branch3);
-            TestLevel(layout, 1, branch4);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, -1, branch2);
-            TestLevel(layout, -2, branch1);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(5, numLevels);
+            TestLevel(nodes, 4, branch3);
+            TestLevel(nodes, 3, branch4);
+            TestLevel(nodes, 2, start);
+            TestLevel(nodes, 1, branch2);
+            TestLevel(nodes, 0, branch1);
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -301,17 +308,18 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             // build network and layout
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(6, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, 1, branch1, branch2);
-            TestLevel(layout, 2, branch3);
-            TestLevel(layout, 3, branch4);
-            TestLevel(layout, 4, branch5, branch6);
-            TestLevel(layout, 5, branch7);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(6, numLevels);
+            TestLevel(nodes, 0, start);
+            TestLevel(nodes, 1, branch1, branch2);
+            TestLevel(nodes, 2, branch3);
+            TestLevel(nodes, 3, branch4);
+            TestLevel(nodes, 4, branch5, branch6);
+            TestLevel(nodes, 5, branch7);
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -330,13 +338,14 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(2, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, -1, branch1);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(2, numLevels);
+            TestLevel(nodes, 1, start);
+            TestLevel(nodes, 0, branch1);
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -356,13 +365,14 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(2, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, -1, branch1);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(2, numLevels);
+            TestLevel(nodes, 1, start);
+            TestLevel(nodes, 0, branch1);
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -387,15 +397,16 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(4, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, 1, branch1, back1);
-            TestLevel(layout, 2, branch2, back2);
-            TestLevel(layout, 3, branch3);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(4, numLevels);
+            TestLevel(nodes, 0, start);
+            TestLevel(nodes, 1, branch1, back1);
+            TestLevel(nodes, 2, branch2, back2);
+            TestLevel(nodes, 3, branch3);
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -452,13 +463,14 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(2, layout.NodeLevels.Count);
-            TestLevel(layout, 0, starts.ToArray());
-            TestLevel(layout, 1, ends.ToArray());
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(2, numLevels);
+            TestLevel(nodes, 0, starts.ToArray());
+            TestLevel(nodes, 1, ends.ToArray());
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -484,14 +496,15 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(3, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, 1, branch1, branch2);
-            TestLevel(layout, 2, branch3);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(3, numLevels);
+            TestLevel(nodes, 0, start);
+            TestLevel(nodes, 1, branch1, branch2);
+            TestLevel(nodes, 2, branch3);
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -516,15 +529,16 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(4, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, 1, branch1, branch2);
-            TestLevel(layout, 2, branch3);
-            TestLevel(layout, 3, branch4);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(4, numLevels);
+            TestLevel(nodes, 0, start);
+            TestLevel(nodes, 1, branch1);
+            TestLevel(nodes, 2, branch2, branch3);
+            TestLevel(nodes, 3, branch4);
 
-            TestSpacing(layout, tree);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -553,16 +567,17 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(4, layout.NodeLevels.Count);
-            TestLevel(layout, 1, branch1);
-            TestLevel(layout, 0, start, branch2);
-            TestLevel(layout, -1, branch3);
-            TestLevel(layout, -2, branch4);
-            TestLevel(layout, -3, branch5);
-            
-            TestSpacing(layout, tree);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(5, numLevels);
+            TestLevel(nodes, 4, branch1);
+            TestLevel(nodes, 3, start, branch2);
+            TestLevel(nodes, 2, branch3);
+            TestLevel(nodes, 1, branch4);
+            TestLevel(nodes, 0, branch5);
+
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -593,15 +608,16 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(4, layout.NodeLevels.Count);
-            TestLevel(layout, 1, branch1);
-            TestLevel(layout, 0, start, branch2);
-            TestLevel(layout, -1, branch3);
-            TestLevel(layout, -2, branch4);
-            TestLevel(layout, -3, branch5);
-            TestSpacing(layout, tree);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(5, numLevels);
+            TestLevel(nodes, 4, branch1);
+            TestLevel(nodes, 3, start, branch2);
+            TestLevel(nodes, 2, branch3);
+            TestLevel(nodes, 1, branch4);
+            TestLevel(nodes, 0, branch5);
+            TestSpacing(nodes, tree);
         }
 
         /// <summary>
@@ -630,29 +646,31 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
 
             NetworkViewModel network = CreateNetworkForTree(project, tree);
             LeveledLayout layout = new LeveledLayout();
-            layout.Layout(network);
+            IReadOnlyList<LeveledLayout.Node> nodes = layout.Layout(network);
 
-            Assert.AreEqual(6, layout.NodeLevels.Count);
-            TestLevel(layout, 0, start);
-            TestLevel(layout, 1, branch5);
-            TestLevel(layout, 2, branch1);
-            TestLevel(layout, 3, branch2);
-            TestLevel(layout, 4, branch3);
-            TestLevel(layout, 5, branch4);
-            TestSpacing(layout, tree);
+            var numLevels = nodes.Select(n => n.X).Distinct().Count();
+            Assert.AreEqual(6, numLevels);
+            TestLevel(nodes, 0, start);
+            TestLevel(nodes, 1, branch5);
+            TestLevel(nodes, 2, branch1);
+            TestLevel(nodes, 3, branch2);
+            TestLevel(nodes, 4, branch3);
+            TestLevel(nodes, 5, branch4);
+            TestSpacing(nodes, tree);
         }
 
 
-        private void TestLevel(LeveledLayout layout, int level, params DialogTreeBranchIdentifier[] expectedBranches)
+        private void TestLevel(IReadOnlyList<LeveledLayout.Node> nodes, int level, params DialogTreeBranchIdentifier[] expectedBranches)
         {
-            Assert.IsTrue(layout.NodeLevels.ContainsKey(level), $"Missing level for {level}");
-            Assert.AreEqual(expectedBranches.Length, layout.NodeLevels[level].Count,
-                $"Expected {expectedBranches.Length} branches at level {level} but found {layout.NodeLevels[level].Count} branches");
+            var nodesInLevel = nodes.Where(n => n.X == level).ToArray();
+            Assert.IsNotEmpty(nodesInLevel, $"Missing level for {level}");
+            Assert.AreEqual(expectedBranches.Length, nodesInLevel.Length,
+                $"Expected {expectedBranches.Length} branches at level {level} but found {nodesInLevel.Length} branches");
 
             HashSet<DialogTreeBranchIdentifier> remainingBranches = new HashSet<DialogTreeBranchIdentifier>(expectedBranches);
-            for (int i = 0; i < layout.NodeLevels[level].Count; i++)
+            for (int i = 0; i < nodesInLevel.Length; i++)
             {
-                DialogTreeBranchIdentifier foundBranch = ((BranchNode)layout.NodeLevels[level][i]).Branch;
+                DialogTreeBranchIdentifier foundBranch = ((BranchNode)nodesInLevel[i].ViewModel).Branch;
                 Assert.IsTrue(expectedBranches.Contains(foundBranch), $"Level {level} contains unexpected branch");
                 remainingBranches.Remove(foundBranch);
             }
@@ -660,17 +678,15 @@ namespace NpcChatTestUi.ViewModels.ScriptDiagram.Layout
             Assert.IsEmpty(remainingBranches, $"Branch level {level} didn't contain all expected branches");
         }
 
-        private void TestSpacing(LeveledLayout layout, DialogTree tree)
+        private void TestSpacing(IReadOnlyList<LeveledLayout.Node> nodes, DialogTree tree)
         {
-            List<BranchNode> nodes = new List<BranchNode>();
-            for (int y = 0; y < layout.NodeLayout.GetLength(1); y++)
-                for (int x = 0; x < layout.NodeLayout.GetLength(0); x++)
-                {
-                    BranchNode branchNode = layout.NodeLayout[x, y] as BranchNode;
-                    if (branchNode != null) nodes.Add(branchNode);
-                }
+            List<BranchNode> branchNodes = new List<BranchNode>();
+            foreach (var node in nodes)
+            {
+                branchNodes.Add(node.ViewModel as BranchNode);
+            }
 
-            List<DialogTreeBranchIdentifier> containedNodes = nodes.Distinct().Select(n => n.Branch).ToList();
+            List<DialogTreeBranchIdentifier> containedNodes = branchNodes.Distinct().Select(n => n.Branch).ToList();
             Assert.AreEqual(tree.Branches.Count, containedNodes.Count, "Unexpected amount of nodes");
             foreach (DialogTreeBranchIdentifier id in tree.Branches)
                 Assert.IsTrue(containedNodes.Contains(id));
