@@ -76,7 +76,7 @@ namespace NpcChatSystem.Data.Dialog
         internal DialogTreeBranch(NpcChatProject project, DialogTreeIdentifier dialogId, int treePartId)
             : base(project)
         {
-            Id = new DialogTreeBranchIdentifier(dialogId, treePartId);
+            Id = new DialogTreeBranchIdentifier(dialogId, treePartId, branch:this);
         }
 
         public DialogSegment CreateNewDialog(int characterId = -1)

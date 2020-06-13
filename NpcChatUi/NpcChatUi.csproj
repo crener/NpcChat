@@ -168,6 +168,7 @@
     <Compile Include="ViewModels\Panels\Project\CharacterOverview.cs" />
     <Compile Include="ViewModels\Panels\Project\DialogOverview.cs" />
     <Compile Include="ViewModels\Panels\Project\ProjectOverviewVM.cs" />
+    <Compile Include="ViewModels\Panels\ScriptDiagram\Layout\ILayout.cs" />
     <Compile Include="ViewModels\Panels\ScriptDiagram\Layout\LeveledLayout.cs" />
     <Compile Include="ViewModels\Panels\ScriptDiagram\Node\BranchOutput.cs" />
     <Compile Include="ViewModels\Panels\ScriptDiagram\Node\BranchInput.cs" />

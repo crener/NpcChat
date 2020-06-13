@@ -57,7 +57,7 @@ namespace NpcChatSystem.Data.Dialog
         internal DialogSegment(NpcChatProject project, DialogTreeBranchIdentifier treeId, int dialogId, int charId)
             : base(project)
         {
-            Id = new DialogSegmentIdentifier(treeId, dialogId);
+            Id = new DialogSegmentIdentifier(project[treeId], dialogId);
             CharacterId = charId;
             m_dialogParts.CollectionChanged += PartsChanged;
 

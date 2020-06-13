@@ -13,38 +13,59 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
     /// Layout designed to be used to organize nodes into levels depending on dependencies and links to other nodes,
     /// so that nodes with no dependencies are on the left and the end of a dependency chain on the right
     /// </summary>
-    public class LeveledLayout
+    public class LeveledLayout : ILayout
     {
+        public int Columns => NodeColumns.Count;
+        public int ColumnMin => NodeColumns?.Keys.Min() ?? 0;
+        public int Rows { get; private set; } = 0;
+        public int RowMin => -m_nodeOffsetX;
+
+        public NodeViewModel this[int x, int y]
+        {
+            get
+            {
+                if(ColumnMin > x || x > ColumnMin + Columns)
+                    throw new ArgumentException($"X axis ({x}) out of range [{RowMin}, {RowMin + Rows}", nameof(x));
+                if(RowMin > y || y > RowMin + Rows)
+                    throw new ArgumentException($"Y axis ({y}) out of range [{ColumnMin}, {ColumnMin + Columns}", nameof(x));
+
+                int column = ColumnMin < 0 ? Math.Abs(ColumnMin) + x: x;
+                int row = y + m_nodeOffsetX;
+
+                return NodeLayout[column, row];
+            }
+        }
+
         /// <summary>
         /// The depth relative to the center node that nodes on the network are
         /// </summary>
-        public readonly Dictionary<int, List<NodeViewModel>> NodeLevels = new Dictionary<int, List<NodeViewModel>>();
+        public readonly Dictionary<int, List<NodeViewModel>> NodeColumns = new Dictionary<int, List<NodeViewModel>>();
 
         /// <summary>
         /// Proposed layout of the node network on a 2D plane from the last <see cref="Layout"/> call
         /// </summary>
         public NodeViewModel[,] NodeLayout { get; protected set; }
 
-        private Dictionary<NodeViewModel, int> m_nodeLevelLookup = new Dictionary<NodeViewModel, int>();
+        private Dictionary<NodeViewModel, int> m_nodeColumnLookup = new Dictionary<NodeViewModel, int>();
         private Dictionary<NodeInputViewModel, NodeViewModel> m_inputLookup = new Dictionary<NodeInputViewModel, NodeViewModel>();
         private Dictionary<NodeOutputViewModel, NodeViewModel> m_outputLookup = new Dictionary<NodeOutputViewModel, NodeViewModel>();
 
         private const double c_nodeSpacerX = 16d;
         private const double c_nodeSpacerY = 5d;
         private Dictionary<int, double> m_levelWidth = new Dictionary<int, double>();
-
+        private int m_nodeOffsetX = 0;
 
         public void Layout(NetworkViewModel network)
         {
             NodeLayout = null;
-            NodeLevels.Clear();
-            m_nodeLevelLookup.Clear();
+            NodeColumns.Clear();
+            m_nodeColumnLookup.Clear();
             m_inputLookup.Clear();
             m_outputLookup.Clear();
             m_levelWidth.Clear();
 
             NodeViewModel first = network?.Nodes?.Items.FirstOrDefault();
-            if (first == null) return;
+            if(first == null) return;
 
             BuildNodeLevels(network, first);
             NodeLayout = LayoutNodesInNetwork(network, first);
@@ -60,14 +81,34 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         {
             double xPos = 0f;
 
-            //find the position in the layout
-            int minLevel = NodeLevels.Select(n => n.Key).Min();
-            int centerLevel = m_nodeLevelLookup[center];
-            for (int i = minLevel; i < centerLevel; i++)
+            //find the start position in the layout
+            int minLevel = NodeColumns.Select(n => n.Key).Min();
+            int centerColumn = m_nodeColumnLookup[center];
+            for (int i = minLevel; i < centerColumn; i++)
             {
                 xPos -= m_levelWidth[i];
                 xPos -= c_nodeSpacerX;
             }
+            
+            // get the Y axis offset of the center node
+            for (int row = 0; row < NodeLayout.GetLength(1); row++)
+                if(NodeLayout[centerColumn, row] == center)
+                {
+                    m_nodeOffsetX = row;
+                    break;
+                }
+
+            HashSet<int> rows = new HashSet<int>(NodeLayout.GetLength(0));
+            for (int x = 0; x < NodeLayout.GetLength(0); x++)
+            for (int y = 0; y < NodeLayout.GetLength(1); y++)
+            {
+                if(NodeLayout[x, y] != null && !rows.Contains(y))
+                {
+                    rows.Add(y);
+                }
+            }
+            Rows = rows.Count;
+
             xPos += c_nodeSpacerX;
 
             for (int x = 0; x < layout.GetLength(0); x++)
@@ -76,15 +117,15 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 for (int y = 0; y < layout.GetLength(1); y++)
                 {
                     NodeViewModel model = layout[x, y];
-                    if (model != null) model.Position = new Point(xPos, yPos);
+                    if(model != null) model.Position = new Point(xPos, yPos);
                     yPos += center.Size.Height + c_nodeSpacerY;
                 }
+
                 xPos += m_levelWidth[minLevel + x] + c_nodeSpacerX;
             }
         }
 
         #region layout generation
-
         protected virtual NodeViewModel[,] LayoutNodesInNetwork(NetworkViewModel network, NodeViewModel centerNode)
         {
             // find all starting points
@@ -96,14 +137,14 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 startPoint.Add(node);
             }*/
 
-            HashSet<NodeViewModel> seen = new HashSet<NodeViewModel>(m_nodeLevelLookup.Count);
+            HashSet<NodeViewModel> seen = new HashSet<NodeViewModel>(m_nodeColumnLookup.Count);
             List<NodeViewModel> criticalPath = FindMainNodeSet(centerNode, seen);
 
             NodeViewModel[,] spaceUsage = CreateSpaceUsage();
             int middle = spaceUsage.GetLength(1) / 2;
 
             // align the main points
-            int centerOffset = Math.Abs(NodeLevels.Select(l => l.Key).Min());
+            int centerOffset = Math.Abs(NodeColumns.Select(l => l.Key).Min());
             List<KeyValuePair<NodeViewModel, NodeViewModel>> search = new List<KeyValuePair<NodeViewModel, NodeViewModel>>();
             int? lastDepth = null;
             for (int x = 0; x < criticalPath.Count; x++)
@@ -113,11 +154,11 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 search.AddRange(OutputNodes(model).Select(m => new KeyValuePair<NodeViewModel, NodeViewModel>(model, m)));
                 search.AddRange(InputNodes(model).Select(m => new KeyValuePair<NodeViewModel, NodeViewModel>(model, m)));
 
-                int nodeLevel = m_nodeLevelLookup[model];
+                int nodeLevel = m_nodeColumnLookup[model];
                 spaceUsage[centerOffset + nodeLevel, middle] = model;
 
                 int currentDepth = nodeLevel;
-                if (lastDepth != null)
+                if(lastDepth != null)
                 {
                     for (int cx = lastDepth.Value + 1; cx < currentDepth; cx++)
                     {
@@ -131,7 +172,8 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             }
 
             for (int i = search.Count - 1; i >= 0; i--)
-                if (seen.Contains(search[i].Value)) search.RemoveAt(i);
+                if(seen.Contains(search[i].Value))
+                    search.RemoveAt(i);
 
             // go forward through the added nodes and add children
             while (search.Count != 0)
@@ -143,7 +185,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 for (int i = 1; i < search.Count; i++)
                 {
                     int checkDepth = NodeDepth(search[i].Value);
-                    if (currentDepth < checkDepth)
+                    if(currentDepth < checkDepth)
                     {
                         currentDepth = checkDepth;
                         currentModel = search[i].Value;
@@ -155,7 +197,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
 
                 // find the closest possible empty slot to 'currentModel' in 'spaceUsage'
                 XyPosition? pos = FindClosest(spaceUsage, modelParent, currentModel);
-                if (pos != null)
+                if(pos != null)
                 {
                     spaceUsage[pos.Value.X, pos.Value.Y] = currentModel;
 
@@ -168,7 +210,8 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 }
 
                 for (int i = search.Count - 1; i >= 0; i--)
-                    if (seen.Contains(search[i].Value)) search.RemoveAt(i);
+                    if(seen.Contains(search[i].Value))
+                        search.RemoveAt(i);
             }
 
             return spaceUsage;
@@ -184,14 +227,14 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         protected XyPosition? FindClosest(NodeViewModel[,] spaceUsage, NodeViewModel origin, NodeViewModel destination)
         {
             XyPosition pos = SpaceUsagePosition(spaceUsage, origin);
-            int originLevel = m_nodeLevelLookup[origin];
-            int destinationLevel = m_nodeLevelLookup[destination];
+            int originLevel = m_nodeColumnLookup[origin];
+            int destinationLevel = m_nodeColumnLookup[destination];
 
-            if (originLevel > destinationLevel)
+            if(originLevel > destinationLevel)
             {
                 return FindClosest(spaceUsage, pos, pos.X - 1);
             }
-            else if (originLevel < destinationLevel)
+            else if(originLevel < destinationLevel)
             {
                 return FindClosest(spaceUsage, pos, pos.X + 1);
             }
@@ -215,17 +258,17 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             for (int i = 0; i < height; i++)
             {
                 NodeViewModel model = spaceUsage[searchAxis, i];
-                if (model != null) continue;
+                if(model != null) continue;
 
                 int testDistance = Math.Abs(pos.Y - i);
-                if (testDistance < distance)
+                if(testDistance < distance)
                 {
                     distance = testDistance;
                     closestY = i;
                 }
             }
 
-            if (closestY != null)
+            if(closestY != null)
             {
                 return new XyPosition(searchAxis, closestY.Value);
             }
@@ -240,12 +283,12 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         protected XyPosition SpaceUsagePosition(NodeViewModel[,] spaceUsage, NodeViewModel currentModel)
         {
             int height = spaceUsage.GetLength(1);
-            int centerOffset = Math.Abs(NodeLevels.Select(l => l.Key).Min());
-            int x = centerOffset + m_nodeLevelLookup[currentModel];
+            int centerOffset = Math.Abs(NodeColumns.Select(l => l.Key).Min());
+            int x = centerOffset + m_nodeColumnLookup[currentModel];
             int y = 0;
 
             for (int i = 0; i < height; i++)
-                if (spaceUsage[x, i] == currentModel)
+                if(spaceUsage[x, i] == currentModel)
                 {
                     y = i;
                     break;
@@ -258,25 +301,25 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         /// Creates a 2d array of node models for laying out the position of nodes in space
         /// </summary>
         /// <returns></returns>
-        protected NodeViewModel[,] CreateSpaceUsage() => new NodeViewModel[NodeLevels.Count, FindSpaceUsageHeight()];
+        protected NodeViewModel[,] CreateSpaceUsage() => new NodeViewModel[NodeColumns.Count, FindSpaceUsageHeight()];
 
         private int FindSpaceUsageHeight()
         {
-            HashSet<NodeViewModel> seen = new HashSet<NodeViewModel>(m_nodeLevelLookup.Count);
+            HashSet<NodeViewModel> seen = new HashSet<NodeViewModel>(m_nodeColumnLookup.Count);
             Dictionary<int, int> levelHeight = new Dictionary<int, int>();
-            foreach (KeyValuePair<int, List<NodeViewModel>> level in NodeLevels.OrderBy(n => n.Key))
+            foreach (KeyValuePair<int, List<NodeViewModel>> level in NodeColumns.OrderBy(n => n.Key))
             {
                 foreach (NodeViewModel node in level.Value)
                 {
-                    if (seen.Contains(node)) continue;
+                    if(seen.Contains(node)) continue;
                     seen.Add(node);
 
                     levelHeight[level.Key] = (levelHeight.ContainsKey(level.Key) ? levelHeight[level.Key] + 1 : 1);
                     List<NodeViewModel> children = OutputNodes(node).ToList();
                     foreach (NodeViewModel child in children)
                     {
-                        int nodeLevel = m_nodeLevelLookup[child];
-                        if (nodeLevel > level.Key + 1)
+                        int nodeLevel = m_nodeColumnLookup[child];
+                        if(nodeLevel > level.Key + 1)
                         {
                             // add height between the nodes for spacing
                             for (int i = level.Key + 1; i <= nodeLevel - 1; i++)
@@ -291,7 +334,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
 
             //int height = NodeLevels.Values.Select(l => l.Count).Max();
             int height = levelHeight.Select(p => p.Value).Max();
-            if (height % 2 == 0) height++;
+            if(height % 2 == 0) height++;
             return height;
         }
 
@@ -311,22 +354,24 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
 
             while (checkNode != null)
             {
-                int level = m_nodeLevelLookup[checkNode];
+                int level = m_nodeColumnLookup[checkNode];
                 foreach (NodeOutputViewModel output in checkNode.Outputs.Items)
                 {
                     foreach (ConnectionViewModel connection in output.Connections.Items)
                     {
                         NodeViewModel connected = m_inputLookup[connection.Input];
-                        if (ignore == null || ignore.Contains(connected)) continue;
-                        if (!checkNodes.Contains(connected) && m_nodeLevelLookup[connected] >= level)
+                        if(ignore == null || ignore.Contains(connected)) continue;
+                        if(!checkNodes.Contains(connected) && m_nodeColumnLookup[connected] >= level)
                             checkNodes.Add(connected);
                     }
                 }
 
-                if (checkNodes.Count > 0)
+                if(checkNodes.Count > 0)
                 {
                     NodeViewModel nextNode = NextNodeInMainPath(checkNodes);
-                    if (nextNode == null) throw new NullReferenceException($"Node returned by {nameof(NextNodeInMainPath)} was Null... this should never happen");
+                    if(nextNode == null)
+                        throw new NullReferenceException(
+                            $"Node returned by {nameof(NextNodeInMainPath)} was Null... this should never happen");
 
                     checkNode = nextNode;
                     nodes.Add(nextNode);
@@ -357,8 +402,8 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 int depth = NodeDepth(node);
                 int level = GreatestNodeChildLevel(node);
 
-                if (bestLevel < level ||
-                    bestLevel == level && bestDepth > depth)
+                if(bestLevel < level ||
+                   bestLevel == level && bestDepth > depth)
                 {
                     bestDepth = depth;
                     bestLevel = level;
@@ -371,7 +416,6 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         #endregion
 
         #region Node levels
-
         private void BuildNodeLevels([NotNull] NetworkViewModel network, NodeViewModel mainNode)
         {
             CalculateNodeLevels(network, mainNode);
@@ -380,7 +424,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
 
         private void DetermineLevelWidth()
         {
-            foreach (KeyValuePair<int, List<NodeViewModel>> pair in NodeLevels)
+            foreach (KeyValuePair<int, List<NodeViewModel>> pair in NodeColumns)
             {
                 double width = pair.Value.Select(n => n.Size.Width).Max();
                 m_levelWidth.Add(pair.Key, width);
@@ -406,12 +450,12 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             BreadthNodeLookup(search);
 
             //build the node level
-            foreach (KeyValuePair<NodeViewModel, int> level in m_nodeLevelLookup)
+            foreach (KeyValuePair<NodeViewModel, int> level in m_nodeColumnLookup)
             {
-                if (!NodeLevels.ContainsKey(level.Value))
-                    NodeLevels.Add(level.Value, new List<NodeViewModel>());
+                if(!NodeColumns.ContainsKey(level.Value))
+                    NodeColumns.Add(level.Value, new List<NodeViewModel>());
 
-                NodeLevels[level.Value].Add(level.Key);
+                NodeColumns[level.Value].Add(level.Key);
             }
         }
 
@@ -429,16 +473,16 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             {
                 // Go backwards through network to find uncatalogued nodes
                 foreach (Dictionary<int, Queue<NodeViewModel>> dict in backBuffer)
-                    foreach (KeyValuePair<int, Queue<NodeViewModel>> pair in dict)
-                        foreach (NodeViewModel searchModel in pair.Value)
-                            forwardBuffer.Add(BreadthBackwardTraversal(pair.Key - 1, searchModel));
+                foreach (KeyValuePair<int, Queue<NodeViewModel>> pair in dict)
+                foreach (NodeViewModel searchModel in pair.Value)
+                    forwardBuffer.Add(BreadthBackwardTraversal(pair.Key - 1, searchModel));
                 backBuffer.Clear();
 
                 // Based on nodes that have just been checked go forwards through nodes for uncatalogued nodes
                 foreach (Dictionary<int, Queue<NodeViewModel>> dict in forwardBuffer)
-                    foreach (KeyValuePair<int, Queue<NodeViewModel>> pair in dict)
-                        foreach (NodeViewModel searchModel in pair.Value)
-                            backBuffer.Add(BreadthForwardTraversal(pair.Key + 1, searchModel));
+                foreach (KeyValuePair<int, Queue<NodeViewModel>> pair in dict)
+                foreach (NodeViewModel searchModel in pair.Value)
+                    backBuffer.Add(BreadthForwardTraversal(pair.Key + 1, searchModel));
                 forwardBuffer.Clear();
             }
         }
@@ -467,29 +511,29 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
                 next = forwardQueue.Dequeue();
                 currentLevelRemaining--;
                 //if (m_nodeLevelLookup.ContainsKey(next)) continue;
-                m_nodeLevelLookup[next] = level;
+                m_nodeColumnLookup[next] = level;
 
                 // mark nodes going forward through the network for future traversal
                 foreach (NodeOutputViewModel pin in next.Outputs.Items)
-                    foreach (ConnectionViewModel connection in pin.Connections.Items)
-                    {
-                        NodeViewModel node = m_inputLookup[connection.Input];
-                        forwardQueue.Enqueue(node);
-                        nextLevelCount++;
-                    }
+                foreach (ConnectionViewModel connection in pin.Connections.Items)
+                {
+                    NodeViewModel node = m_inputLookup[connection.Input];
+                    forwardQueue.Enqueue(node);
+                    nextLevelCount++;
+                }
 
                 // make sure to mark nodes going backward encase they are not already traversed
                 foreach (NodeInputViewModel input in next.Inputs.Items)
-                    foreach (ConnectionViewModel connection in input.Connections.Items)
-                    {
-                        NodeViewModel node = m_outputLookup[connection.Output];
-                        //if (m_nodeLevelLookup.ContainsKey(node)) continue;
-                        if (!backBuffer.ContainsKey(level))
-                            backBuffer.Add(level, new Queue<NodeViewModel>());
-                        backBuffer[level].Enqueue(node);
-                    }
+                foreach (ConnectionViewModel connection in input.Connections.Items)
+                {
+                    NodeViewModel node = m_outputLookup[connection.Output];
+                    //if (m_nodeLevelLookup.ContainsKey(node)) continue;
+                    if(!backBuffer.ContainsKey(level))
+                        backBuffer.Add(level, new Queue<NodeViewModel>());
+                    backBuffer[level].Enqueue(node);
+                }
 
-                if (currentLevelRemaining <= 0)
+                if(currentLevelRemaining <= 0)
                 {
                     level++;
                     currentLevelRemaining = nextLevelCount;
@@ -524,30 +568,30 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             {
                 next = backQueue.Dequeue();
                 currentLevelRemaining--;
-                if (m_nodeLevelLookup.ContainsKey(next)) continue;
-                m_nodeLevelLookup[next] = level;
+                if(m_nodeColumnLookup.ContainsKey(next)) continue;
+                m_nodeColumnLookup[next] = level;
 
                 // mark nodes going backward through the network for future traversal
                 foreach (NodeInputViewModel pin in next.Inputs.Items)
-                    foreach (ConnectionViewModel connection in pin.Connections.Items)
-                    {
-                        NodeViewModel node = m_outputLookup[connection.Output];
-                        backQueue.Enqueue(node);
-                        nextLevelCount++;
-                    }
+                foreach (ConnectionViewModel connection in pin.Connections.Items)
+                {
+                    NodeViewModel node = m_outputLookup[connection.Output];
+                    backQueue.Enqueue(node);
+                    nextLevelCount++;
+                }
 
                 // make sure to mark nodes going forward encase they are not already traversed
                 foreach (NodeOutputViewModel pin in next.Outputs.Items)
-                    foreach (ConnectionViewModel connection in pin.Connections.Items)
-                    {
-                        NodeViewModel node = m_inputLookup[connection.Input];
-                        //if (m_nodeLevelLookup.ContainsKey(node)) continue;
-                        if (!forwardBuffer.ContainsKey(level))
-                            forwardBuffer.Add(level, new Queue<NodeViewModel>());
-                        forwardBuffer[level].Enqueue(node);
-                    }
+                foreach (ConnectionViewModel connection in pin.Connections.Items)
+                {
+                    NodeViewModel node = m_inputLookup[connection.Input];
+                    //if (m_nodeLevelLookup.ContainsKey(node)) continue;
+                    if(!forwardBuffer.ContainsKey(level))
+                        forwardBuffer.Add(level, new Queue<NodeViewModel>());
+                    forwardBuffer[level].Enqueue(node);
+                }
 
-                if (currentLevelRemaining <= 0)
+                if(currentLevelRemaining <= 0)
                 {
                     level--;
                     currentLevelRemaining = nextLevelCount;
@@ -557,7 +601,6 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
 
             return forwardBuffer;
         }
-
         #endregion
 
         /// <summary>
@@ -569,13 +612,13 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         {
             List<KeyValuePair<int, NodeViewModel>> children = new List<KeyValuePair<int, NodeViewModel>>();
             foreach (NodeOutputViewModel pin in node.Outputs.Items)
-                foreach (ConnectionViewModel connection in pin.Connections.Items)
-                {
-                    NodeViewModel lookupNode = m_inputLookup[connection.Input];
-                    children.Add(new KeyValuePair<int, NodeViewModel>(NodeDepth(lookupNode), lookupNode));
-                }
+            foreach (ConnectionViewModel connection in pin.Connections.Items)
+            {
+                NodeViewModel lookupNode = m_inputLookup[connection.Input];
+                children.Add(new KeyValuePair<int, NodeViewModel>(NodeDepth(lookupNode), lookupNode));
+            }
 
-            if (children.Count > 0)
+            if(children.Count > 0)
             {
                 List<KeyValuePair<int, NodeViewModel>> sorted = children.OrderBy(c => c.Key).ToList();
                 return sorted[0].Key + 1;
@@ -583,6 +626,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
 
             return 0;
         }
+
         /// <summary>
         /// finds the largest amount of children that <see cref="node"/> has without circular dependencies
         /// </summary>
@@ -592,19 +636,19 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
         {
             List<KeyValuePair<int, NodeViewModel>> children = new List<KeyValuePair<int, NodeViewModel>>();
             foreach (NodeOutputViewModel pin in node.Outputs.Items)
-                foreach (ConnectionViewModel connection in pin.Connections.Items)
-                {
-                    NodeViewModel lookupNode = m_inputLookup[connection.Input];
-                    children.Add(new KeyValuePair<int, NodeViewModel>(GreatestNodeChildLevel(lookupNode), lookupNode));
-                }
+            foreach (ConnectionViewModel connection in pin.Connections.Items)
+            {
+                NodeViewModel lookupNode = m_inputLookup[connection.Input];
+                children.Add(new KeyValuePair<int, NodeViewModel>(GreatestNodeChildLevel(lookupNode), lookupNode));
+            }
 
-            if (children.Count > 0)
+            if(children.Count > 0)
             {
                 List<KeyValuePair<int, NodeViewModel>> sorted = children.OrderBy(c => c.Key).ToList();
                 return sorted[0].Key;
             }
 
-            return m_nodeLevelLookup[node];
+            return m_nodeColumnLookup[node];
         }
 
         protected IEnumerable<NodeViewModel> OutputNodes(NodeViewModel node)
@@ -612,11 +656,11 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             List<NodeViewModel> outNodes = new List<NodeViewModel>(node.Outputs.Count);
 
             foreach (NodeOutputViewModel pin in node.Outputs.Items)
-                foreach (ConnectionViewModel connection in pin.Connections.Items)
-                {
-                    NodeViewModel lookupNode = m_inputLookup[connection.Input];
-                    outNodes.Add(lookupNode);
-                }
+            foreach (ConnectionViewModel connection in pin.Connections.Items)
+            {
+                NodeViewModel lookupNode = m_inputLookup[connection.Input];
+                outNodes.Add(lookupNode);
+            }
 
             return outNodes;
         }
@@ -626,11 +670,11 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Layout
             List<NodeViewModel> outNodes = new List<NodeViewModel>(node.Outputs.Count);
 
             foreach (NodeInputViewModel pin in node.Inputs.Items)
-                foreach (ConnectionViewModel connection in pin.Connections.Items)
-                {
-                    NodeViewModel lookupNode = m_outputLookup[connection.Output];
-                    outNodes.Add(lookupNode);
-                }
+            foreach (ConnectionViewModel connection in pin.Connections.Items)
+            {
+                NodeViewModel lookupNode = m_outputLookup[connection.Output];
+                outNodes.Add(lookupNode);
+            }
 
             return outNodes;
         }
