@@ -46,7 +46,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
 
         private NpcChatProject m_project { get; }
         private DialogTree m_tree;
-        private LeveledLayout m_layouter = new LeveledLayout();
+        private MsAglLayout m_layouter = new MsAglLayout();
         private readonly Dictionary<DialogTreeBranchIdentifier, BranchNode> m_branchNodes = new Dictionary<DialogTreeBranchIdentifier, BranchNode>();
         private bool m_ignoreBranchEvents = false;
         private bool m_autoLayout = false;

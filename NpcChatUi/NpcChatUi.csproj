@@ -169,7 +169,7 @@
     <Compile Include="ViewModels\Panels\Project\DialogOverview.cs" />
     <Compile Include="ViewModels\Panels\Project\ProjectOverviewVM.cs" />
     <Compile Include="ViewModels\Panels\ScriptDiagram\Layout\ILayout.cs" />
-    <Compile Include="ViewModels\Panels\ScriptDiagram\Layout\LeveledLayout.cs" />
+    <Compile Include="ViewModels\Panels\ScriptDiagram\Layout\MsAglLayout.cs" />
     <Compile Include="ViewModels\Panels\ScriptDiagram\Node\BranchOutput.cs" />
     <Compile Include="ViewModels\Panels\ScriptDiagram\Node\BranchInput.cs" />
     <Compile Include="ViewModels\Panels\ScriptDiagram\Node\BranchNode.cs" />
@@ -316,6 +316,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Licenses\AutomaticGraphLayout.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\SpellCheck\GPLv3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -413,6 +416,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\External\automatic-graph-layout\GraphLayout\MSAGL\AutomaticGraphLayout.csproj">
+      <Project>{7637ff03-7c44-4be6-bf17-ab683839b9ee}</Project>
+      <Name>AutomaticGraphLayout</Name>
+    </ProjectReference>
     <ProjectReference Include="..\External\FirstFloor.ModernUI\FirstFloor.ModernUI\FirstFloor.ModernUI.csproj">
       <Project>{9a653a28-fe46-40e8-a14f-48b0e325165d}</Project>
       <Name>FirstFloor.ModernUI</Name>

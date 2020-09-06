@@ -37,6 +37,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodeNetwork", "External\Nod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodeNetworkToolkit", "External\NodeNetwork\NodeNetworkToolkit\NodeNetworkToolkit.csproj", "{391D0670-646F-4633-9E86-E9A966F61953}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.AutomaticGraphLayout", "Microsoft.AutomaticGraphLayout", "{839B19B4-7983-46C6-85CA-69AD9C349040}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomaticGraphLayout", "External\automatic-graph-layout\GraphLayout\MSAGL\AutomaticGraphLayout.csproj", "{03D0963C-D7D8-4E5A-832D-FA487E007784}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -87,6 +91,10 @@ Global
 		{391D0670-646F-4633-9E86-E9A966F61953}.Debug|x64.Build.0 = Debug|x64
 		{391D0670-646F-4633-9E86-E9A966F61953}.Release|x64.ActiveCfg = Release|x64
 		{391D0670-646F-4633-9E86-E9A966F61953}.Release|x64.Build.0 = Release|x64
+		{03D0963C-D7D8-4E5A-832D-FA487E007784}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{03D0963C-D7D8-4E5A-832D-FA487E007784}.Debug|x64.Build.0 = Debug|Any CPU
+		{03D0963C-D7D8-4E5A-832D-FA487E007784}.Release|x64.ActiveCfg = Release|Any CPU
+		{03D0963C-D7D8-4E5A-832D-FA487E007784}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,6 +113,8 @@ Global
 		{E42EA606-3FCA-4571-A426-900A1D772400} = {2B9F80A1-4D07-4204-8BE1-94373AA463BB}
 		{96E1761E-AE02-48E9-95E8-4A3B2FC32025} = {E42EA606-3FCA-4571-A426-900A1D772400}
 		{391D0670-646F-4633-9E86-E9A966F61953} = {E42EA606-3FCA-4571-A426-900A1D772400}
+		{839B19B4-7983-46C6-85CA-69AD9C349040} = {2B9F80A1-4D07-4204-8BE1-94373AA463BB}
+		{03D0963C-D7D8-4E5A-832D-FA487E007784} = {839B19B4-7983-46C6-85CA-69AD9C349040}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D75EC4FA-B6A7-4476-A0FD-CDC503780AD8}
