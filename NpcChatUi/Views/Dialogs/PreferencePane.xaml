@@ -1,0 +1,29 @@
+<mui:ModernWindow x:Class="NpcChat.Views.Dialogs.PreferencePane"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:local="clr-namespace:NpcChat.Views.Dialogs"
+                  xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+                  xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+                  xmlns:settings="clr-namespace:NpcChat.ViewModels.Settings"
+                  mc:Ignorable="d"
+                  Style="{DynamicResource BlankWindow}"
+                  Title="SettingsPane" Height="450" Width="800"
+                  Topmost="True">
+    <Grid>
+        <TabControl ItemsSource="{Binding Tabs}">
+            <TabControl.ItemTemplate>
+                <DataTemplate DataType="settings:IPreferenceTab">
+                    <TextBlock Text="{Binding Header}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+
+            <TabControl.ContentTemplate>
+                <DataTemplate DataType="settings:IPreferenceTab">
+                    <xctk:PropertyGrid SelectedObjectName="{Binding Header}" SelectedObject="{Binding}" ShowTitle="False" AutoGenerateProperties="True" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+    </Grid>
+</mui:ModernWindow>

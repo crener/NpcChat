@@ -43,6 +43,7 @@ namespace NpcChat.ViewModels
         public ICommand NewProjectCommand { get; }
         public ICommand SaveProjectCommand { get; }
         public ICommand ShowAboutCommand { get; }
+        public ICommand ShowPreferenceCommand { get; }
         public ICommand ForceSaveLayoutCommand { get; }
         public ICommand ForceLoadLayoutCommand { get; }
         public ICommand ShowWindowCommand { get; }
@@ -90,8 +91,9 @@ namespace NpcChat.ViewModels
                 //View
                 ShowWindowCommand = new DelegateCommand<Type>(ShowWindow);
 
-                //About
+                // Dialogs
                 ShowAboutCommand = new DelegateCommand(ShowAbout);
+                ShowPreferenceCommand = new DelegateCommand(ShowPreference);
 
                 //Debug
                 ForceLoadLayoutCommand = new DelegateCommand(LoadLayout);
@@ -227,6 +229,12 @@ namespace NpcChat.ViewModels
         {
             AboutDialog about = new AboutDialog();
             about.ShowDialog();
+        }
+
+        private void ShowPreference()
+        {
+            PreferencePane preference = new PreferencePane();
+            preference.Show();
         }
 
         public void SetDockingManager(DockingManager dockingManager)

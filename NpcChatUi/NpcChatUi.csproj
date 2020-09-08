@@ -85,6 +85,7 @@
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -177,6 +178,12 @@
     <Compile Include="ViewModels\Panels\ScriptEditor\TextBlockElements\EditBlock.cs" />
     <Compile Include="ViewModels\Panels\ScriptEditor\TextBlockElements\SpellingOptions.cs" />
     <Compile Include="ViewModels\Panels\UtilityPanels\LogPanelVM.cs" />
+    <Compile Include="ViewModels\Settings\SettingsTabs\PreferenceTab.cs" />
+    <Compile Include="ViewModels\Settings\Preferences.cs" />
+    <Compile Include="ViewModels\Settings\SettingsTabs\GeneralPreference.cs" />
+    <Compile Include="Views\Dialogs\PreferencePane.xaml.cs">
+      <DependentUpon>PreferencePane.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Panels\Project\ProjectOverview.xaml.cs">
       <DependentUpon>ProjectOverview.xaml</DependentUpon>
     </Compile>
@@ -244,6 +251,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Dialogs\PreferencePane.xaml" />
     <Page Include="Views\Panels\Project\ProjectOverview.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -328,6 +336,7 @@
     <Content Include="Resources\SpellCheck\MPL-1.1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Compile Include="ViewModels\Settings\IPreferenceTab.cs" />
     <None Include="App.config" />
     <Content Include="Resources\Licenses\NodeNetwork.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -449,7 +458,6 @@
       <Name>NpcChatSystem</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>

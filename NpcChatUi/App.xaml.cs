@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using NpcChat.Backend.Validation;
+using NpcChat.ViewModels.Settings;
 using NpcChat.Views.Dialogs;
 using NpcChatSystem.System;
 using NpcChatSystem.System.TypeStore;
@@ -23,6 +25,13 @@ namespace NpcChat
     /// </summary>
     public partial class App
     {
+        /// <summary>
+        /// Main application container
+        /// </summary>
+        public static CompositionContainer AppContainer;
+
+        private AggregateCatalog m_catalog = new AggregateCatalog();
+
         public App()
         {
 #if !DEBUG
@@ -35,6 +44,7 @@ namespace NpcChat
 
             SetupJitCache();
             StartBackgroundInitialization();
+            SetupAggregateCatalogs();
         }
 
         private void SetupJitCache()
@@ -63,6 +73,13 @@ namespace NpcChat
             });
 
             spellingSetup.Start();
+        }
+
+        private void SetupAggregateCatalogs()
+        {
+            m_catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
+
+            AppContainer = new CompositionContainer(m_catalog);
         }
     }
 }

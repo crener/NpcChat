@@ -5,12 +5,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Annotations;
 using System.Windows.Documents;
 using NpcChat.ViewModels.Panels.ScriptEditor.TextBlockElements;
+using NpcChat.ViewModels.Settings;
+using NpcChat.ViewModels.Settings.SettingsTabs;
 using NpcChatSystem.Data.Dialog.DialogParts;
 using NpcChatSystem.Utilities;
 using WeCantSpell.Hunspell;
@@ -21,9 +20,17 @@ namespace NpcChat.Backend.Validation
     public class SpellCheck
     {
         private static IReadOnlyDictionary<string, WordList> m_dictionary;
-        private static readonly string[] s_acceptedFormats = new[] { ".dic", ".aff" };
+        private static readonly string[] s_acceptedFormats = { ".dic", ".aff" };
 
         static SpellCheck()
+        {
+            LoadSpellingData();
+        }
+
+        /// <summary>
+        /// Load the spelling dictionaries and initialise the Hunspell spelling engine
+        /// </summary>
+        private static void LoadSpellingData()
         {
             Stopwatch timer = new Stopwatch();
             timer.Start();
@@ -91,7 +98,7 @@ namespace NpcChat.Backend.Validation
         {
             List<Inline> paragraphRuns = new List<Inline>();
 
-            if (m_dictionary.ContainsKey(currentLanguage))
+            if (GeneralPreference.Instance.EnableSpellCheck && m_dictionary.ContainsKey(currentLanguage))
             {
                 WordList dictionary = m_dictionary[currentLanguage];
 
