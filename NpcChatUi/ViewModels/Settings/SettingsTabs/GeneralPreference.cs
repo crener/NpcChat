@@ -1,20 +1,23 @@
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NLog;
+using NpcChatSystem.Utilities;
 
 namespace NpcChat.ViewModels.Settings.SettingsTabs
 {
-    [DisplayName("{Header}"), InheritedExport(nameof(GeneralPreference), typeof(IPreferenceTab))]
     public class GeneralPreference : PreferenceTab
     {
-        [Browsable(false), Import(nameof(GeneralPreference), typeof(IPreferenceTab))]
-        public static GeneralPreference Instance;
+        [Browsable(false), JsonIgnore] 
+        public static GeneralPreference Instance { get; set; }
 
         /// <summary>
         /// Name of the preference type
         /// </summary>
         [Browsable(false)]
         public override string Header => "General";
-
+        
         /// <summary>
         /// Allow spell check
         /// </summary>
@@ -32,7 +35,13 @@ namespace NpcChat.ViewModels.Settings.SettingsTabs
             }
         }
 
-
         private bool m_enableSpellCheck = false;
+        
+        [Browsable(false)] 
+        public GeneralPreference()
+        {
+            if(Instance == null) Instance = this;
+            else Logging.Logger.Log(LogLevel.Error, $"Multiple {nameof(GeneralPreference)} preference tabs created during runtime!");
+        }
     }
 }

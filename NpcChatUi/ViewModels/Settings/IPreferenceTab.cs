@@ -1,28 +1,26 @@
-
-
-using System;
-using System.Xml;
+using System.ComponentModel;
+using System.Xml.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace NpcChat.ViewModels.Settings
 {
-    public interface IPreferenceTab
+    public interface IPreferenceTab : INotifyPropertyChanged
     {
         /// <summary>
         /// Name of the settings tab
         /// </summary>
         string Header { get; }
-        
+
         /// <summary>
-        /// Save the tabs settings into the <paramref name="tabRoot"/>
+        /// Name as shown in the saved data of the preferences to identify what to pass the data into 
         /// </summary>
-        /// <param name="tabRoot">xml Element to save settings into</param>
-        void Save(XmlElement tabRoot);
+        string SerializationName { get; }
 
         /// <summary>
         /// Loads settings from preexisting settings
         /// </summary>
-        /// <param name="tabRoot">xmlElement containing data</param>
-        /// <remarks>may be null if previous settings don't contain this data</remarks>
-        void Load(XmlElement tabRoot);
+        /// <param name="tabData">XElement containing the previously data</param>
+        /// <remarks>may be null if previous settings don't contain any data</remarks>
+        void Load(JToken tabData);
     }
 }

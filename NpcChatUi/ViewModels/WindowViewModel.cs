@@ -15,6 +15,7 @@ using NpcChat.ViewModels.Panels.ScriptEditor;
 using NpcChat.ViewModels.Panels.UtilityPanels;
 using NpcChat.Views.About;
 using NpcChat.Views.Dialogs;
+using NpcChat.Views.Misc;
 using NpcChatSystem;
 using NpcChatSystem.Data.Dialog;
 using NpcChatSystem.Identifiers;
@@ -233,8 +234,8 @@ namespace NpcChat.ViewModels
 
         private void ShowPreference()
         {
-            PreferencePane preference = new PreferencePane();
-            preference.Show();
+            PreferenceWindow preference = new PreferenceWindow();
+            preference.ShowDialog();
         }
 
         public void SetDockingManager(DockingManager dockingManager)

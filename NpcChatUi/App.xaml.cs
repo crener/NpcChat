@@ -45,6 +45,10 @@ namespace NpcChat
             SetupJitCache();
             StartBackgroundInitialization();
             SetupAggregateCatalogs();
+            
+            // initialize preferences
+            if(Preferences.Instance != null)
+                Logging.Logger.Log(LogLevel.Error, "Failed to load preferences");
         }
 
         private void SetupJitCache()

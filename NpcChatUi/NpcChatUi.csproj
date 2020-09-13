@@ -61,6 +61,10 @@
       <HintPath>..\packages\DynamicData.6.13.21\lib\net461\DynamicData.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.6.8\lib\net45\NLog.dll</HintPath>
     </Reference>
@@ -162,6 +166,7 @@
     <Compile Include="Backend\Interfaces\IScriptPanelVM.cs" />
     <Compile Include="Backend\Validation\SpellCheck.cs" />
     <Compile Include="Converters\TreeBranchNameConverter.cs" />
+    <Compile Include="Exceptions\DuplicateLoadingException.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Util\DependencyNotificationObject.cs" />
@@ -181,8 +186,8 @@
     <Compile Include="ViewModels\Settings\SettingsTabs\PreferenceTab.cs" />
     <Compile Include="ViewModels\Settings\Preferences.cs" />
     <Compile Include="ViewModels\Settings\SettingsTabs\GeneralPreference.cs" />
-    <Compile Include="Views\Dialogs\PreferencePane.xaml.cs">
-      <DependentUpon>PreferencePane.xaml</DependentUpon>
+    <Compile Include="Views\Misc\PreferenceWindow.xaml.cs">
+      <DependentUpon>PreferenceWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\Project\ProjectOverview.xaml.cs">
       <DependentUpon>ProjectOverview.xaml</DependentUpon>
@@ -203,10 +208,10 @@
       <DependentUpon>LicensePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\About\LicencePageVM.cs" />
-    <Compile Include="Views\Dialogs\UnhandledExceptionDialog.xaml.cs">
+    <Compile Include="Views\Misc\UnhandledExceptionDialog.xaml.cs">
       <DependentUpon>UnhandledExceptionDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialogs\UnhandledExceptionDialogVM.cs" />
+    <Compile Include="Views\Misc\UnhandledExceptionDialogVM.cs" />
     <Compile Include="Views\Panels\ScriptDiagram\ScriptDiagram.xaml.cs">
       <DependentUpon>ScriptDiagram.xaml</DependentUpon>
     </Compile>
@@ -251,7 +256,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Dialogs\PreferencePane.xaml" />
+    <Page Include="Views\Misc\PreferenceWindow.xaml" />
     <Page Include="Views\Panels\Project\ProjectOverview.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -268,7 +273,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Dialogs\UnhandledExceptionDialog.xaml">
+    <Page Include="Views\Misc\UnhandledExceptionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

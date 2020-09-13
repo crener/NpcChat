@@ -9,8 +9,8 @@ namespace NpcChat.Views.About
     {
         public AboutDialog()
         {
-            InitializeComponent();
             DataContext = new AboutDialogVM();
+            InitializeComponent();
         }
     }
 }
