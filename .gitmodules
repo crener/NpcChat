@@ -1,0 +1,3 @@
+[submodule "External/automatic-graph-layout"]
+	path = External/automatic-graph-layout
+	url = https://github.com/microsoft/automatic-graph-layout
