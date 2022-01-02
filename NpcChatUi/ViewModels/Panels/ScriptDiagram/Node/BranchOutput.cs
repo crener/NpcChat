@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NodeNetwork;
 using NodeNetwork.ViewModels;
 using NodeNetwork.Views;
 using NpcChatSystem.Identifiers;
@@ -11,12 +12,12 @@ using ReactiveUI;
 
 namespace NpcChat.ViewModels.Panels.ScriptDiagram.Node
 {
-    [DebuggerDisplay("{Output: (Node?.Name ?? nameof(BranchOutput))}")]
+    [DebuggerDisplay("Output: {(Node?.Name ?? nameof(BranchOutput))}")]
     public class BranchOutput : NodeOutputViewModel
     {
         static BranchOutput()
         {
-            Splat.Locator.CurrentMutable.Register(() => new NodeOutputView(), typeof(IViewFor<BranchOutput>));
+            NNViewRegistrar.AddRegistration(() => new NodeOutputView(), typeof(IViewFor<BranchOutput>));
         }
 
         public BranchNode Node { get; }

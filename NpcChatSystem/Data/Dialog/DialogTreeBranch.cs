@@ -58,6 +58,9 @@ namespace NpcChatSystem.Data.Dialog
             }
         }
 
+        /// <summary>
+        /// Pieces of dialog contained inside the branch
+        /// </summary>
         public IReadOnlyCollection<DialogSegment> Dialog => m_dialog;
 
         public event Action<DialogSegmentIdentifier> OnDialogCreated;
@@ -69,8 +72,8 @@ namespace NpcChatSystem.Data.Dialog
 
         private string m_name = "New Tree Branch";
         private IEvaluationContainer m_branchCondition = null;
-        private HashSet<DialogTreeBranchIdentifier> m_children = new HashSet<DialogTreeBranchIdentifier>();
-        private HashSet<DialogTreeBranchIdentifier> m_parents = new HashSet<DialogTreeBranchIdentifier>();
+        private readonly HashSet<DialogTreeBranchIdentifier> m_children = new HashSet<DialogTreeBranchIdentifier>();
+        private readonly HashSet<DialogTreeBranchIdentifier> m_parents = new HashSet<DialogTreeBranchIdentifier>();
         private readonly List<DialogSegment> m_dialog = new List<DialogSegment>();
 
         internal DialogTreeBranch(NpcChatProject project, DialogTreeIdentifier dialogId, int treePartId)

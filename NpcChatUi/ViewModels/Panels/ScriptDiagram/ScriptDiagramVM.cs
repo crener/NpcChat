@@ -21,6 +21,9 @@ using Xceed.Wpf.AvalonDock.Layout;
 
 namespace NpcChat.ViewModels.Panels.ScriptDiagram
 {
+    /// <summary>
+    /// Core view model for Node based visualization of the branches
+    /// </summary>
     public class ScriptDiagramVM : LayoutDocument
     {
         public DialogTree Tree => m_tree;
@@ -46,7 +49,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
 
         private NpcChatProject m_project { get; }
         private DialogTree m_tree;
-        private MsAglLayout m_layouter = new MsAglLayout();
+        private readonly MsAglLayout m_layouter = new MsAglLayout();
         private readonly Dictionary<DialogTreeBranchIdentifier, BranchNode> m_branchNodes = new Dictionary<DialogTreeBranchIdentifier, BranchNode>();
         private bool m_ignoreBranchEvents = false;
         private bool m_autoLayout = false;
@@ -107,7 +110,8 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram
         {
             foreach (Change<ConnectionViewModel> changeCollection in change)
             {
-                foreach (ConnectionViewModel connection in changeCollection?.Range ?? (IEnumerable<ConnectionViewModel>)new[] { changeCollection.Item.Current })
+                IEnumerable<ConnectionViewModel> changedArray = changeCollection.Range.Count > 0 ? changeCollection.Range : (IEnumerable<ConnectionViewModel>)new[] { changeCollection.Item.Current };
+                foreach (ConnectionViewModel connection in changedArray)
                 {
                     BranchInput input = connection.Input as BranchInput;
                     BranchOutput output = connection.Output as BranchOutput;

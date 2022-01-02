@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using NodeNetwork;
 using NpcChat.Backend.Validation;
 using NpcChat.ViewModels.Settings;
 using NpcChat.Views.Dialogs;
@@ -35,6 +36,7 @@ namespace NpcChat
         public App()
         {
 #if !DEBUG
+            // handle application crashes
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 UnhandledExceptionDialog dialog = new UnhandledExceptionDialog(args);
@@ -45,9 +47,11 @@ namespace NpcChat
             SetupJitCache();
             StartBackgroundInitialization();
             SetupAggregateCatalogs();
-            
+
+            NNViewRegistrar.RegisterSplat();
+
             // initialize preferences
-            if(Preferences.Instance != null)
+            if (Preferences.Instance != null)
                 Logging.Logger.Log(LogLevel.Error, "Failed to load preferences");
         }
 

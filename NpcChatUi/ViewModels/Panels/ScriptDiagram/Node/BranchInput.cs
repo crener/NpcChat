@@ -10,12 +10,12 @@ using ReactiveUI;
 
 namespace NpcChat.ViewModels.Panels.ScriptDiagram.Node
 {
-    [DebuggerDisplay("{Input: (Node?.Name ?? nameof(BranchInput))}")]
+    [DebuggerDisplay("Input: {(Node?.Name ?? nameof(BranchInput))}")]
     public class BranchInput : NodeInputViewModel
     {
         static BranchInput()
         {
-            Splat.Locator.CurrentMutable.Register(() => new NodeInputView(), typeof(IViewFor<BranchInput>));
+            NNViewRegistrar.AddRegistration(() => new NodeInputView(), typeof(IViewFor<BranchInput>));
         }
 
         public BranchNode Node { get; }

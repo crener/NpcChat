@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using DynamicData;
+using NodeNetwork;
 using NodeNetwork.ViewModels;
 using NodeNetwork.Views;
 using NpcChatSystem;
@@ -15,7 +16,7 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Node
     {
         static BranchNode()
         {
-            Splat.Locator.CurrentMutable.Register(() => new NodeView(), typeof(IViewFor<BranchNode>));
+            NNViewRegistrar.AddRegistration(() => new NodeView(), typeof(IViewFor<BranchNode>));
         }
 
         public BranchInput ParentPin { get; }
@@ -48,11 +49,11 @@ namespace NpcChat.ViewModels.Panels.ScriptDiagram.Node
 
                 DialogTreeBranch branch = project[branchId];
                 Name = branch.Name;
-                branch.PropertyChanged += BranchChanged;
+                branch.PropertyChanged += OnBranchChanged;
             }
         }
 
-        private void BranchChanged(object sender, PropertyChangedEventArgs e)
+        private void OnBranchChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(DialogTreeBranch.Name))
             {
