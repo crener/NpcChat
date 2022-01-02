@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -72,20 +73,110 @@ namespace NodeNetwork.Views
             }
         }
         private BindingExpressionBase _viewportBinding;
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// The element that is used as an origin for the position of the elements of the network.
-		/// </summary>
-		/// <example>
-		/// Can be used for calculating the mouse position relative to the network.
-		/// <code>
-		/// Mouse.GetPosition(network.CanvasOriginElement)
-		/// </code>
-		/// </example>
-		public IInputElement CanvasOriginElement => contentContainer;
+        #region Node move events
+        public class NodeMovementEventArgs : EventArgs
+        {
+            public IEnumerable<NodeViewModel> Nodes { get; }
+            public NodeMovementEventArgs(IEnumerable<NodeViewModel> nodes) => Nodes = nodes.ToList();
+        }
 
-		public NetworkView()
+        //Start
+        public class NodeMoveStartEventArgs : NodeMovementEventArgs
+        {
+            public DragStartedEventArgs DragEvent { get; }
+
+            public NodeMoveStartEventArgs(IEnumerable<NodeViewModel> nodes, DragStartedEventArgs dragEvent) :
+                base(nodes)
+            {
+                DragEvent = dragEvent;
+            }
+        }
+        public delegate void NodeMoveStartDelegate(object sender, NodeMoveStartEventArgs e);
+        /// <summary>Occurs when a (set of) node(s) is selected and starts moving.</summary>
+        public event NodeMoveStartDelegate NodeMoveStart;
+
+        //Move
+        public class NodeMoveEventArgs : NodeMovementEventArgs
+        {
+            public DragDeltaEventArgs DragEvent { get; }
+
+            public NodeMoveEventArgs(IEnumerable<NodeViewModel> nodes, DragDeltaEventArgs dragEvent) : base(nodes)
+            {
+                DragEvent = dragEvent;
+            }
+        }
+        public delegate void NodeMoveDelegate(object sender, NodeMoveEventArgs e);
+        /// <summary>Occurs one or more times as the mouse changes position when a (set of) node(s) is selected and has mouse capture.</summary>
+        public event NodeMoveDelegate NodeMove;
+
+        //End
+        public class NodeMoveEndEventArgs : NodeMovementEventArgs
+        {
+            public DragCompletedEventArgs DragEvent { get; }
+
+            public NodeMoveEndEventArgs(IEnumerable<NodeViewModel> nodes, DragCompletedEventArgs dragEvent) : base(nodes)
+            {
+                DragEvent = dragEvent;
+            }
+        }
+        public delegate void NodeMoveEndDelegate(object sender, NodeMoveEndEventArgs e);
+        /// <summary>Occurs when a (set of) node(s) loses mouse capture.</summary>
+        public event NodeMoveEndDelegate NodeMoveEnd;
+        #endregion
+
+        #region NetworkBackground
+        public static readonly DependencyProperty NetworkBackgroundProperty = DependencyProperty.Register(nameof(NetworkBackground),
+            typeof(Brush), typeof(NetworkView), new PropertyMetadata(null));
+
+        public Brush NetworkBackground
+        {
+            get => (Brush)GetValue(NetworkBackgroundProperty);
+            set => SetValue(NetworkBackgroundProperty, value);
+        }
+        #endregion
+
+        /// <summary>
+        /// The element that is used as an origin for the position of the elements of the network.
+        /// </summary>
+        /// <example>
+        /// Can be used for calculating the mouse position relative to the network.
+        /// <code>
+        /// Mouse.GetPosition(network.CanvasOriginElement)
+        /// </code>
+        /// </example>
+        public IInputElement CanvasOriginElement => contentContainer;
+
+        #region StartCutGesture
+        public static readonly DependencyProperty StartCutGestureProperty = DependencyProperty.Register(nameof(StartCutGesture),
+            typeof(MouseGesture), typeof(NetworkView), new PropertyMetadata(new MouseGesture(MouseAction.RightClick)));
+
+        /// <summary>
+        /// This mouse gesture starts a cut, making the cutline visible. Right click by default.
+        /// </summary>
+        public MouseGesture StartCutGesture
+        {
+            get => (MouseGesture)GetValue(StartCutGestureProperty);
+            set => SetValue(StartCutGestureProperty, value);
+        }
+        #endregion
+
+        #region StartSelectionRectangleGesture
+        public static readonly DependencyProperty StartSelectionRectangleGestureProperty = DependencyProperty.Register(nameof(StartSelectionRectangleGesture),
+            typeof(MouseGesture), typeof(NetworkView), new PropertyMetadata(new MouseGesture(MouseAction.LeftClick, ModifierKeys.Shift)));
+
+        /// <summary>
+        /// This mouse gesture starts a selection, making the selection rectangle visible. Left click + Shift by default.
+        /// </summary>
+        public MouseGesture StartSelectionRectangleGesture
+        {
+            get => (MouseGesture)GetValue(StartSelectionRectangleGestureProperty);
+            set => SetValue(StartSelectionRectangleGestureProperty, value);
+        }
+        #endregion
+
+        public NetworkView()
         {
             InitializeComponent();
 	        if (DesignerProperties.GetIsInDesignMode(this)) { return; }
@@ -113,7 +204,6 @@ namespace NodeNetwork.Views
             this.WhenActivated(d =>
             {
 	            this.BindList(ViewModel, vm => vm.Connections, v => v.connectionsControl.ItemsSource).DisposeWith(d);
-                //this.OneWayBind(ViewModel, vm => vm.Connections, v => v.connectionsControl.ItemsSource).DisposeWith(d);
                 this.OneWayBind(ViewModel, vm => vm.PendingConnection, v => v.pendingConnectionView.ViewModel).DisposeWith(d);
 
                 this.Events().MouseMove
@@ -123,7 +213,7 @@ namespace NodeNetwork.Views
 
                 this.Events().MouseLeftButtonUp
                     .Where(_ => ViewModel.PendingConnection != null)
-                    .Subscribe(_ => ViewModel.RemovePendingConnection())
+                    .Subscribe(_ => ViewModel.OnPendingConnectionDropped())
                     .DisposeWith(d);
             });
         }
@@ -149,24 +239,29 @@ namespace NodeNetwork.Views
                     isVisible => isVisible ? Visibility.Visible : Visibility.Collapsed)
                     .DisposeWith(d);
 
-                dragCanvas.Events().MouseRightButtonDown.Subscribe(e =>
+                bool cutGestured = false;
+                dragCanvas.Events().MouseDown.Subscribe(e =>
                 {
-                    Point pos = e.GetPosition(contentContainer);
-                    ViewModel.CutLine.StartPoint = pos;
-                    ViewModel.CutLine.EndPoint = pos;
-
-                    e.Handled = true;
+                    if (StartCutGesture.Matches(this, e))
+                    {
+                        Point pos = e.GetPosition(contentContainer);
+                        ViewModel.CutLine.StartPoint = pos;
+                        ViewModel.CutLine.EndPoint = pos;
+                        cutGestured = true;
+                        
+                        e.Handled = true;
+                    }
                 }).DisposeWith(d);
 
                 dragCanvas.Events().MouseMove.Subscribe(e =>
                 {
-	                if (e.RightButton == MouseButtonState.Pressed)
-	                {
-		                if (!ViewModel.CutLine.IsVisible)
-		                {
-			                ViewModel.StartCut();
-						}
+                    if (!ViewModel.CutLine.IsVisible && cutGestured)
+                    {
+                        ViewModel.StartCut();
+                    }
 
+                    if (ViewModel.CutLine.IsVisible)
+	                {
 						ViewModel.CutLine.EndPoint = e.GetPosition(contentContainer);
 
 		                ViewModel.CutLine.IntersectingConnections.Edit(l =>
@@ -180,14 +275,15 @@ namespace NodeNetwork.Views
                     
                 }).DisposeWith(d);
 
-                dragCanvas.Events().MouseRightButtonUp.Subscribe(e =>
+                dragCanvas.Events().MouseUp.Subscribe(e =>
                 {
-	                if (ViewModel.CutLine.IsVisible)
+                    cutGestured = false;
+                    if (ViewModel.CutLine.IsVisible)
 	                {
 		                //Do cuts
 		                ViewModel.FinishCut();
 
-		                e.Handled = true;
+                        e.Handled = true;
 	                }
                 }).DisposeWith(d);
             });
@@ -195,6 +291,14 @@ namespace NodeNetwork.Views
 
         private void SetupViewportBinding()
         {
+            this.WhenActivated(d =>
+            {
+                this.Bind(ViewModel, vm => vm.ZoomFactor, v => v.dragCanvas.ZoomFactor);
+                this.Bind(ViewModel, vm => vm.MaxZoomLevel, v => v.dragCanvas.MaxZoomFactor);
+                this.Bind(ViewModel, vm => vm.MinZoomLevel, v => v.dragCanvas.MinZoomFactor);
+                this.Bind(ViewModel, vm => vm.DragOffset, v => v.dragCanvas.DragOffset);
+            });
+
             Binding binding = new Binding
             {
                 Source = this,
@@ -301,7 +405,7 @@ namespace NodeNetwork.Views
 
                 this.Events().PreviewMouseDown.Subscribe(e =>
                 {
-                    if (ViewModel != null && e.ChangedButton == MouseButton.Left && Keyboard.IsKeyDown(Key.LeftShift))
+                    if (ViewModel != null && StartSelectionRectangleGesture.Matches(this, e))
                     {
                         CaptureMouse();
                         dragCanvas.IsDraggingEnabled = false;
@@ -389,13 +493,51 @@ namespace NodeNetwork.Views
         }
         #endregion
 
-        private void OnDragNode(object sender, DragDeltaEventArgs e)
+        #region Node move events
+        private void OnNodeDragStart(object sender, DragStartedEventArgs e)
         {
-            foreach (NodeViewModel node in ViewModel.SelectedNodes.Items)
+            // Hacky fix for issue #78. A nested thumb being dragged would also drag the node around, which is incorrect.
+            // For some reason, trying to stop the MouseMove event from bubbling up does not work, so instead we check
+            // here what caused this drag event. Only the Thumb around the node may cause drag events.
+
+            bool isCorrectSource = WPFUtils.GetVisualAncestorNLevelsUp((DependencyObject)e.OriginalSource, 6) == nodesControl;
+            if (NodeMoveStart != null && isCorrectSource)
             {
-                node.Position = new Point(node.Position.X + e.HorizontalChange, node.Position.Y + e.VerticalChange);
+                var args = new NodeMoveStartEventArgs(ViewModel.SelectedNodes.Items, e);
+                NodeMoveStart(sender, args);
             }
         }
+
+        private void OnNodeDrag(object sender, DragDeltaEventArgs e)
+        {
+            // See OnNodeDragStart
+            bool isCorrectSource = WPFUtils.GetVisualAncestorNLevelsUp((DependencyObject)e.OriginalSource, 6) == nodesControl;
+            if (isCorrectSource)
+            {
+                foreach (NodeViewModel node in ViewModel.SelectedNodes.Items)
+                {
+                    node.Position = new Point(node.Position.X + e.HorizontalChange, node.Position.Y + e.VerticalChange);
+                }
+
+                if (NodeMove != null)
+                {
+                    var args = new NodeMoveEventArgs(ViewModel.SelectedNodes.Items, e);
+                    NodeMove(sender, args);
+                }
+            }
+        }
+
+        private void OnNodeDragEnd(object sender, DragCompletedEventArgs e)
+        {
+            // See OnNodeDragStart
+            bool isCorrectSource = WPFUtils.GetVisualAncestorNLevelsUp((DependencyObject)e.OriginalSource, 6) == nodesControl;
+            if (NodeMoveEnd != null && isCorrectSource)
+            {
+                var args = new NodeMoveEndEventArgs(ViewModel.SelectedNodes.Items, e);
+                NodeMoveEnd(sender, args);
+            }
+        }
+        #endregion
 
         private void OnClickCanvas(object sender, MouseButtonEventArgs e)
         {
@@ -406,11 +548,33 @@ namespace NodeNetwork.Views
         {
             foreach (ConnectionViewModel con in ViewModel.Connections.Items)
             {
-                PathGeometry conGeom = ConnectionView.BuildSmoothBezier(con.Input.Port.CenterPoint, con.Output.Port.CenterPoint);
+                PathGeometry conGeom = ConnectionView.BuildSmoothBezier(con.Input.Port.CenterPoint, con.Input.PortPosition, con.Output.Port.CenterPoint, con.Output.PortPosition);
                 LineGeometry cutLineGeom = new LineGeometry(ViewModel.CutLine.StartPoint, ViewModel.CutLine.EndPoint);
                 bool hasIntersections = WPFUtils.GetIntersectionPoints(conGeom, cutLineGeom).Any();
                 yield return (con, hasIntersections);
             }
+        }
+
+        public void CenterAndZoomView()
+        {
+            if (ViewModel.Nodes.Count == 0)
+            {
+                return;
+            }
+
+            var bounding = ViewModel.Nodes.Items.Select(node =>
+            {
+                var currentTopLeft = node.Position;
+                var currentBottomRight = Point.Add(node.Position, new Vector(node.Size.Width, node.Size.Height));
+                var nodeBounding = new Rect(currentTopLeft, currentBottomRight);
+                return nodeBounding;
+            }).Aggregate((r1, r2) =>
+            {
+                r1.Union(r2);
+                return r1;
+            });
+
+            this.dragCanvas?.SetViewport(bounding);
         }
     }
 }

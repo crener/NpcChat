@@ -7,9 +7,25 @@
         xmlns:views="clr-namespace:NodeNetwork.Views;assembly=NodeNetwork"
         xmlns:nodeList="clr-namespace:NodeNetwork.Toolkit.NodeList;assembly=NodeNetworkToolkit"
         xmlns:views1="clr-namespace:ExampleCodeGenApp.Views"
+        xmlns:viewModels="clr-namespace:ExampleCodeGenApp.ViewModels"
+        xmlns:nodes="clr-namespace:ExampleCodeGenApp.ViewModels.Nodes"
+        xmlns:converters="clr-namespace:ExampleCodeGenApp.Views.Converters"
+        xmlns:breadcrumbBar="clr-namespace:NodeNetwork.Toolkit.BreadcrumbBar;assembly=NodeNetworkToolkit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="550" Width="825">
+    <Window.Resources>
+        <converters:TypeVisibilityCheck x:Key="TypeCheckToVisibility"/>
+        <ContextMenu x:Key="nodeMenu" x:Shared="True">
+            <MenuItem x:Name="groupNodesButton" Header="Group nodes"/>
+            <MenuItem x:Name="ungroupNodesButton" Header="Ungroup nodes" Visibility="{Binding Converter={StaticResource TypeCheckToVisibility}, ConverterParameter={x:Type nodes:GroupNodeViewModel}}"/>
+            <MenuItem x:Name="openGroupButton" Header="Open group" Visibility="{Binding Converter={StaticResource TypeCheckToVisibility}, ConverterParameter={x:Type nodes:GroupNodeViewModel}}"/>
+        </ContextMenu>
+    </Window.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="5"/>
@@ -17,7 +33,9 @@
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
+
+        <breadcrumbBar:BreadcrumbBarView x:Name="breadcrumbBar" Grid.Row="0" Grid.ColumnSpan="5" MinHeight="30"/>
+        <Grid Grid.Row="1" Grid.Column="0">
             <nodeList:NodeListView x:Name="nodeList" Margin="0,0,0,36"/>
             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="10, 0, 10, 8">
                 <Button Name="autoLayoutButton">Auto-layout</Button>
@@ -25,10 +43,27 @@
                 <Button Name="stopAutoLayoutLiveButton" Margin="0, 5, 0, 0">Stop live auto-layout</Button>
             </StackPanel>
         </Grid>
-        <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-        <views:NetworkView x:Name="network" Grid.Column="2"/>
-        <GridSplitter Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-        <Grid Grid.Column="4">
+        <GridSplitter Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+        <views:NetworkView x:Name="network" Grid.Row="1" Grid.Column="2">
+            <views:NetworkView.Resources>
+                <Style TargetType="views:NodeView">
+                    <Setter Property="ContextMenu" Value="{StaticResource nodeMenu}" />
+                </Style>
+            </views:NetworkView.Resources>
+            <views:NetworkView.NetworkBackground>
+                <DrawingBrush TileMode="Tile" Viewport="0,0,96,96" ViewportUnits="Absolute" Viewbox="0,0,96,96" ViewboxUnits="Absolute">
+                    <DrawingBrush.Drawing>
+                        <GeometryDrawing Brush="Black">
+                            <GeometryDrawing.Geometry>
+                                <Geometry>M 77.000,37.000 L 59.000,37.000 L 59.000,19.000 L 77.000,19.000 L 77.000,37.000 Z M 77.000,57.000 L 59.000,57.000 L 59.000,38.000 L 77.000,38.000 L 77.000,57.000 Z M 77.000,76.000 L 59.000,76.000 L 59.000,58.000 L 77.000,58.000 L 77.000,76.000 Z M 77.000,94.000 L 59.000,94.000 L 59.000,77.000 L 77.000,77.000 L 77.000,94.000 Z M 39.000,94.000 L 39.000,77.000 L 58.000,77.000 L 58.000,94.000 L 39.000,94.000 Z M 20.000,94.000 L 20.000,77.000 L 38.000,77.000 L 38.000,94.000 L 20.000,94.000 Z M 2.000,94.000 L 2.000,77.000 L 19.000,77.000 L 19.000,94.000 L 2.000,94.000 Z M 2.000,58.000 L 19.000,58.000 L 19.000,76.000 L 2.000,76.000 L 2.000,58.000 Z M 2.000,38.000 L 19.000,38.000 L 19.000,57.000 L 2.000,57.000 L 2.000,38.000 Z M 2.000,19.000 L 19.000,19.000 L 19.000,37.000 L 2.000,37.000 L 2.000,19.000 Z M 38.000,19.000 L 38.000,37.000 L 20.000,37.000 L 20.000,19.000 L 38.000,19.000 Z M 39.000,57.000 L 39.000,38.000 L 58.000,38.000 L 58.000,57.000 L 39.000,57.000 Z M 39.000,58.000 L 58.000,58.000 L 58.000,76.000 L 39.000,76.000 L 39.000,58.000 Z M 20.000,57.000 L 20.000,38.000 L 38.000,38.000 L 38.000,57.000 L 20.000,57.000 Z M 38.000,58.000 L 38.000,76.000 L 20.000,76.000 L 20.000,58.000 L 38.000,58.000 Z M 58.000,19.000 L 58.000,37.000 L 39.000,37.000 L 39.000,19.000 L 58.000,19.000 Z M 96.000,19.000 L 96.000,18.000 L 78.000,18.000 L 78.000,0.000 L 77.000,0.000 L 77.000,18.000 L 59.000,18.000 L 59.000,0.000 L 58.000,0.000 L 58.000,18.000 L 39.000,18.000 L 39.000,0.000 L 38.000,0.000 L 38.000,18.000 L 20.000,18.000 L 20.000,0.000 L 19.000,0.000 L 19.000,18.000 L 2.000,18.000 L 2.000,0.000 L 0.000,0.000 L 0.000,18.000 L 0.000,19.000 L 0.000,37.000 L 0.000,38.000 L 0.000,57.000 L 0.000,58.000 L 0.000,76.000 L 0.000,77.000 L 0.000,94.000 L 0.000,96.000 L 2.000,96.000 L 19.000,96.000 L 20.000,96.000 L 38.000,96.000 L 39.000,96.000 L 58.000,96.000 L 59.000,96.000 L 77.000,96.000 L 78.000,96.000 L 96.000,96.000 L 96.000,94.000 L 78.000,94.000 L 78.000,77.000 L 96.000,77.000 L 96.000,76.000 L 78.000,76.000 L 78.000,58.000 L 96.000,58.000 L 96.000,57.000 L 78.000,57.000 L 78.000,38.000 L 96.000,38.000 L 96.000,37.000 L 78.000,37.000 L 78.000,19.000 L 96.000,19.000 Z</Geometry>
+                            </GeometryDrawing.Geometry>
+                        </GeometryDrawing>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </views:NetworkView.NetworkBackground>
+        </views:NetworkView>
+        <GridSplitter Grid.Row="1" Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+        <Grid Grid.Row="1" Grid.Column="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="5"/>

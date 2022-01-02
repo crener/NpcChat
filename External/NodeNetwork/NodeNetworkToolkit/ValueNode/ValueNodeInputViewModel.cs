@@ -23,7 +23,7 @@ namespace NodeNetwork.Toolkit.ValueNode
     {
         static ValueNodeInputViewModel()
         {
-            Splat.Locator.CurrentMutable.Register(() => new NodeInputView(), typeof(IViewFor<ValueNodeInputViewModel<T>>));
+            NNViewRegistrar.AddRegistration(() => new NodeInputView(), typeof(IViewFor<ValueNodeInputViewModel<T>>));
         }
 
         #region Value
@@ -44,29 +44,6 @@ namespace NodeNetwork.Toolkit.ValueNode
         /// </summary>
         public IObservable<T> ValueChanged { get; } 
         #endregion
-
-        /// <summary>
-        /// Action that should be taken based on the validation result
-        /// </summary>
-        public enum ValidationAction
-        {
-            /// <summary>
-            /// Don't run the validation. (LatestValidation is not updated)
-            /// </summary>
-            DontValidate,
-            /// <summary>
-            /// Run the validation, but ignore the result and assume the network is valid.
-            /// </summary>
-            IgnoreValidation,
-            /// <summary>
-            /// Run the validation and if the network is invalid then wait until it is valid.
-            /// </summary>
-            WaitForValid,
-            /// <summary>
-            /// Run the validation and if the network is invalid then make default(T) the current value.
-            /// </summary>
-            PushDefaultValue
-        }
 
         /// <summary>
         /// Constructs a new ValueNodeInputViewModel with the specified ValidationActions. 
@@ -104,16 +81,13 @@ namespace NodeNetwork.Toolkit.ValueNode
 
             var valueChanged = Observable.CombineLatest(connectedValues, localValues,
                     (connectedValue, localValue) => Connections.Count == 0 ? localValue : connectedValue
-                )
-                .Multicast(new Subject<T>());
+                ).Publish();
             valueChanged.Connect();
             valueChanged.ToProperty(this, vm => vm.Value, out _value);
-            ValueChanged = Observable.Create<T>(observer =>
-            {
-                observer.OnNext(Value);
-                observer.OnCompleted();
-                return Disposable.Empty;
-            }).Concat(valueChanged);
+            
+            ValueChanged = Observable
+                .Defer(() => Observable.Return(Value))
+                .Concat(valueChanged);
         }
 
         private IObservable<T> GenerateConnectedValuesBinding(ValidationAction connectionChangedValidationAction, ValidationAction connectedValueChangedValidationAction)
@@ -231,7 +205,7 @@ namespace NodeNetwork.Toolkit.ValueNode
                         || connectedValueChangedValidationAction == ValidationAction.PushDefaultValue && !validation.IsValid)
                     {
                         //Push default(T) if the network isn't valid
-                        return default(T);
+                        return default;
                     }
 
                     //Or just ignore the validation and push the value as is

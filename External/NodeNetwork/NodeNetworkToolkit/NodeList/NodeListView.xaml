@@ -7,7 +7,8 @@
              xmlns:controls="clr-namespace:NodeNetwork.Views.Controls;assembly=NodeNetwork"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="320"
-             Background="#f1f1f1">
+             Background="#f1f1f1"
+             x:Name="self">
     <UserControl.Resources>
         <DataTemplate x:Key="tilesTemplate">
             <Grid>
@@ -31,10 +32,10 @@
             <Grid HorizontalAlignment="Stretch" Margin="0, 0, 0, 0" MouseMove="OnNodeMouseMove">
                 <Grid.Style>
                     <Style TargetType="Grid">
-                        <Setter Property="Background" Value="White"/>
+                        <Setter Property="Background" Value="{Binding ListEntryBackgroundBrush, ElementName=self}"/>
                         <Style.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#f7f7f7"/>
+                                <Setter Property="Background" Value="{Binding ListEntryBackgroundMouseOverBrush, ElementName=self}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -42,14 +43,14 @@
                 <TextBlock Margin="10,5,5,5"><Run Text="{Binding Name}"/></TextBlock>
                 <Viewbox Stretch="Uniform" Width="10" Height="20" HorizontalAlignment="Right" Margin="5" Cursor="SizeAll">
                     <Canvas Width="12.5" Height="30" Background="#01ffffff">
-                        <Rectangle Canvas.Left="0" Canvas.Top="0" Width="4" Height="4" Fill="#FF999999" Stroke="#FF999999"/>
-                        <Rectangle Canvas.Left="7.5" Canvas.Top="0" Width="4" Height="4" Fill="#FF999999" Stroke="#FF999999"/>
-                        <Rectangle Canvas.Left="0" Canvas.Top="7.5" Width="4" Height="4" Fill="#FF999999" Stroke="#FF999999"/>
-                        <Rectangle Canvas.Left="7.5" Canvas.Top="7.5" Width="4" Height="4" Fill="#FF999999" Stroke="#FF999999"/>
-                        <Rectangle Canvas.Left="0" Canvas.Top="15" Width="4" Height="4" Fill="#FF999999" Stroke="#FF999999"/>
-                        <Rectangle Canvas.Left="7.5" Canvas.Top="15" Width="4" Height="4" Fill="#FF999999" Stroke="#FF999999"/>
-                        <Rectangle Canvas.Left="0" Canvas.Top="22.5" Width="4" Height="4" Fill="#FF999999" Stroke="#FF999999"/>
-                        <Rectangle Canvas.Left="7.5" Canvas.Top="22.5" Width="4" Height="4" Fill="#FF999999" Stroke="#FF999999"/>
+                        <Rectangle Canvas.Left="0" Canvas.Top="0" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+                        <Rectangle Canvas.Left="7.5" Canvas.Top="0" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+                        <Rectangle Canvas.Left="0" Canvas.Top="7.5" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+                        <Rectangle Canvas.Left="7.5" Canvas.Top="7.5" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+                        <Rectangle Canvas.Left="0" Canvas.Top="15" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+                        <Rectangle Canvas.Left="7.5" Canvas.Top="15" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+                        <Rectangle Canvas.Left="0" Canvas.Top="22.5" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+                        <Rectangle Canvas.Left="7.5" Canvas.Top="22.5" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
                     </Canvas>
                 </Viewbox>
             </Grid>
@@ -62,18 +63,23 @@
         </ControlTemplate>
     </UserControl.Resources>
 
-    <StackPanel>
-        <Grid>
-            <Label x:Name="titleLabel" Margin="10,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" FontFamily="Segoe UI Semilight"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Row="0">
+            <TextBlock x:Name="titleLabel" Margin="10, 0, 0, 0" Padding="0, 10, 0, 10" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontFamily="Segoe UI Semilight" Text="Test"/>
             <ComboBox x:Name="viewComboBox" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right" Width="65" Height="20" />
         </Grid>
 
-        <Grid x:Name="searchBoxGrid" Margin="25,7,25,0" MaxWidth="300" VerticalAlignment="Top">
+        <Grid Row="1" x:Name="searchBoxGrid" Margin="25,7,25,0" MaxWidth="300" VerticalAlignment="Top">
             <TextBox x:Name="searchBox" TextWrapping="Wrap"/>
             <TextBlock Margin="5, 0, 0, 0" x:Name="emptySearchBoxMessage" Text="Search..." IsHitTestVisible="False" Foreground="LightGray"/>
         </Grid>
 
-        <Grid Margin="10,10,10,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid Row="2" Margin="10,10,10,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <ScrollViewer>
                 <ItemsControl x:Name="elementsList" IsTabStop="False">
                     <ItemsControl.GroupStyle>
@@ -96,7 +102,7 @@
 
                 </ItemsControl>
             </ScrollViewer>
-            <TextBlock x:Name="emptyMessage" Text="No matching nodes found" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock x:Name="emptyMessage" Text="No matching nodes found" HorizontalAlignment="Center" VerticalAlignment="Top"/>
         </Grid>
-    </StackPanel>
+    </Grid>
 </UserControl>

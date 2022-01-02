@@ -25,7 +25,7 @@ namespace NodeNetwork.ViewModels
     {
         static NetworkViewModel()
         {
-            Splat.Locator.CurrentMutable.Register(() => new NetworkView(), typeof(IViewFor<NetworkViewModel>));
+            NNViewRegistrar.AddRegistration(() => new NetworkView(), typeof(IViewFor<NetworkViewModel>));
         }
 
         #region Logger
@@ -66,6 +66,8 @@ namespace NodeNetwork.ViewModels
             set => this.RaiseAndSetIfChanged(ref _pendingConnection, value);
         }
         private PendingConnectionViewModel _pendingConnection;
+
+        public Action OnPendingConnectionDropped { get; set; }
         #endregion
 
         #region PendingNode
@@ -148,7 +150,54 @@ namespace NodeNetwork.ViewModels
         /// </summary>
         public CutLineViewModel CutLine { get; } = new CutLineViewModel();
         #endregion
-        
+
+        #region ZoomFactor
+        /// <summary>
+        /// Scale of the view. Larger means more zoomed in. Default value is 1.
+        /// </summary>
+        public double ZoomFactor
+        {
+            get => _zoomFactor;
+            set => this.RaiseAndSetIfChanged(ref _zoomFactor, value);
+        }
+
+        private double _zoomFactor = 1;
+
+        /// <summary>
+        /// The maximum zoom level used in this network view. Default value is 2.5.
+        /// </summary>
+        public double MaxZoomLevel
+        {
+            get => _maxZoomLevel;
+            set => this.RaiseAndSetIfChanged(ref _maxZoomLevel, value);
+        }
+
+        private double _maxZoomLevel = 2.5;
+
+        /// <summary>
+        /// The minimum zoom level used in this network view. Default value is 0.15.
+        /// </summary>
+        public double MinZoomLevel
+        {
+            get => _minZoomLevel;
+            set => this.RaiseAndSetIfChanged(ref _minZoomLevel, value);
+        }
+
+        private double _minZoomLevel = 0.15;
+
+        /// <summary>
+        /// The drag offset of the initial view position used in this network view. Default value is (0, 0).
+        /// </summary>
+        public Point DragOffset
+        {
+            get => _dragOffset;
+            set => this.RaiseAndSetIfChanged(ref _dragOffset, value);
+        }
+
+        private Point _dragOffset = new Point(0, 0);
+
+        #endregion
+
         #region SelectionRectangle
         /// <summary>
         /// The viewmodel for the selection rectangle used in this network view.
@@ -219,7 +268,10 @@ namespace NodeNetwork.ViewModels
                     RemovePendingConnection();
                 }
             }).Subscribe();
-            
+
+            // If, while dragging a pending connection, the mouse is released over the canvas, then cancel the connection.
+            OnPendingConnectionDropped = RemovePendingConnection;
+
             // When the list of nodes is reset, remove any connections whose input/output node was removed.
             /*Nodes.ShouldReset.Subscribe(_ =>
             {
@@ -293,6 +345,8 @@ namespace NodeNetwork.ViewModels
             //  - Network validation changes
             NetworkChanged = Observable.Merge(
                 Observable.Select(Nodes.Connect(), _ => Unit.Default),
+                Observable.Select(Nodes.Connect().MergeMany(node => node.Inputs.Connect()), _ => Unit.Default),
+                Observable.Select(Nodes.Connect().MergeMany(node => node.Outputs.Connect()), _ => Unit.Default),
                 ConnectionsUpdated,
                 OnEditorChanged(),
                 Validation.Select(_ => Unit.Default)

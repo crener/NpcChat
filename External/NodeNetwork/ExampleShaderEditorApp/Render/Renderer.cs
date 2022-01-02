@@ -1,45 +1,46 @@
 ﻿using System;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
-using OpenGL;
+using OpenTK.Graphics.OpenGL;
+using OpenTK;
 
 namespace ExampleShaderEditorApp.Render
 {
     public class Renderer
     {
-        public void Render(int width, int height, RenderObject root, Camera camera)
+        public void Render(int width, int height, RenderObject root, Camera camera, float time)
         {
-            Gl.Viewport(0, 0, width, height);
+            GL.Viewport(0, 0, width, height);
 
-            Gl.Enable(EnableCap.DepthTest);
-            Gl.Enable(EnableCap.CullFace);
-            Gl.CullFace(CullFaceMode.Back);
+            GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
 
-            Gl.ClearColor(0, 0, 0, 1);
-            Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.ClearColor(0, 0, 0, 1);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            Matrix4x4f viewMatrix = CreateViewMatrix(camera);
-            Matrix4x4f projectionMatrix = CreateProjectionMatrix(camera);
-            Matrix4x4f viewProjectionMatrix = projectionMatrix * viewMatrix;
+            var viewMatrix = CreateViewMatrix(camera);
+            var projectionMatrix = CreateProjectionMatrix(camera);
+            var viewProjectionMatrix = projectionMatrix * viewMatrix;
 
-            RenderChildren(root, viewProjectionMatrix, camera);
+            RenderChildren(root, viewProjectionMatrix, camera, time);
         }
 
-        private void RenderChildren(RenderObject obj, Matrix4x4f viewProjectionMatrix, Camera camera)
+        private void RenderChildren(RenderObject obj, Matrix4 viewProjectionMatrix, Camera camera, float time)
         {
             foreach (RenderObject child in obj.Children)
             {
-                RenderChildren(child, viewProjectionMatrix, camera);
+                RenderChildren(child, viewProjectionMatrix, camera, time);
             }
 
             if (obj.Model?.Mesh != null && obj.Model?.Shader != null)
             {
                 Vector<double> cameraPos = camera.GetWorldPosition().Subtract(obj.GetWorldPosition());
-                RenderModel(obj.Model, viewProjectionMatrix, obj.GetObjectToWorldTransform(), cameraPos);
+                RenderModel(obj.Model, viewProjectionMatrix, obj.GetObjectToWorldTransform(), cameraPos, time);
             }
         }
 
-        private void RenderModel(Render.Model model, Matrix4x4f viewProjectionMatrix, Matrix<double> modelMatrix, Vector<double> cameraPosition)
+        private void RenderModel(Model model, Matrix4 viewProjectionMatrix, Matrix<double> modelMatrix, Vector<double> cameraPosition, float time)
         {
             if (!model.Shader.SetUniformMatrix("viewProjectionTransformation", viewProjectionMatrix))
             {
@@ -50,31 +51,45 @@ namespace ExampleShaderEditorApp.Render
                 throw new Exception("Vertex shader is missing 'modelTransformation'");
             }
             model.Shader.SetUniformVector("cameraPos", cameraPosition);
+            model.Shader.SetUniformFloat("timeSeconds", time);
 
-            Gl.BindVertexArray(model.Mesh.VertexArrayObjectId);
-            Gl.ActiveTexture(TextureUnit.Texture0);
-            Gl.BindTexture(TextureTarget.Texture2d, model.Texture?.Id ?? 0);
-            Gl.UseProgram(model.Shader.Id);
+            GL.BindVertexArray(model.Mesh.VertexArrayObjectId);
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, model.Texture?.Id ?? 0);
+            GL.UseProgram(model.Shader.Id);
             
-            Gl.DrawElements(PrimitiveType.Triangles, model.Mesh.IndexCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
+            GL.DrawElements(PrimitiveType.Triangles, model.Mesh.IndexCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
         }
 
-        private Matrix4x4f CreateViewMatrix(Camera camera)
+        private Matrix4 CreateViewMatrix(Camera camera)
         {
-            Matrix<double> viewMatrix = camera.BuildViewMatrix();
-            double[] elements = viewMatrix.AsColumnMajorArray() ?? viewMatrix.ToColumnMajorArray();
-            float[] floats = new float[elements.Length];
-            for (int i = 0; i < elements.Length; i++)
-            {
-                floats[i] = (float)elements[i];
-            }
-            return new Matrix4x4f(floats);
+            return MathMatrixToOpenglMatrix(camera.BuildViewMatrix());
         }
 
-        private Matrix4x4f CreateProjectionMatrix(Camera camera)
+        private Matrix4 CreateProjectionMatrix(Camera camera)
         {
-            return Matrix4x4f.Perspective((camera.VerticalFOV / (float) Math.PI) * 180f,
+            var mat = Matrix4.CreatePerspectiveFieldOfView(camera.VerticalFOV, 
                 camera.HorizontalFOV / camera.VerticalFOV, camera.NearPlaneZ, camera.FarPlaneZ);
+            mat.Transpose();
+            return mat;
+        }
+
+        //Conversion
+
+        private Matrix<double> OpenGlMatrixToMathMatrix(Matrix4 m)
+        {
+            return Matrix<double>.Build.DenseOfRowArrays(
+                new[] { m.Row0, m.Row1, m.Row2, m.Row3 }.Select(v => new double[] { v.X, v.Y, v.Z, v.W })
+            );
+        }
+
+        private Matrix4 MathMatrixToOpenglMatrix(Matrix<double> values)
+        {
+            var vectors = (values.AsRowArrays() ?? values.ToRowArrays())
+                    .Select(arr => new Vector4((float)arr[0], (float)arr[1], (float)arr[2], (float)arr[3])).ToList();
+            return new Matrix4(
+                vectors[0], vectors[1], vectors[2], vectors[3]
+            );
         }
     }
 }

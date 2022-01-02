@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using DynamicData;
 using NodeNetwork.Utilities;
 using NodeNetwork.ViewModels;
@@ -32,7 +33,7 @@ namespace NodeNetwork.Toolkit.NodeList
         }
         #endregion
 
-        #region Show/Hide proporties
+        #region Show/Hide properties
         public static readonly DependencyProperty ShowSearchProperty =
             DependencyProperty.Register(nameof(ShowSearch), typeof(bool), typeof(NodeListView), new PropertyMetadata(true));
         public static readonly DependencyProperty ShowDisplayModeSelectorProperty =
@@ -59,15 +60,43 @@ namespace NodeNetwork.Toolkit.NodeList
         }
         #endregion
 
+        #region Colors
+        public static readonly DependencyProperty ListEntryBackgroundBrushProperty =
+            DependencyProperty.Register(nameof(ListEntryBackgroundBrush), typeof(Brush), typeof(NodeListView), new PropertyMetadata(new SolidColorBrush(Colors.White)));
+
+        public Brush ListEntryBackgroundBrush
+        {
+            get { return (Brush)GetValue(ListEntryBackgroundBrushProperty); }
+            set { SetValue(ListEntryBackgroundBrushProperty, value); }
+        }
+
+        public static readonly DependencyProperty ListEntryBackgroundMouseOverBrushProperty =
+            DependencyProperty.Register(nameof(ListEntryBackgroundMouseOverBrush), typeof(Brush), typeof(NodeListView), new PropertyMetadata(new SolidColorBrush(Color.FromRgb(0xf7, 0xf7, 0xf7))));
+
+        public Brush ListEntryBackgroundMouseOverBrush
+        {
+            get { return (Brush)GetValue(ListEntryBackgroundMouseOverBrushProperty); }
+            set { SetValue(ListEntryBackgroundMouseOverBrushProperty, value); }
+        }
+
+        public static readonly DependencyProperty ListEntryHandleBrushProperty =
+            DependencyProperty.Register(nameof(ListEntryHandleBrush), typeof(Brush), typeof(NodeListView), new PropertyMetadata(new SolidColorBrush(Color.FromRgb(0x99, 0x99, 0x99))));
+
+        public Brush ListEntryHandleBrush
+        {
+            get { return (Brush)GetValue(ListEntryHandleBrushProperty); }
+            set { SetValue(ListEntryHandleBrushProperty, value); }
+        }
+        #endregion
 
         public CollectionViewSource CVS { get; } = new CollectionViewSource();
 
         public NodeListView()
         {
             InitializeComponent();
-	        if (DesignerProperties.GetIsInDesignMode(this)) { return; }
+            if (DesignerProperties.GetIsInDesignMode(this)) { return; }
 
-			viewComboBox.ItemsSource = Enum.GetValues(typeof(NodeListViewModel.DisplayMode)).Cast<NodeListViewModel.DisplayMode>();
+            viewComboBox.ItemsSource = Enum.GetValues(typeof(NodeListViewModel.DisplayMode)).Cast<NodeListViewModel.DisplayMode>();
             this.WhenActivated(d =>
             {
                 this.Bind(ViewModel, vm => vm.Display, v => v.viewComboBox.SelectedItem).DisposeWith(d);
@@ -100,7 +129,7 @@ namespace NodeNetwork.Toolkit.NodeList
                     .Select(count => count == 0)
                     .BindTo(this, v => v.emptyMessage.Visibility).DisposeWith(d);
 
-                this.OneWayBind(ViewModel, vm => vm.Title, v => v.titleLabel.Content).DisposeWith(d);
+                this.OneWayBind(ViewModel, vm => vm.Title, v => v.titleLabel.Text).DisposeWith(d);
                 this.OneWayBind(ViewModel, vm => vm.EmptyLabel, v => v.emptyMessage.Text).DisposeWith(d);
 
                 this.WhenAnyValue(v => v.searchBox.IsFocused, v => v.searchBox.Text)
@@ -127,7 +156,8 @@ namespace NodeNetwork.Toolkit.NodeList
                     return;
                 }
 
-                NodeViewModel newNodeVM = ViewModel.NodeFactories[nodeVM]();
+                var nodeFactory = ViewModel.NodeTemplates.Items.First(t => t.Instance == nodeVM).Factory;
+                NodeViewModel newNodeVM = nodeFactory();
 
                 DragDrop.DoDragDrop(this, new DataObject("nodeVM", newNodeVM), DragDropEffects.Copy);
             }

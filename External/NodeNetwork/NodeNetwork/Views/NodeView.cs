@@ -12,21 +12,29 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using DynamicData;
 using DynamicData.Binding;
 using NodeNetwork.Utilities;
 using NodeNetwork.ViewModels;
 using NodeNetwork.Views.Controls;
 using ReactiveUI;
+using Splat;
 
 namespace NodeNetwork.Views
 {
     [TemplatePart(Name = nameof(CollapseButton), Type = typeof(ArrowToggleButton))]
     [TemplatePart(Name = nameof(NameLabel), Type = typeof(TextBlock))]
+    [TemplatePart(Name = nameof(HeaderIcon), Type = typeof(Image))]
     [TemplatePart(Name = nameof(InputsList), Type = typeof(ItemsControl))]
     [TemplatePart(Name = nameof(OutputsList), Type = typeof(ItemsControl))]
+    [TemplatePart(Name = nameof(EndpointGroupsList), Type = typeof(ItemsControl))]
+    [TemplatePart(Name = nameof(ResizeVerticalThumb), Type = typeof(Thumb))]
+    [TemplatePart(Name = nameof(ResizeHorizontalThumb), Type = typeof(Thumb))]
+    [TemplatePart(Name = nameof(ResizeDiagonalThumb), Type = typeof(Thumb))]
     [TemplateVisualState(Name = SelectedState, GroupName = SelectedVisualStatesGroup)]
     [TemplateVisualState(Name = UnselectedState, GroupName = SelectedVisualStatesGroup)]
     [TemplateVisualState(Name = CollapsedState, GroupName = CollapsedVisualStatesGroup)]
@@ -115,9 +123,14 @@ namespace NodeNetwork.Views
 
 		private ArrowToggleButton CollapseButton { get; set; }
         private TextBlock NameLabel { get; set; }
+        private Image HeaderIcon { get; set; }
         private ItemsControl InputsList { get; set; }
         private ItemsControl OutputsList { get; set; }
-        
+        private ItemsControl EndpointGroupsList { get; set; }
+        private Thumb ResizeVerticalThumb { get; set; }
+        private Thumb ResizeHorizontalThumb { get; set; }
+        private Thumb ResizeDiagonalThumb { get; set; }
+
         public NodeView()
         {
             DefaultStyleKey = typeof(NodeView);
@@ -131,11 +144,32 @@ namespace NodeNetwork.Views
         {
             CollapseButton = GetTemplateChild(nameof(CollapseButton)) as ArrowToggleButton;
             NameLabel = GetTemplateChild(nameof(NameLabel)) as TextBlock;
+            HeaderIcon = GetTemplateChild(nameof(HeaderIcon)) as Image;
             InputsList = GetTemplateChild(nameof(InputsList)) as ItemsControl;
             OutputsList = GetTemplateChild(nameof(OutputsList)) as ItemsControl;
+            EndpointGroupsList = GetTemplateChild(nameof(EndpointGroupsList)) as ItemsControl;
+            ResizeVerticalThumb = GetTemplateChild(nameof(ResizeVerticalThumb)) as Thumb;
+            ResizeHorizontalThumb = GetTemplateChild(nameof(ResizeHorizontalThumb)) as Thumb;
+            ResizeDiagonalThumb = GetTemplateChild(nameof(ResizeDiagonalThumb)) as Thumb;
+
+            ResizeVerticalThumb.DragDelta += (sender, e) => ApplyResize(e, false, true);
+            ResizeHorizontalThumb.DragDelta += (sender, e) => ApplyResize(e, true, false);
+            ResizeDiagonalThumb.DragDelta += (sender, e) => ApplyResize(e, true, true);
 
             VisualStateManager.GoToState(this, ExpandedState, false);
             VisualStateManager.GoToState(this, UnselectedState, false);
+        }
+
+        private void ApplyResize(DragDeltaEventArgs e, bool horizontal, bool vertical)
+        {
+            if (horizontal)
+            {
+                MinWidth = Math.Max(20, MinWidth + e.HorizontalChange);
+            }
+            if (vertical)
+            {
+                MinHeight = Math.Max(20, MinHeight + e.VerticalChange);
+            }
         }
 
         private void SetupBindings()
@@ -146,11 +180,14 @@ namespace NodeNetwork.Views
 
                 this.OneWayBind(ViewModel, vm => vm.Name, v => v.NameLabel.Text).DisposeWith(d);
 
-	            this.BindList(ViewModel, vm => vm.VisibleInputs, v => v.InputsList.ItemsSource);
-	            this.BindList(ViewModel, vm => vm.VisibleOutputs, v => v.OutputsList.ItemsSource);
+	            this.BindList(ViewModel, vm => vm.VisibleInputs, v => v.InputsList.ItemsSource).DisposeWith(d);
+	            this.BindList(ViewModel, vm => vm.VisibleOutputs, v => v.OutputsList.ItemsSource).DisposeWith(d);
+	            this.OneWayBind(ViewModel, vm => vm.VisibleEndpointGroups, v => v.EndpointGroupsList.ItemsSource).DisposeWith(d);
 
                 this.WhenAnyValue(v => v.ActualWidth, v => v.ActualHeight, (width, height) => new Size(width, height))
                     .BindTo(this, v => v.ViewModel.Size).DisposeWith(d);
+
+                this.OneWayBind(ViewModel, vm => vm.HeaderIcon, v => v.HeaderIcon.Source, img => img?.ToNative()).DisposeWith(d);
             });
         }
 
