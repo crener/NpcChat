@@ -21,7 +21,7 @@ namespace FirstFloor.ModernUI.Windows.Controls
         /// <summary>
         /// Occurs when the system or monitor DPI for this window has changed.
         /// </summary>
-        public event EventHandler DpiChanged;
+        //public new event EventHandler DpiChanged;
 
         private HwndSource source;
         private DpiInformation dpiInfo;
@@ -116,7 +116,7 @@ namespace FirstFloor.ModernUI.Windows.Controls
                     UpdateLayoutTransform();
 
                     // raise DpiChanged event
-                    OnDpiChanged(EventArgs.Empty);
+                    //OnDpiChanged(EventArgs.Empty);
                 }
 
                 handled = true;
@@ -185,7 +185,7 @@ namespace FirstFloor.ModernUI.Windows.Controls
             UpdateLayoutTransform();
         }
        
-        /// <summary>
+        /*/// <summary>
         /// Raises the <see cref="E:DpiChanged" /> event.
         /// </summary>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
@@ -195,6 +195,6 @@ namespace FirstFloor.ModernUI.Windows.Controls
             if (handler != null) {
                 handler(this, e);
             }
-        }
+        }*/
     }
 }
